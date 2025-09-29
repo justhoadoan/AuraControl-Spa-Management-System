@@ -1,7 +1,7 @@
 #  🌿AuraControl Spa Management System: A Professional Spa Booking System
 
 
-**Serenity Spa Booker** is a comprehensive web application designed to help spa businesses manage their operations efficiently. The system provides an online booking portal for customers, a powerful dashboard for management, and a simple workspace for technicians.
+**AuraControl Spa Management System** is a comprehensive web application designed to help spa businesses manage their operations efficiently. The system provides an online booking portal for customers, a powerful dashboard for management, and a simple workspace for technicians.
 
 ---
 ## ✨ Key Features
