@@ -1,13 +1,15 @@
 server:
-  port: 8888
+  port: 8081
   error:
     include-message: always
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/spa
-    username: postgres
-    password: admin
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,3 +17,13 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+  main:
+    allow-bean-definition-overriding: true
+
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
+
