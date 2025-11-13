@@ -1,4 +1,3 @@
-import {react} from 'react';
 import './SignUp.css';
 
 const SignUp = () => {

@@ -1,14 +1,13 @@
 import { useState } from 'react'
-import Login from './Components/Login.jsx'
-import SignUp from './Components/SignUp.jsx'
+import SignUp from './components/SignUp.jsx'
+import Login from './components/Login.jsx'
 import './App.css'
 
 function App() {
   return (
     <>
-      <Login/>
-
-      <SignUp/>
+      <Login />
+      <SignUp />
     </>
   )
 }
