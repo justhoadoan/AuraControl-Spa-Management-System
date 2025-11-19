@@ -26,4 +26,7 @@ app:
   jwt:
     secret: ${JWT_SECRET}
     expiration: ${JWT_EXPIRATION}
+  admin:
+    email: ${ADMIN_EMAIL:admin@localhost}
+    password: ${ADMIN_PASSWORD:admin}
 
