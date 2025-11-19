@@ -39,4 +39,6 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
     @Modifying
     @Query("DELETE FROM Service s WHERE s.service_id = :id")
     void deleteById(@Param("id") Integer id);
+
+
 }
