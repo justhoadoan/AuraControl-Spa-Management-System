@@ -6,19 +6,18 @@ import com.example.auracontrol.auth.dto.RegisterRequest;
 import com.example.auracontrol.shared.security.JwtService;
 import com.example.auracontrol.user.Role;
 import com.example.auracontrol.user.User;
-import com.example.auracontrol.user.UserReposistory;
+import com.example.auracontrol.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private  final UserReposistory userReposistory;
+    private  final UserRepository userRepository;
     private  final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -26,7 +25,7 @@ public class AuthService {
 
     @Transactional
     public AuthResponse register(RegisterRequest registerRequest) throws Exception {
-        if (userReposistory.findByEmail(registerRequest.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new Exception("Email already exists");
         }
         User user = new User();
@@ -37,7 +36,7 @@ public class AuthService {
 
         user.setRole(Role.CUSTOMER);
 
-        userReposistory.save(user);
+        userRepository.save(user);
 
         String jwtToken = jwtService.generateToken(user);
 
@@ -55,7 +54,7 @@ public class AuthService {
                         loginRequest.getPassword()
                 )
         );
-        User user = userReposistory.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new Exception("User not found"));
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new Exception("User not found"));
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
 
