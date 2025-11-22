@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Extracted styles: common layout + page-specific styles -->
+    <link rel="stylesheet" href="../css/common.css">
+    <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+
+<!-- Flowers image: uses public folder path so it can be served by static server -->
+<img id="flowers" class="flowers-img" src="../../../public/res/Flowers.png" alt="Flowers" />
+
+
+<div class="card" role="main" aria-label="Login form">
+    <h2>Login</h2>
+
+    <form action="#">
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Login</button>
+    </form>
+
+    <div class="signup-login-text">
+        Forgot Password? <button type="button" class="btn-text-link" onclick="window.location.href='Reset_Password_1.html'">Reset Password</button>
+    </div>
+</div>
+</body>
+</html>

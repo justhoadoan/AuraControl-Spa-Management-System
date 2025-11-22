@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -32,8 +33,6 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String password;
 
-    private String phone_number;
-
     @Enumerated(EnumType.STRING)
     private Role role;
 
@@ -47,7 +46,11 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
+    @Column(name = "is_enabled")
+    private boolean enabled = false;
 
+    @Column(name = "verification_token")
+    private String verificationToken;
     @Override
     public String getUsername() {
         return this.email;
@@ -56,5 +59,17 @@ public class User implements UserDetails {
     public String getPassword() {
         return this.password;
     }
+
+    @Column(name = "reset_password_token")
+    private String resetPasswordToken;
+
+    @Column(name = "reset_password_token_expiry")
+    private LocalDateTime resetPasswordTokenExpiry;
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
+
 
 }
