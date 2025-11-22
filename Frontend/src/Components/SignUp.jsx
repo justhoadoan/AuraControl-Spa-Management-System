@@ -36,13 +36,10 @@ const SignUp = () => {
                 return;
             }  
             
-            //
+            // Get token from response and let AuthContext decode it
             const data = await response.json();
             const token = data.token;
-            const payload = JSON.parse(atob(token.split('.')[1]));
-            console.log('Decoded JWT payload:', payload);
-            const role = payload.role;
-            login(token, role);
+            login(token);
 
             // Clear form
             setEmail('');
