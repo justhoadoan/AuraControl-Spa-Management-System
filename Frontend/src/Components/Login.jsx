@@ -1,46 +1,25 @@
 import './Login.css';
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.jsx';
+import { validateLoginForm } from '../utils/validation.jsx';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errors, setError] = useState({});
+    const [errors, setErrors] = useState({});
     const {login} = useContext(AuthContext);
-
-    //Validate email format
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    const validateForm = () => {
-        const newErrors = {};
-        // Email validation
-        if(!email.trim()) {
-            newErrors.email = 'Email is required';
-        }else if(!validateEmail(email)){
-            newErrors.email = 'Invalid email format';
-        }
-        // Password validation
-        if(!password){
-            newErrors.password = 'Password is required';
-        }else if(password.length < 8){
-            newErrors.password = 'Password must be at least 8 characters';
-        }
-        setError(newErrors);
-        return Object.keys(newErrors).length === 0;
-    };
 
     const handleLogin = async () => {
         // Validate form
-        if(!validateForm()){
+        const validationErrors = validateForm(email, password);
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
             return;
         }
 
         // Call backend API to authenticate
         try {
-            const response = await fetch('/api/auth/login', {
+            const response = await fetch('http://localhost:8080/api/auth/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({email, password})
@@ -73,16 +52,16 @@ const Login = () => {
     // Handle email input change
     const handleEmailChange = (e) => {
         setEmail(e.target.value);
-        if(error.email){
-            setError((prev) => ({...prev, email: ''}));
+        if(errors.email){
+            setErrors((prev) => ({...prev, email: ''}));
         }
     }
 
     // Handle password input change
     const handlePasswordChange = (e) => {
         setPassword(e.target.value);
-        if(error.password){
-            setError((prev) => ({...prev, password: ''}));
+        if(errors.password){
+            setErrors((prev) => ({...prev, password: ''}));
         }
     }
 
