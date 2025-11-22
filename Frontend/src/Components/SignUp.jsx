@@ -1,5 +1,6 @@
 import './SignUp.css';
 import {useState, useEffect, useContext} from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.jsx';
 import { validateForm } from '../utils/validation.jsx';
 
@@ -7,7 +8,8 @@ const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errors, setErrors] = useState({});
-    const {login} = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleSignUp = async () => {
         // Validate form
@@ -45,6 +47,9 @@ const SignUp = () => {
             setEmail('');
             setPassword('');
             setErrors({});
+
+            // Redirect về home sau khi đăng ký thành công
+            navigate('/', { replace: true });
             
         } catch (error) {
             console.error('Error during sign up:', error);
