@@ -29,15 +29,6 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public String generateToken(User user) {
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", user.getRole().name());
-
-
-        extraClaims.put("userId", user.getUser_id());
-
-        return createToken(extraClaims, user);
-    }
 
 
     public String createToken(Map<String, Object> claims, UserDetails userDetails ) {
