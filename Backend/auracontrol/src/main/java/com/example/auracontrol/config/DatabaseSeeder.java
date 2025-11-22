@@ -29,7 +29,6 @@ public class DatabaseSeeder implements CommandLineRunner {
             User admin = new User();
             admin.setName("Super Admin");
             admin.setEmail(adminEmail);
-            admin.setPhone_number("0000000000");
 
             admin.setPassword(passwordEncoder.encode(adminPassword));
 

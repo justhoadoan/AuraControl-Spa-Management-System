@@ -40,7 +40,6 @@ public class ServiceService {
             throw new ResourceNotFoundException("Không tìm thấy dịch vụ để cập nhật.");
         }
 
-        // 2. Gọi hàm Update tùy chỉnh trong Repository
         int rowsAffected = serviceRepository.update(
                 id,
                 request.getName(),

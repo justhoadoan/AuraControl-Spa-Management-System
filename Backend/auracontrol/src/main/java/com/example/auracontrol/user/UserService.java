@@ -70,7 +70,6 @@ public class UserService {
             throw new InvalidRequestException("Old password is not correct.");
         }
 
-
         String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
 
 

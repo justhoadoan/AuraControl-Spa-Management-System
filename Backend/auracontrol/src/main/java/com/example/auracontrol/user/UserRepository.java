@@ -34,4 +34,8 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Modifying
     @Query("DELETE FROM User u WHERE u.user_id = :id")
     void deleteById(@Param("id") Integer id);
+
+    Optional<User> findByVerificationToken(String token);
+    @Query("SELECT u FROM User u WHERE u.resetPasswordToken = :token")
+    Optional<User> findByResetPasswordToken(@Param("token") String token);
 }
