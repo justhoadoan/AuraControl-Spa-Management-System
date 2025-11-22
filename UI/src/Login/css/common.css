@@ -1,0 +1,96 @@
+:root{
+  /* easy-to-change coordinates and sizing for the flowers image */
+  --flowers-left: 20px;
+  --flowers-top: 20px;
+  --flowers-max-width: 220px; /* change this to adjust max width */
+  /* overlay alpha: 0.25 = 25% opaque (75% transparent). Change as needed */
+  --overlay-alpha: 0.75;
+}
+
+html, body {
+  min-height: 100vh; /* allow scrolling */
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  /* gradient background from bottom (pink) to top (white) */
+  background: linear-gradient(to top, #FBB6D3 0%, #ffffff 100%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  font-family: Arial, Helvetica, sans-serif;
+
+  /* center content by default */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Flowers image: fixed to viewport so it is always visible and easy to position */
+.flowers-img {
+  position: fixed; /* ensures it sits relative to viewport (not a container) */
+  left: var(--flowers-left);
+  top: var(--flowers-top);
+  width: clamp(80px, 20vw, var(--flowers-max-width));
+  height: auto;
+  z-index: 8;
+  pointer-events: none;
+  user-select: none;
+  transition: all 0.25s ease;
+}
+
+/* --- Card Container --- */
+.card {
+    /* Responsive Scaling:
+       Min 320px, Preferred 450px, Max 90% of screen width */
+    width: min(450px, 90vw);
+
+    background: #ffffff;
+    padding: 40px 50px;
+    border-radius: 8px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1); /* Softer, deeper shadow */
+    box-sizing: border-box;
+
+    /* Ensure Card is always on top of flower */
+    position: relative;
+    z-index: 10;
+
+    margin-bottom: 30px;
+}
+
+/* small helper to keep things readable on narrow screens */
+@media (max-width: 900px) {
+  .flowers-img {
+    position: relative;
+    left: auto;
+    top: auto;
+    width: 120px;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .center-rect {
+    position: static;
+    transform: none;
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  .page-overlay {
+    position: static;
+    transform: none;
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+
+  body {
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+}

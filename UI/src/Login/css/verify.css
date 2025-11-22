@@ -1,0 +1,102 @@
+/* Signup page specific styles */
+.card {
+    position: relative; /* create stacking context */
+    z-index: 20;       /* above .page-overlay (which uses z-index:11) */
+    background: transparent; /* keep card visuals controlled by page, or set to a color if desired */
+}
+
+.card h2 {
+    margin: 0 0 30px 0;
+    font-weight: 700;
+    font-size: 28px;
+    color: #fff;
+    text-align: left;
+    z-index: 12;
+}
+
+
+
+/* Semi-transparent overlay that sits above the center white rectangle and below the card */
+.page-overlay {
+    position: fixed;
+    inset: 0; /* top:0; right:0; bottom:0; left:0; */
+    background: rgba(0,0,0, var(--overlay-alpha, 0.75));
+    z-index: 11;
+    pointer-events: none;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid #fff;
+    padding: 8px 0;
+    font-size: 16px;
+    outline: none;
+    background: transparent;
+    transition: border-color 0.3s;
+    z-index: 12;
+}
+
+input:focus {
+    border-bottom: 1px solid #000;
+}
+
+.btn-submit {
+    width: 100%;
+    background-color: #fff;
+    color: #000;
+    border: none;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    transition: background-color 0.2s;
+    z-index: 12;
+}
+
+.btn-submit:hover {
+    background-color: #333;
+}
+
+.btn-text-link {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-weight: 600;
+    color: #ff0066;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-text-link:hover {
+    color: #d60055;
+    text-decoration: underline;
+}
+
+.btn-text-link:active {
+    transform: scale(0.98);
+}
+
+.verify-text {
+    text-align: center;
+    font-size: 14px;
+    color: #333;
+}
