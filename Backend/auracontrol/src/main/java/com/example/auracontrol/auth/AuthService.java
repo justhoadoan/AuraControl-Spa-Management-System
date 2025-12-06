@@ -3,6 +3,7 @@ package com.example.auracontrol.auth;
 import com.example.auracontrol.auth.dto.AuthResponse;
 import com.example.auracontrol.auth.dto.LoginRequest;
 import com.example.auracontrol.auth.dto.RegisterRequest;
+import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.shared.security.JwtService;
 import com.example.auracontrol.user.Role;
 import com.example.auracontrol.user.User;
@@ -31,7 +32,6 @@ public class AuthService {
         User user = new User();
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setPhone_number(registerRequest.getPhone_number());
         user.setName(registerRequest.getName());
 
         user.setRole(Role.CUSTOMER);
@@ -54,7 +54,7 @@ public class AuthService {
                         loginRequest.getPassword()
                 )
         );
-        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new Exception("User not found"));
+        User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(()-> new ResourceNotFoundException("User not found"));
         String jwtToken = jwtService.generateToken(user);
         return new AuthResponse(jwtToken);
 
