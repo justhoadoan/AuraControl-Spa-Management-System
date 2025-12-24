@@ -16,6 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
+@Data
 @Table(name = "services")
 public class Service {
 

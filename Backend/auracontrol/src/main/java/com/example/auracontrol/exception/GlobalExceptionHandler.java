@@ -29,20 +29,20 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDatabaseException(DataIntegrityViolationException ex) {
-        String errorMsg = ex.getMostSpecificCause().getMessage();
+    public ResponseEntity<String> handleDatabaseTriggerException(DataIntegrityViolationException ex) {
+        String rootCause = ex.getMostSpecificCause().getMessage();
 
-        String userMessage = "Data processing error.";
+        String clientMessage = "Booking failed due to a data conflict.";
 
-        if (errorMsg.contains("The technician is busy")) {
-            userMessage = "The technician is busy.";
-        } else if (errorMsg.contains("Cannot book an appointment in the past")) {
-            userMessage = "Cannot book an appointment in the past.";
-        } else if (errorMsg.contains("does not have the skill")) {
-            userMessage = "The technician does not have the skill to do the service .";
+        if (rootCause.contains("The technician is busy")) {
+            clientMessage = "The selected technician is busy during this time slot.";
+        } else if (rootCause.contains("Cannot book an appointment in the past")) {
+            clientMessage = "You cannot book an appointment in the past.";
+        } else if (rootCause.contains("does not have the skill")) {
+            clientMessage = "This technician cannot perform the selected service.";
         }
 
-        return ResponseEntity.badRequest().body(new ErrorResponse(400, userMessage));
+        return ResponseEntity.badRequest().body(clientMessage);
     }
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponse> handleDuplicateResourceException(DuplicateResourceException ex, WebRequest request) {

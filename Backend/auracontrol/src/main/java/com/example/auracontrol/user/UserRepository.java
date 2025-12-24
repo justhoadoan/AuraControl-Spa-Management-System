@@ -17,22 +17,22 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     boolean existsByEmail(@Param("email") String email);
 
     @Override
-    @Query("SELECT u FROM User u WHERE u.user_id = :id")
+    @Query("SELECT u FROM User u WHERE u.userId = :id")
     Optional<User> findById(@Param("id") Integer id);
 
     @Modifying
-    @Query("UPDATE User u SET u.name = :name WHERE u.user_id = :id")
+    @Query("UPDATE User u SET u.name = :name WHERE u.userId = :id")
     void updateProfile(
             @Param("id") Integer id,
             @Param("name") String name
     );
 
     @Modifying
-    @Query("UPDATE User u SET u.password = :newPassword WHERE u.user_id = :id")
+    @Query("UPDATE User u SET u.password = :newPassword WHERE u.userId = :id")
     void updatePassword(@Param("id") Integer id, @Param("newPassword") String newPassword);
 
     @Modifying
-    @Query("DELETE FROM User u WHERE u.user_id = :id")
+    @Query("DELETE FROM User u WHERE u.userId = :id")
     void deleteById(@Param("id") Integer id);
 
     Optional<User> findByVerificationToken(String token);

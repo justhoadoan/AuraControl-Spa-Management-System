@@ -27,7 +27,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot find User"));
 
         return UserProfileResponse.builder()
-                .id(Math.toIntExact(user.getUser_id()))
+                .id(Math.toIntExact(user.getUserId()))
                 .fullName(user.getName())
                 .email(user.getEmail())
                 .build();
@@ -45,11 +45,11 @@ public class UserService {
         String newName = request.getFullName() != null ? request.getFullName() : currentUser.getName();
 
 
-        userRepository.updateProfile(Math.toIntExact(currentUser.getUser_id()), newName);
+        userRepository.updateProfile(Math.toIntExact(currentUser.getUserId()), newName);
 
 
         UserProfileResponse updatedUserDto = UserProfileResponse.builder()
-                .id(Math.toIntExact(currentUser.getUser_id()))
+                .id(Math.toIntExact(currentUser.getUserId()))
                 .fullName(newName)
                 .email(currentUser.getEmail())
                 .build();
@@ -73,6 +73,6 @@ public class UserService {
         String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
 
 
-        userRepository.updatePassword(Math.toIntExact(user.getUser_id()), encodedNewPassword);
+        userRepository.updatePassword(Math.toIntExact(user.getUserId()), encodedNewPassword);
     }
 }

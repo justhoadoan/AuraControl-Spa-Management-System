@@ -31,14 +31,23 @@ FROM technician t
          JOIN users u ON t.user_id = u.user_id -- Join to get name from users table
          JOIN technician_services ts ON t.technician_id = ts.technician_id
 WHERE ts.service_id = p_service_id -- Technician must have the skill for this service
+-- Filter 2: Must NOT have an overlapping Appointment
   AND t.technician_id NOT IN (
-    -- Exclude technicians who have overlapping appointments
     SELECT a.technician_id
     FROM appointment a
     WHERE a.status != 'CANCELLED'
-  AND (
+    AND (
     (a.start_time < v_end_time) AND (a.end_time > p_check_time)
     )
+    )
+-- Filter 3: Must NOT have an overlapping Absence Request
+  AND t.technician_id NOT IN (
+    SELECT ar.technician_id
+    FROM absence_request ar
+    WHERE ar.status = 'APPROVED' -- Only block if the leave is approved
+    AND (
+            (ar.start_date < v_end_time) AND (ar.end_date > p_check_time)
+        )
     );
 END;
 $$ LANGUAGE plpgsql;

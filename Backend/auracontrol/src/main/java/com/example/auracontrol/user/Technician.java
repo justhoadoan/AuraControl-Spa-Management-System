@@ -19,7 +19,8 @@ import java.util.Set;
 public class Technician {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer technician_id;
+    @Column(name = "technician_id")
+    private Integer technicianId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")

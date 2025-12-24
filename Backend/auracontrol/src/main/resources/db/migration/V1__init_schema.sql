@@ -1,16 +1,16 @@
 -- 1. Table: Users
-CREATE TABLE users (
-                       user_id SERIAL PRIMARY KEY,
-                       name VARCHAR(255),
-                       email VARCHAR(255) NOT NULL UNIQUE,
-                       password VARCHAR(255) NOT NULL,
-                       role VARCHAR(50), -- Enum stored as string: 'CUSTOMER', 'TECHNICIAN', 'ADMIN'
-                       phone_number VARCHAR(20),
-                       is_active BOOLEAN DEFAULT FALSE,
-                       verification_token VARCHAR(255),
-                       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
+CREATE TABLE IF NOT EXISTS users (
+                        user_id SERIAL PRIMARY KEY,
+                        name VARCHAR(255),
+                        email VARCHAR(255) NOT NULL UNIQUE,
+                        password VARCHAR(255) NOT NULL,
+                        role VARCHAR(50), -- Enum stored as string: 'CUSTOMER', 'TECHNICIAN', 'ADMIN'
+                        is_enabled BOOLEAN DEFAULT TRUE,
+                        verification_token VARCHAR(255),
+                        reset_password_token VARCHAR(255),
+                        reset_password_token_expiry TIMESTAMP,
+                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
 -- 2. Table: Customer (Links to Users)
 CREATE TABLE customer (
                           customer_id SERIAL PRIMARY KEY,
@@ -94,7 +94,7 @@ CREATE TABLE absence_request (
                                  start_date TIMESTAMP NOT NULL,
                                  end_date TIMESTAMP NOT NULL,
                                  reason TEXT,
-                                 status VARCHAR(50) DEFAULT 'ACCEPTED',
+                                 status VARCHAR(50) DEFAULT 'APPROVED',
                                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                  CONSTRAINT fk_absence_tech FOREIGN KEY (technician_id) REFERENCES technician(technician_id) ON DELETE CASCADE
 );
