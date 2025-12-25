@@ -5,8 +5,8 @@ import com.example.auracontrol.auth.dto.LoginRequest;
 import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.shared.security.JwtService;
 import com.example.auracontrol.user.Role;
-import com.example.auracontrol.user.User;
-import com.example.auracontrol.user.UserRepository;
+import com.example.auracontrol.user.entity.User;
+import com.example.auracontrol.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,7 +44,7 @@ public class AuthTest {
         User mockUser = new User();
         mockUser.setEmail("test@gmail.com");
         mockUser.setRole(Role.CUSTOMER);
-        mockUser.setUser_id(1L);
+        mockUser.setUserId(1);
 
 
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUser));

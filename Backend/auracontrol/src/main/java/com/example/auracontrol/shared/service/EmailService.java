@@ -50,7 +50,7 @@ public class EmailService {
 
         } catch (MessagingException e) {
             System.err.println("Error sending reset password email: " + e.getMessage());
-            // You can log this to your database if needed
+
         }
     }
 

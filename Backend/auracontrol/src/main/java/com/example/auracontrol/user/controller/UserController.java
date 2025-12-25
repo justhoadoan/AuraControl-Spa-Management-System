@@ -1,4 +1,5 @@
-package com.example.auracontrol.user;
+package com.example.auracontrol.user.controller;
+import com.example.auracontrol.user.service.UserService;
 import com.example.auracontrol.user.dto.ChangePasswordRequest;
 import com.example.auracontrol.user.dto.UpdateProfileRequest;
 import com.example.auracontrol.user.dto.UpdateProfileResponseWrapper;

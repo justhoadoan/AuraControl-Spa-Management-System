@@ -1,4 +1,4 @@
-package com.example.auracontrol.resource;
+package com.example.auracontrol.booking.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import lombok.*;
 public class Resource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer resource_id;
+    private Integer resourceId;
     @Column(nullable = false, length = 100)
     private String name;
 
@@ -20,6 +20,5 @@ public class Resource {
     private String type;
 
 
-//    @ManyToMany(mappedBy = "resources")
-//    private Set<Appointment> appointments;
+
 }

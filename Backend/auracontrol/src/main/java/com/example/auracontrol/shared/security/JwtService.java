@@ -1,7 +1,7 @@
 package com.example.auracontrol.shared.security;
 
 
-import com.example.auracontrol.user.User;
+import com.example.auracontrol.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,7 +34,7 @@ public class JwtService {
         extraClaims.put("role", user.getRole().name());
 
 
-        extraClaims.put("userId", user.getUser_id());
+        extraClaims.put("userId", user.getUserId());
 
         return createToken(extraClaims, user);
     }

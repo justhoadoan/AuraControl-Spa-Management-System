@@ -1,9 +1,8 @@
 package com.example.auracontrol.service;
 
 
-import com.example.auracontrol.user.Technician;
+import com.example.auracontrol.user.entity.Technician;
 import jakarta.persistence.*;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -1,14 +1,11 @@
-package com.example.auracontrol.user;
+package com.example.auracontrol.user.entity;
 
 
-import com.example.auracontrol.service.TechnicianServiceSkill;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @Builder
@@ -16,16 +13,12 @@ import java.util.Set;
 @AllArgsConstructor
 @Entity
 @Table
-public class Technician {
+public class Customer {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer technician_id;
+    private Integer customer_id;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
-
-    @OneToMany(mappedBy = "technician", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TechnicianServiceSkill> skills;
-
 }

@@ -1,8 +1,8 @@
 package com.example.auracontrol.config;
 
 import com.example.auracontrol.user.Role;
-import com.example.auracontrol.user.User;
-import com.example.auracontrol.user.UserRepository;
+import com.example.auracontrol.user.entity.User;
+import com.example.auracontrol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;

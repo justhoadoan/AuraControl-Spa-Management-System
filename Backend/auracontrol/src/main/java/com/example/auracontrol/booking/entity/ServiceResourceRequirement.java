@@ -1,4 +1,4 @@
-package com.example.auracontrol.resource;
+package com.example.auracontrol.booking.entity;
 import com.example.auracontrol.service.Service;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import lombok.*;
 public class ServiceResourceRequirement {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer requirement_id;
+    private Integer requirementId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)

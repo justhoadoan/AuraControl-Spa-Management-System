@@ -9,18 +9,16 @@ import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.shared.security.JwtService;
 import com.example.auracontrol.shared.service.EmailService;
 import com.example.auracontrol.user.Role;
-import com.example.auracontrol.user.User;
-import com.example.auracontrol.user.UserRepository;
-import com.example.auracontrol.user.dto.ForgotPasswordRequest;
+import com.example.auracontrol.user.entity.Customer;
+import com.example.auracontrol.user.entity.User;
+import com.example.auracontrol.user.repository.CustomerRepository;
+import com.example.auracontrol.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -33,6 +31,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final CustomerRepository customerRepository;
 
     public void register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -89,6 +88,11 @@ public class AuthService {
 
         user.setEnabled(true);
         user.setVerificationToken(null);
+        if (user.getRole() == Role.CUSTOMER) {
+            Customer customer = new Customer();
+            customer.setUser(user);
+            customerRepository.save(customer);
+        }
         userRepository.save(user);
     }
 

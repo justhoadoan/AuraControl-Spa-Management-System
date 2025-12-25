@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data // Tự động tạo getters, setters, toString, equals, hashCode
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
