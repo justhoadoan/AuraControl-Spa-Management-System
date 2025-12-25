@@ -1,7 +1,7 @@
 package com.example.auracontrol.shared.security;
 
 
-import com.example.auracontrol.user.User;
+import com.example.auracontrol.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

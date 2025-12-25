@@ -2,7 +2,7 @@ package com.example.auracontrol.service;
 
 
 
-import com.example.auracontrol.resource.ServiceResourceRequirement;
+import com.example.auracontrol.booking.entity.ServiceResourceRequirement;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,7 +22,8 @@ public class Service {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer service_id;
+    @Column(name = "service_id")
+    private Integer serviceId;
 
     @Column(length = 200)
     private String name;

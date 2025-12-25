@@ -1,12 +1,14 @@
-package com.example.auracontrol.user;
+package com.example.auracontrol.user.service;
 
 
 import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.exception.ResourceNotFoundException;
+import com.example.auracontrol.user.entity.User;
 import com.example.auracontrol.user.dto.ChangePasswordRequest;
 import com.example.auracontrol.user.dto.UpdateProfileRequest;
 import com.example.auracontrol.user.dto.UpdateProfileResponseWrapper;
 import com.example.auracontrol.user.dto.UserProfileResponse;
+import com.example.auracontrol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;

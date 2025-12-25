@@ -1,6 +1,7 @@
-package com.example.auracontrol.user;
+package com.example.auracontrol.user.entity;
 
 
+import com.example.auracontrol.user.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

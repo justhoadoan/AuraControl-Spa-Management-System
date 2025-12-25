@@ -1,5 +1,6 @@
-package com.example.auracontrol.booking;
+package com.example.auracontrol.booking.repository;
 
+import com.example.auracontrol.booking.entity.Appointment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

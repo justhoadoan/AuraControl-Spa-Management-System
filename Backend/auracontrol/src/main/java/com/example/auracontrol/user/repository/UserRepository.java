@@ -1,5 +1,6 @@
-package com.example.auracontrol.user;
+package com.example.auracontrol.user.repository;
 
+import com.example.auracontrol.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

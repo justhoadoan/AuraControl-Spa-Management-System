@@ -1,14 +1,15 @@
-package com.example.auracontrol.booking;
+package com.example.auracontrol.booking.controller;
 
 
+import com.example.auracontrol.booking.dto.BookingRequest;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
+import com.example.auracontrol.booking.entity.Appointment;
+import com.example.auracontrol.booking.service.AppointmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -42,5 +43,17 @@ public class BookingController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startTime
     ) {
         return ResponseEntity.ok(appointmentService.getAvailableTechnicians(serviceId, startTime));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> createBooking(@RequestBody @Valid BookingRequest request) {
+        Appointment newAppointment = appointmentService.createAppointment(request);
+
+        return ResponseEntity.ok(Map.of(
+                "message", "Booking successfully created!.",
+                "appointmentId", newAppointment.getAppointmentId(),
+                "status", newAppointment.getStatus(),
+                "startTime", newAppointment.getStartTime()
+        ));
     }
 }

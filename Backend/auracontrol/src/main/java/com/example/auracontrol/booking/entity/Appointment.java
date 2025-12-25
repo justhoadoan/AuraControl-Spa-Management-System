@@ -1,14 +1,11 @@
-package com.example.auracontrol.booking;
+package com.example.auracontrol.booking.entity;
 
 import com.example.auracontrol.service.Service;
-import com.example.auracontrol.user.Customer;
-import com.example.auracontrol.user.Technician;
+import com.example.auracontrol.user.entity.Customer;
+import com.example.auracontrol.user.entity.Technician;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,6 +14,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Getter
+@Setter
 @Table(name = "appointment")
 public class Appointment {
     @Id

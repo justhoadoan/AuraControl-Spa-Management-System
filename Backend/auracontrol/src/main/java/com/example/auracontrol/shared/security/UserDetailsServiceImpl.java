@@ -1,7 +1,7 @@
 package com.example.auracontrol.shared.security;
 
 
-import com.example.auracontrol.user.UserRepository;
+import com.example.auracontrol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

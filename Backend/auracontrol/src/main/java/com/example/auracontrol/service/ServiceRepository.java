@@ -11,11 +11,11 @@ import java.util.Optional;
 public interface ServiceRepository extends JpaRepository<Service, Integer> {
 
     @Override
-    @Query("SELECT s FROM Service s ORDER BY s.service_id DESC")
+    @Query("SELECT s FROM Service s ORDER BY s.serviceId DESC")
     List<Service> findAll();
 
     @Override
-    @Query("SELECT s FROM Service s WHERE s.service_id = :id")
+    @Query("SELECT s FROM Service s WHERE s.serviceId = :id")
     Optional<Service> findById(@Param("id") Integer id);
 
     @Modifying
@@ -25,7 +25,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
             "s.price = :price, " +
             "s.durationMinutes = :duration, " +
             "s.isActive = :active " +
-            "WHERE s.service_id = :id")
+            "WHERE s.serviceId = :id")
     int update(
             @Param("id") Integer id,
             @Param("name") String name,
@@ -37,7 +37,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 
     @Override
     @Modifying
-    @Query("DELETE FROM Service s WHERE s.service_id = :id")
+    @Query("DELETE FROM Service s WHERE s.serviceId = :id")
     void deleteById(@Param("id") Integer id);
 
 
