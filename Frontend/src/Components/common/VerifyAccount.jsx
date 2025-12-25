@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const VerifyAccount = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
+
+    // 1. Dùng useRef để đánh dấu xem API đã được gọi hay chưa
+    // Biến này sẽ không bị reset khi component render lại
+    const isCalled = useRef(false);
 
     // Các trạng thái của trang
     const [status, setStatus] = useState('verifying'); // 'verifying' | 'success' | 'error'
@@ -13,38 +17,47 @@ const VerifyAccount = () => {
     useEffect(() => {
         const token = searchParams.get('token');
 
-        // 1. Kiểm tra nếu không có token trên URL
+        // Nếu không có token trên URL thì báo lỗi ngay
         if (!token) {
             setStatus('error');
             setMessage('Link kích hoạt không hợp lệ hoặc bị thiếu token.');
             return;
         }
 
-        // 2. Gọi API xuống Backend
-        // Lưu ý: Đổi port 8080 nếu backend bạn chạy port khác
+        // 2. CHẶN GỌI LẠI (QUAN TRỌNG)
+        // Nếu isCalled.current là true nghĩa là đã gọi rồi -> Dừng lại ngay
+        if (isCalled.current) return;
+        
+        // Đánh dấu là đã gọi để các lần render sau không gọi nữa
+        isCalled.current = true; 
+
+        // 3. Gọi API xuống Backend
+        // Lưu ý: Đảm bảo port 8081 đúng với server của bạn
         axios.get(`http://localhost:8081/api/auth/verify-account?token=${token}`)
             .then((response) => {
-                // Backend trả về 200 OK & String message
+                // Backend trả về thành công
                 setStatus('success');
-                setMessage(response.data); // "Your account has been activated! You can now log in."
+                // Nếu backend trả về string text thì lấy luôn, nếu là object thì lấy field message
+                const successMsg = typeof response.data === 'string' ? response.data : "Tài khoản kích hoạt thành công!";
+                setMessage(successMsg);
             })
             .catch((error) => {
                 setStatus('error');
-                // Xử lý lỗi trả về từ Backend (InvalidRequestException)
+                // Xử lý lỗi trả về từ Backend
                 if (error.response && error.response.data) {
-                    // Nếu Backend trả về lỗi dạng text hoặc JSON object
                     const errorData = error.response.data;
-                    // Kiểm tra nếu errorData là object (thường Spring Boot trả về object lỗi) hay string
+                    // Kiểm tra xem lỗi trả về là String hay Object JSON
                     setMessage(typeof errorData === 'string' ? errorData : (errorData.message || 'Kích hoạt thất bại.'));
                 } else {
                     setMessage('Đã xảy ra lỗi kết nối đến máy chủ.');
                 }
             });
+            
     }, [searchParams]);
 
     // Điều hướng
     const handleLoginRedirect = () => {
-        navigate('/login'); // Đổi đường dẫn tới trang login của bạn
+        navigate('/login'); // Đổi đường dẫn tới trang login của bạn nếu khác
     };
 
     return (
@@ -83,11 +96,21 @@ const VerifyAccount = () => {
                     </>
                 )}
             </div>
+            
+            {/* Thêm style cho keyframes animation */}
+            <style>
+                {`
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `}
+            </style>
         </div>
     );
 };
 
-// CSS Styles (Inline cho gọn)
+// CSS Styles (Inline)
 const styles = {
     container: {
         display: 'flex',
@@ -156,8 +179,5 @@ const styles = {
         fontWeight: '600',
     }
 };
-
-// Thêm keyframe cho spinner vào style global hoặc file css
-// @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
 export default VerifyAccount;

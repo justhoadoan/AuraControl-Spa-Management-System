@@ -57,7 +57,7 @@ public class EmailService {
     @Async
     public void sendVerificationEmail(String toEmail, String name, String token) {
         try {
-            String verifyLink = "http://localhost:3000/verify-account?token=" + token;
+            String verifyLink = "http://localhost:5173/verify-account?token=" + token;
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");

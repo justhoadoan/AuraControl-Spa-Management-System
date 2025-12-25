@@ -23,7 +23,7 @@ const ResetPassword = () => {
         try {
             // 2. Gửi Token + Password mới xuống Backend
             // URL Backend: localhost:8080 (hoặc port bạn cấu hình)
-            await axios.post('http://localhost:8080/api/auth/reset-password', {
+            await axios.post('http://localhost:8081/api/auth/reset-password', {
                 token: token,       // Token lấy từ URL
                 newPassword: password // Password người dùng nhập
             });
