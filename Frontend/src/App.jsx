@@ -1,15 +1,18 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from './context/AuthContext';
-import Login from './components/Login.jsx';
-import SignUp from './components/SignUp.jsx';
-import ProtectedRoute from './components/ProtectedRoute.jsx';
-import RoleBasedRoute from './components/RoleBasedRoute.jsx';
+import Login from './Components/auth/Login.jsx';
+import SignUp from './Components/auth/SignUp.jsx';
+import ProtectedRoute from './Components/guards/ProtectedRoute.jsx';
+import RoleBasedRoute from './Components/guards/RoleBasedRoute.jsx';
 import Home from './pages/Home.jsx';
 import MyAppointments from './pages/MyAppointments.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import StaffDashboard from './pages/StaffDashboard.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
+import VerifyAccount from './Components/common/VerifyAccount.jsx';
+import ResetPassword from './Components/ResetPassword.jsx';
+import ForgotPassword from './Components/ForgotPassword.jsx';
 import './App.css';
 
 function App() {
@@ -28,6 +31,18 @@ function App() {
           path="/signup" 
           element={isAuthenticated ? <Navigate to="/" replace /> : <SignUp />} 
         />
+        <Route 
+          path="/verify-account" 
+          element={<VerifyAccount />} />
+
+        <Route 
+          path="/forgot-password" 
+          element={<ForgotPassword />} />
+
+        <Route 
+          path="/reset-password" 
+          element={<ResetPassword />} />
+
         <Route path="/unauthorized" element={<Unauthorized />} />
 
         {/* Protected Routes - Chỉ cần đăng nhập */}
