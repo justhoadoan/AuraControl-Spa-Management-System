@@ -9,7 +9,7 @@ const AuthProvider = ({children}) => {
     const [userRole, setUserRole] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
-        
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         const storedToken = localStorage.getItem('token');
 
@@ -40,6 +40,7 @@ const AuthProvider = ({children}) => {
                 logout();
             }
         }
+        setLoading(false);
     }, []);
 
     const login = (authToken) =>{

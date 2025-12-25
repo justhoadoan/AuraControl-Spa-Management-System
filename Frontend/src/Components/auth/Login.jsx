@@ -2,8 +2,9 @@ import './Login.css';
 import { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-import { AuthContext } from '../context/AuthContext.jsx';
-import { validateForm } from '../utils/validation.jsx';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { validateForm } from '../../utils/Validation.jsx';
+import FlowersImg from '../../assets/Flowers.png';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -29,7 +30,7 @@ const Login = () => {
 
         // Call backend API to authenticate
         try {
-            const response = await fetch('http://localhost:8080/api/auth/login', {
+            const response = await fetch('http://localhost:8081/api/auth/login', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({email, password})
@@ -115,66 +116,95 @@ const Login = () => {
     }
 
     return (
-        <div className="container">
-            <div className="header">
-                <div className="text">Log In</div>
-            </div>
+    <>
+        {/* Hình ảnh Flowers */}
+        <img 
+            id="flowers" 
+            className="flowers-img" 
+            src={FlowersImg} 
+            alt="Flowers" 
+        />
 
-            {/* General Error Message */}
+        <div className="card" role="main" aria-label="Login form">
+            <h2>Login</h2>
+
+            {/* Lỗi tổng quát */}
             {errors.general && (
-                <div className="error-message general-error" style={{ 
+                <div style={{ 
                     color: '#e74c3c', 
-                    textAlign: 'center', 
                     marginBottom: '15px',
                     padding: '10px',
                     backgroundColor: '#ffe6e6',
-                    borderRadius: '5px'
+                    borderRadius: '5px',
+                    textAlign: 'center'
                 }}>
                     {errors.general}
                 </div>
             )}
 
-            <div className="inputs">
-                <div className="input">
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+                {/* Email */}
+                <div className="form-group">
+                    <label htmlFor="email">Email</label>
                     <input 
                         type="email" 
-                        placeholder="email" 
+                        id="email" 
+                        name="email"
                         value={email}
                         onChange={handleEmailChange}
                         disabled={isLoading}
+                        required 
                     />
+                    {errors.email && (
+                        <span style={{ color: 'red', fontSize: '12px' }}>
+                            {errors.email}
+                        </span>
+                    )}
                 </div>
-                {errors.email && (
-                    <span className="error-message">{errors.email}</span>
-                )}
-                <div className="input">
+
+                {/* Password */}
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
                     <input 
                         type="password" 
-                        placeholder="password"
+                        id="password" 
+                        name="password"
                         value={password}
                         onChange={handlePasswordChange}
                         disabled={isLoading}
+                        required 
                     />
+                    {errors.password && (
+                        <span style={{ color: 'red', fontSize: '12px' }}>
+                            {errors.password}
+                        </span>
+                    )}
                 </div>
-                {errors.password && (
-                    <span className="error-message">{errors.password}</span>
-                )}
-            </div>
-            <div className="login-button">
+
+                {/* Submit Button */}
                 <button 
                     type="submit" 
-                    onClick={handleLogin}
+                    className="btn-submit"
                     disabled={isLoading}
-                    style={{
-                        opacity: isLoading ? 0.6 : 1,
-                        cursor: isLoading ? 'not-allowed' : 'pointer'
-                    }}
                 >
-                    {isLoading ? 'Logging in...' : 'Log In'}
+                    {isLoading ? 'Logging in...' : 'Login'}
+                </button>
+            </form>
+
+            {/* Forgot Password */}
+            <div className="signup-login-text">
+                Forgot Password?{' '}
+                <button 
+                    type="button" 
+                    className="btn-text-link"
+                    onClick={() => navigate('/forgot-password')}
+                >
+                    Reset Password
                 </button>
             </div>
         </div>
-    );
+    </>
+);
 }
 
 export default Login;
