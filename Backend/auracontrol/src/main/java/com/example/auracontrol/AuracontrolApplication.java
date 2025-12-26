@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class AuracontrolApplication {
 
 	public static void main(String[] args) {
+        //Test github action.
 		SpringApplication.run(AuracontrolApplication.class, args);
 
 	}
