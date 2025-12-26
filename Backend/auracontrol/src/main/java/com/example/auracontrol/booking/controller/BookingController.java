@@ -2,6 +2,7 @@ package com.example.auracontrol.booking.controller;
 
 
 import com.example.auracontrol.booking.dto.BookingRequest;
+import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
 import com.example.auracontrol.booking.entity.Appointment;
 import com.example.auracontrol.booking.service.AppointmentService;
@@ -9,6 +10,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -56,4 +58,37 @@ public class BookingController {
                 "startTime", newAppointment.getStartTime()
         ));
     }
+    //GET /api/booking/upcoming-appointments
+    @GetMapping("/upcoming-appointments")
+    public ResponseEntity<List<BookingResponseDto>> getUpcomingAppointments() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<BookingResponseDto> list = appointmentService.getUpcomingAppointments(currentUserEmail);
+
+        return ResponseEntity.ok(list);
+    }
+    //PUT /api/booking/upcoming-appointments
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<?> cancelAppointment(@PathVariable Integer id) {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        try {
+            appointmentService.cancelAppointment(id, currentUserEmail);
+            return ResponseEntity.ok(Map.of("message", "Appointment cancelled successfully."));
+        } catch (RuntimeException e) {
+
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
+        }
+    }
+    // GET /api/booking/history
+    @GetMapping("/history")
+    public ResponseEntity<List<BookingResponseDto>> getAppointmentHistory() {
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<BookingResponseDto> history = appointmentService.getAppointmentHistory(currentUserEmail);
+
+        return ResponseEntity.ok(history);
+    }
+
+
 }
