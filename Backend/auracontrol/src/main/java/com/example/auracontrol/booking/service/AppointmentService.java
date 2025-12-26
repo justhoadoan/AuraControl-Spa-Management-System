@@ -137,12 +137,12 @@ public class AppointmentService {
             String requiredType = requirementOpt.get().getResourceType();
 
             // Find busy resources during the requested time
-            List<Long> busyIds =
+            List<Integer> busyIds =
                     resourceRepository.findBusyResourceIds(startTime, endTime);
 
             // Prevent empty IN-clause issues
             if (busyIds.isEmpty()) {
-                busyIds.add(-1L);
+                busyIds.add((int) -1L);
             }
 
             // Select the first available resource

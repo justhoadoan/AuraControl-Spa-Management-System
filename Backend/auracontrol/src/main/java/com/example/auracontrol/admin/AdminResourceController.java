@@ -1,0 +1,53 @@
+package com.example.auracontrol.admin;
+
+import com.example.auracontrol.admin.dto.ResourceDto;
+import com.example.auracontrol.booking.entity.Resource;
+import com.example.auracontrol.booking.repository.ResourceRepository;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/admin/resources")
+@RequiredArgsConstructor
+public class AdminResourceController {
+    private final ResourceAdminService resourceAdminService;
+    // GET /api/admin/resources
+    @GetMapping
+    public ResponseEntity<List<Resource>> getAllResources() {
+        return ResponseEntity.ok(resourceAdminService.getAllResources());
+    }
+
+    // GET /api/admin/resources/{id}
+    @GetMapping("/{id}")
+    public ResponseEntity<Resource> getResourceById(@PathVariable Integer id) {
+        return ResponseEntity.ok(resourceAdminService.getResourceById(id));
+    }
+
+    // POST /api/admin/resources
+    @PostMapping
+    public ResponseEntity<Resource> createResource(@RequestBody @Valid ResourceDto request) {
+        Resource newResource = resourceAdminService.createResource(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newResource);
+    }
+
+    // PUT /api/admin/resources/{id}
+    @PutMapping("/{id}")
+    public ResponseEntity<Resource> updateResource(
+            @PathVariable Integer id,
+            @RequestBody @Valid ResourceDto request
+    ) {
+        return ResponseEntity.ok(resourceAdminService.updateResource(id, request));
+    }
+
+    // DELETE /api/admin/resources/{id}
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteResource(@PathVariable Integer id) {
+        resourceAdminService.deleteResource(id);
+        return ResponseEntity.noContent().build();
+    }
+}
