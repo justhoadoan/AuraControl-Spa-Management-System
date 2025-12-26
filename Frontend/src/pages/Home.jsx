@@ -20,12 +20,17 @@ const Home = () => {
             <header className="sticky top-0 z-50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md shadow-sm">
                 <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
                     {/* Logo */}
-                    <Link className="text-2xl font-bold text-primary" to="/">blyss</Link>
+                    <Link className="text-2xl font-bold text-primary" to="/">AuraControl</Link>
                     
                     {/* Desktop Menu */}
                     <div className="hidden md:flex items-center space-x-8">
                         <Link className="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" to="/">Home</Link>
-                        <a className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#services">Services</a>
+                        <button 
+                            onClick={() => isAuthenticated ? navigate('/services') : navigate('/login')}
+                            className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors"
+                        >
+                            Services
+                        </button>
                     </div>
 
                     {/* Auth Buttons (Logic ghép vào đây) */}
@@ -55,12 +60,12 @@ const Home = () => {
                                     </button>
                                 )}
 
-                                {/* My Appointments */}
+                                {/* Account Dashboard */}
                                 <button 
-                                    onClick={() => navigate('/my-appointments')} 
+                                    onClick={() => navigate('/account')} 
                                     className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
                                 >
-                                    My Appointments
+                                    Account
                                 </button>
 
                                 {/* Logout Button */}
@@ -109,7 +114,7 @@ const Home = () => {
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             {/* Nút Book Now có Logic check login */}
                             <button 
-                                onClick={() => isAuthenticated ? navigate('/my-appointments') : navigate('/login')}
+                                onClick={() => isAuthenticated ? navigate('/account') : navigate('/login')}
                                 className="w-full sm:w-auto bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
                             >
                                 Book Now
@@ -200,13 +205,13 @@ const Home = () => {
                 <div className="container mx-auto px-6 py-12">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
                         <div>
-                            <Link className="inline-block text-2xl font-bold text-primary mb-4" to="/">blyss</Link>
+                            <Link className="inline-block text-2xl font-bold text-primary mb-4" to="/">AuraControl</Link>
                             <p className="text-sm text-subtle-light dark:text-subtle-dark max-w-xs mx-auto md:mx-0">Bringing the best in-home massage, beauty, and wellness services to you.</p>
                         </div>
                         <div>
                             <h4 className="font-semibold text-text-light dark:text-text-dark mb-4">Contact Us</h4>
                             <ul className="space-y-2 text-sm text-subtle-light dark:text-subtle-dark">
-                                <li><a className="hover:text-primary transition-colors" href="mailto:hello@blyss.com">hello@blyss.com</a></li>
+                                <li><a className="hover:text-primary transition-colors" href="mailto:hello@auracontrol.com">hello@auracontrol.com</a></li>
                                 <li><a className="hover:text-primary transition-colors" href="tel:1800123456">1-800-123-456</a></li>
                                 <li>Help Center</li>
                             </ul>
@@ -221,7 +226,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-subtle-light dark:text-subtle-dark">
-                        © 2024 blyss. All Rights Reserved.
+                        © 2024 AuraControl. All Rights Reserved.
                     </div>
                 </div>
             </footer>

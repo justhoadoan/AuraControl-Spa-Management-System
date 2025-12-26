@@ -7,8 +7,13 @@ import { AuthContext } from '../../context/AuthContext';
  * Không kiểm tra role, chỉ kiểm tra authentication
  */
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, loading } = useContext(AuthContext);
     const location = useLocation();
+
+    // Wait for auth state to be loaded from localStorage
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     if (!isAuthenticated) {
         // Chuyển hướng về login, lưu location hiện tại để redirect lại sau

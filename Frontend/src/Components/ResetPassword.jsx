@@ -14,7 +14,7 @@ const ResetPassword = () => {
 
     // Nếu vừa vào trang mà không thấy token trên URL -> Báo lỗi ngay
     if (!token) {
-        return <div style={{textAlign: 'center', marginTop: '50px', color: 'red'}}>Lỗi: Link không hợp lệ (Thiếu token).</div>;
+        return <div style={{textAlign: 'center', marginTop: '50px', color: 'red'}}>Error: Invalid link (Missing token).</div>;
     }
 
     const handleSubmit = async (e) => {
@@ -29,14 +29,14 @@ const ResetPassword = () => {
             });
 
             setIsError(false);
-            setMessage('Đổi mật khẩu thành công! Đang chuyển hướng...');
+            setMessage('Password changed successfully! Redirecting...');
             
             // Chuyển về trang login sau 2 giây
             setTimeout(() => navigate('/login'), 2000);
 
         } catch (error) {
             setIsError(true);
-            setMessage(error.response?.data || 'Link đã hết hạn hoặc không hợp lệ.');
+            setMessage(error.response?.data || 'Link has expired or is invalid.');
         }
     };
 
