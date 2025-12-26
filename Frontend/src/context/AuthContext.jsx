@@ -90,6 +90,7 @@ const AuthProvider = ({children}) => {
                 userRole, 
                 isAuthenticated,
                 user,
+                loading,
                 login, 
                 logout 
             }}

@@ -1,10 +1,10 @@
-import './Login.css';
 import { useState, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { validateForm } from '../../utils/Validation.jsx';
-import FlowersImg from '../../assets/Flowers.png';
+
+// Không cần import Login.css hay FlowersImg nữa vì AuthLayout lo rồi
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -15,20 +15,16 @@ const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Lấy trang trước đó từ state, mặc định là null (sẽ điều hướng theo role)
     const from = location.state?.from?.pathname || null;
 
+    // --- GIỮ NGUYÊN LOGIC CŨ CỦA BẠN ---
     const handleLogin = async () => {
-        // Validate form
         const validationErrors = validateForm(email, password);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
-
         setIsLoading(true);
-
-        // Call backend API to authenticate
         try {
             const response = await fetch('http://localhost:8081/api/auth/login', {
                 method: 'POST',
@@ -36,61 +32,33 @@ const Login = () => {
                 body: JSON.stringify({email, password})
             });
 
-            // Handle HTTP error responses
             if (!response.ok) {
-                // Try to get error message from backend
                 const errorData = await response.json().catch(() => ({}));
-                
-                if (response.status === 401) {
-                    // Unauthorized - Wrong credentials
-                    throw new Error(errorData.message || 'Incorrect email or password');
-                } else if (response.status === 403) {
-                    // Forbidden - Account disabled/locked
-                    throw new Error(errorData.message || 'Account access denied');
-                } else if (response.status === 400) {
-                    // Bad request - Invalid input
-                    throw new Error(errorData.message || 'Invalid login request');
-                } else {
-                    throw new Error(errorData.message || 'Login failed. Please try again later.');
-                }
+                if (response.status === 401) throw new Error(errorData.message || 'Incorrect email or password');
+                else if (response.status === 403) throw new Error(errorData.message || 'Account access denied');
+                else if (response.status === 400) throw new Error(errorData.message || 'Invalid login request');
+                else throw new Error(errorData.message || 'Login failed. Please try again later.');
             }
 
-            // Get token from response
             const data = await response.json();
             const token = data.token;
-            
-            // Decode token to get role for navigation
             const decoded = jwtDecode(token);
             const role = decoded.role || decoded.authorities?.[0] || 'CUSTOMER';
 
-            // Save to AuthContext
             login(token);
-
-            // Clear form
             setEmail('');
             setPassword('');
             setErrors({});
 
-            // Logic Điều hướng dựa trên Role
             if (from) {
-                // Nếu có trang trước đó, redirect về đó
                 navigate(from, { replace: true });
             } else {
-                // Điều hướng theo role
                 switch (role) {
-                    case 'ADMIN':
-                        navigate('/admin', { replace: true });
-                        break;
-                    case 'TECHNICIAN':
-                        navigate('/staff', { replace: true });
-                        break;
-                    case 'CUSTOMER':
-                    default:
-                        navigate('/', { replace: true });
-                        break;
+                    case 'ADMIN': navigate('/admin', { replace: true }); break;
+                    case 'TECHNICIAN': navigate('/staff', { replace: true }); break;
+                    case 'CUSTOMER': default: navigate('/', { replace: true }); break;
                 }
             }
-
         } catch (error) {
             console.error('Error during login:', error);
             setErrors({ general: error.message || 'Login failed. Please try again.' });
@@ -99,112 +67,80 @@ const Login = () => {
         }
     }
 
-    // Handle email input change
-    const handleEmailChange = (e) => {
-        setEmail(e.target.value);
-        if(errors.email){
-            setErrors((prev) => ({...prev, email: ''}));
-        }
-    }
-
-    // Handle password input change
-    const handlePasswordChange = (e) => {
-        setPassword(e.target.value);
-        if(errors.password){
-            setErrors((prev) => ({...prev, password: ''}));
-        }
-    }
-
+    // --- GIAO DIỆN MỚI (TAILWIND) ---
     return (
-    <>
-        {/* Hình ảnh Flowers */}
-        <img 
-            id="flowers" 
-            className="flowers-img" 
-            src={FlowersImg} 
-            alt="Flowers" 
-        />
+        <>
+            <h2 className="text-2xl font-bold text-slate-800 mb-6 text-center">Login</h2>
 
-        <div className="card" role="main" aria-label="Login form">
-            <h2>Login</h2>
-
-            {/* Lỗi tổng quát */}
+            {/* Hiển thị lỗi General đẹp hơn */}
             {errors.general && (
-                <div style={{ 
-                    color: '#e74c3c', 
-                    marginBottom: '15px',
-                    padding: '10px',
-                    backgroundColor: '#ffe6e6',
-                    borderRadius: '5px',
-                    textAlign: 'center'
-                }}>
+                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm text-center mb-4">
                     {errors.general}
                 </div>
             )}
 
-            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
-                {/* Email */}
-                <div className="form-group">
-                    <label htmlFor="email">Email</label>
+            <form onSubmit={(e) => { e.preventDefault(); handleLogin(); }} className="space-y-4">
+                {/* Email Input */}
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
                     <input 
                         type="email" 
-                        id="email" 
-                        name="email"
                         value={email}
-                        onChange={handleEmailChange}
+                        onChange={(e) => { setEmail(e.target.value); if(errors.email) setErrors({...errors, email: ''}) }}
                         disabled={isLoading}
-                        required 
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all"
+                        placeholder="name@example.com"
                     />
-                    {errors.email && (
-                        <span style={{ color: 'red', fontSize: '12px' }}>
-                            {errors.email}
-                        </span>
-                    )}
+                    {errors.email && <span className="text-xs text-red-500 mt-1 block">{errors.email}</span>}
                 </div>
 
-                {/* Password */}
-                <div className="form-group">
-                    <label htmlFor="password">Password</label>
+                {/* Password Input */}
+                <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
                     <input 
                         type="password" 
-                        id="password" 
-                        name="password"
                         value={password}
-                        onChange={handlePasswordChange}
+                        onChange={(e) => { setPassword(e.target.value); if(errors.password) setErrors({...errors, password: ''}) }}
                         disabled={isLoading}
-                        required 
+                        className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500/20 focus:border-pink-500 transition-all"
+                        placeholder="••••••••"
                     />
-                    {errors.password && (
-                        <span style={{ color: 'red', fontSize: '12px' }}>
-                            {errors.password}
-                        </span>
-                    )}
+                    {errors.password && <span className="text-xs text-red-500 mt-1 block">{errors.password}</span>}
                 </div>
 
                 {/* Submit Button */}
                 <button 
                     type="submit" 
-                    className="btn-submit"
                     disabled={isLoading}
+                    className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-lg transition-all shadow-lg mt-2 disabled:opacity-50"
                 >
                     {isLoading ? 'Logging in...' : 'Login'}
                 </button>
             </form>
 
-            {/* Forgot Password */}
-            <div className="signup-login-text">
-                Forgot Password?{' '}
+            {/* Footer Links */}
+            <div className="mt-6 flex flex-col items-center space-y-2 text-sm text-slate-600">
                 <button 
                     type="button" 
-                    className="btn-text-link"
+                    className="text-pink-600 font-medium hover:underline"
                     onClick={() => navigate('/forgot-password')}
                 >
-                    Reset Password
+                    Forgot Password?
                 </button>
+                
+                <div>
+                    Don't have an account?{' '}
+                    <button 
+                        type="button" 
+                        className="text-pink-600 font-bold hover:underline"
+                        onClick={() => navigate('/signup')}
+                    >
+                        Create free account
+                    </button>
+                </div>
             </div>
-        </div>
-    </>
-);
+        </>
+    );
 }
 
 export default Login;

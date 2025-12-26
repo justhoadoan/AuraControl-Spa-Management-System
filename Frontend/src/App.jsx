@@ -6,9 +6,9 @@ import SignUp from './Components/auth/SignUp.jsx';
 import ProtectedRoute from './Components/guards/ProtectedRoute.jsx';
 import RoleBasedRoute from './Components/guards/RoleBasedRoute.jsx';
 import Home from './pages/Home.jsx';
-import AccountDashboard from './pages/AccountDashboard.jsx';
-import AdminDashboard from './pages/AdminDashboard.jsx';
-import StaffDashboard from './pages/StaffDashboard.jsx';
+import AccountDashboard from './pages/customer/AccountDashboard.jsx';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import StaffDashboard from './pages/technician/StaffDashboard.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
 import VerifyAccount from './Components/common/VerifyAccount.jsx';
 import ResetPassword from './Components/ResetPassword.jsx';
@@ -16,6 +16,7 @@ import ForgotPassword from './Components/ForgotPassword.jsx';
 import Profile from './pages/customer/Profile.jsx';
 import ServiceManagement from './pages/admin/ServiceManagement.jsx';
 import SpaServices from './pages/customer/SpaServices.jsx';
+import AuthLayout from './Components/layout/AuthLayout.jsx';
 import './App.css';
 
 function App() {
@@ -40,30 +41,34 @@ function App() {
   const defaultRoute = getDefaultRoute();
 
   return (
-    <Router>
+    <div className="w-full min-h-screen">
+      <Router>
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
-        <Route 
+
+        <Route element={<AuthLayout />}>
+          <Route 
           path="/login" 
           element={isAuthenticated && defaultRoute ? <Navigate to={defaultRoute} replace /> : <Login />} 
-        />
-        <Route 
-          path="/signup" 
-          element={isAuthenticated && defaultRoute ? <Navigate to={defaultRoute} replace /> : <SignUp />} 
-        />
-        <Route 
-          path="/verify-account" 
-          element={<VerifyAccount />} 
-        />
+          />
+          <Route 
+            path="/signup" 
+            element={isAuthenticated && defaultRoute ? <Navigate to={defaultRoute} replace /> : <SignUp />} 
+          />
+          <Route 
+            path="/verify-account" 
+            element={<VerifyAccount />} 
+          />
 
-        <Route 
-          path="/forgot-password" 
-          element={<ForgotPassword />} />
+          <Route 
+            path="/forgot-password" 
+           element={<ForgotPassword />} />
 
-        <Route 
-          path="/reset-password" 
-          element={<ResetPassword />} />
+          <Route 
+            path="/reset-password" 
+            element={<ResetPassword />} />
+       </Route>
 
         <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -78,7 +83,7 @@ function App() {
         />
 
         <Route 
-          path="/account" 
+          path="/dashboard" 
           element={
             <ProtectedRoute>
               <AccountDashboard />
@@ -128,7 +133,11 @@ function App() {
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
+    </div>
   );
 }
 
 export default App;
+
+
+

@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Thêm Link để chuyển trang mượt hơn
+import { useNavigate, Link } from 'react-router-dom'; 
 import { AuthContext } from '../context/AuthContext';
 
 /**
@@ -62,10 +62,10 @@ const Home = () => {
 
                                 {/* Account Dashboard */}
                                 <button 
-                                    onClick={() => navigate('/account')} 
+                                    onClick={() => navigate('/dashboard')} 
                                     className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
                                 >
-                                    Account
+                                    My Account
                                 </button>
 
                                 {/* Logout Button */}
@@ -114,7 +114,7 @@ const Home = () => {
                         <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
                             {/* Nút Book Now có Logic check login */}
                             <button 
-                                onClick={() => isAuthenticated ? navigate('/account') : navigate('/login')}
+                                onClick={() => isAuthenticated ? navigate('/dashboard') : navigate('/login')}
                                 className="w-full sm:w-auto bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
                             >
                                 Book Now
