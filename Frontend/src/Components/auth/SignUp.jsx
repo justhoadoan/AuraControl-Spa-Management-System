@@ -3,9 +3,11 @@ import {useState, useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { validateForm } from '../../utils/Validation.jsx';
+import { useToast } from '../common/Toast';
 import FlowersImg from '../../assets/Flowers.png';
 
 const SignUp = () => {
+    const toast = useToast();
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -79,7 +81,7 @@ const SignUp = () => {
             setErrors({});
 
             // Notify user to check email
-            alert("Registration successful! Please check your email to activate your account before logging in.");
+            toast.success("Registration successful! Please check your email to activate your account before logging in.", 6000);
 
             // Redirect to Login page
             navigate('/login');

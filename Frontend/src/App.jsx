@@ -6,17 +6,38 @@ import SignUp from './Components/auth/SignUp.jsx';
 import ProtectedRoute from './Components/guards/ProtectedRoute.jsx';
 import RoleBasedRoute from './Components/guards/RoleBasedRoute.jsx';
 import Home from './pages/Home.jsx';
-import MyAppointments from './pages/MyAppointments.jsx';
+import AccountDashboard from './pages/AccountDashboard.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import StaffDashboard from './pages/StaffDashboard.jsx';
 import Unauthorized from './pages/Unauthorized.jsx';
 import VerifyAccount from './Components/common/VerifyAccount.jsx';
 import ResetPassword from './Components/ResetPassword.jsx';
 import ForgotPassword from './Components/ForgotPassword.jsx';
+import Profile from './pages/customer/Profile.jsx';
+import ServiceManagement from './pages/admin/ServiceManagement.jsx';
+import SpaServices from './pages/customer/SpaServices.jsx';
 import './App.css';
 
 function App() {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, userRole } = useContext(AuthContext);
+
+  // Hàm xác định trang mặc định theo role
+  const getDefaultRoute = () => {
+    // Nếu userRole chưa sẵn sàng, trả về null để không redirect
+    if (!userRole) return null;
+    
+    switch (userRole) {
+      case 'ADMIN':
+        return '/admin';
+      case 'TECHNICIAN':
+        return '/staff';
+      case 'CUSTOMER':
+      default:
+        return '/';
+    }
+  };
+  
+  const defaultRoute = getDefaultRoute();
 
   return (
     <Router>
@@ -25,15 +46,16 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route 
           path="/login" 
-          element={isAuthenticated ? <Navigate to="/" replace /> : <Login />} 
+          element={isAuthenticated && defaultRoute ? <Navigate to={defaultRoute} replace /> : <Login />} 
         />
         <Route 
           path="/signup" 
-          element={isAuthenticated ? <Navigate to="/" replace /> : <SignUp />} 
+          element={isAuthenticated && defaultRoute ? <Navigate to={defaultRoute} replace /> : <SignUp />} 
         />
         <Route 
           path="/verify-account" 
-          element={<VerifyAccount />} />
+          element={<VerifyAccount />} 
+        />
 
         <Route 
           path="/forgot-password" 
@@ -47,17 +69,35 @@ function App() {
 
         {/* Protected Routes - Chỉ cần đăng nhập */}
         <Route 
-          path="/my-appointments" 
+          path="/services" 
           element={
             <ProtectedRoute>
-              <MyAppointments />
+              <SpaServices />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/account" 
+          element={
+            <ProtectedRoute>
+              <AccountDashboard />
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/profile" 
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           } 
         />
 
         {/* Role-Based Routes - ADMIN only */}
         <Route 
-          path="/admin/*" 
+          path="/admin" 
           element={
             <RoleBasedRoute allowedRoles={['ADMIN']}>
               <AdminDashboard />
@@ -65,9 +105,18 @@ function App() {
           } 
         />
 
+        <Route 
+          path="/admin/services" 
+          element={
+            <RoleBasedRoute allowedRoles={['ADMIN']}>
+              <ServiceManagement />
+            </RoleBasedRoute>
+          } 
+        />
+
         {/* Role-Based Routes - TECHNICIAN only */}
         <Route 
-          path="/staff/*" 
+          path="/staff" 
           element={
             <RoleBasedRoute allowedRoles={['TECHNICIAN']}>
               <StaffDashboard />

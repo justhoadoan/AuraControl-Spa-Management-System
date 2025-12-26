@@ -8,8 +8,13 @@ import { AuthContext } from '../../context/AuthContext';
  * @param {JSX.Element} children - Component con được bảo vệ
  */
 const RoleBasedRoute = ({ children, allowedRoles = [] }) => {
-    const { isAuthenticated, userRole } = useContext(AuthContext);
+    const { isAuthenticated, userRole, loading } = useContext(AuthContext);
     const location = useLocation();
+
+    // Wait for auth state to be loaded from localStorage
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     // Chưa đăng nhập -> Chuyển về login
     if (!isAuthenticated) {
