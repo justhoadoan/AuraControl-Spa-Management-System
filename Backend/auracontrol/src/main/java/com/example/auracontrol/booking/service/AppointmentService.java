@@ -1,6 +1,7 @@
 package com.example.auracontrol.booking.service;
 
 import com.example.auracontrol.booking.dto.BookingRequest;
+import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
 import com.example.auracontrol.booking.entity.Appointment;
 import com.example.auracontrol.booking.entity.AppointmentResource;
@@ -9,6 +10,8 @@ import com.example.auracontrol.booking.repository.AppointmentRepository;
 import com.example.auracontrol.booking.repository.AppointmentResourceRepository;
 import com.example.auracontrol.booking.repository.ResourceRepository;
 import com.example.auracontrol.booking.repository.ServiceResourceRequirementRepository;
+import com.example.auracontrol.exception.DuplicateResourceException;
+import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.user.repository.CustomerRepository;
 import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.service.ServiceRepository;
@@ -26,6 +29,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class AppointmentService {
@@ -71,7 +76,7 @@ public class AppointmentService {
 
         // 2. Get service information
         var service = serviceRepository.findById(request.getServiceId())
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
         // 3. Technician handling (manual selection or auto-assignment)
         Technician technician;
@@ -278,7 +283,85 @@ public class AppointmentService {
 
         return availableSlots;
     }
+    /**
+     * Get upcoming appointment for customer.
+     */
+    public List<BookingResponseDto> getUpcomingAppointments(String userEmail) {
+        LocalDateTime now = LocalDateTime.now();
 
+        List<Appointment> appointments = appointmentRepository
+                .findByCustomer_User_EmailAndStartTimeAfterAndStatusNotOrderByStartTimeAsc(
+                        userEmail,
+                        now,
+                        "CANCELLED"
+                );
+        return appointments.stream()
+                .map(appt -> BookingResponseDto.builder()
+                        .id(appt.getAppointmentId())
+                        .serviceName(appt.getService().getName())
+                        .startTime(appt.getStartTime())
+                        .duration(appt.getService().getDurationMinutes())
+                        .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Arranging")
+                        .status(appt.getStatus())
+                        .build())
+                .collect(Collectors.toList());
+    }
+    /**
+     * Cancel an appointment.
+     * Rules:
+     * 1. Must be the owner (security).
+     * 2. Cannot cancel if already cancelled.
+     * 3. Cannot cancel within 30 minutes of start time.
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public void cancelAppointment(Integer appointmentId, String currentUserEmail) {
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id: " + appointmentId));
+
+        String ownerEmail = appointment.getCustomer().getUser().getEmail();
+        if (!ownerEmail.equals(currentUserEmail)) {
+            throw new InvalidRequestException("Unauthorized: You are not the owner of this appointment.");
+        }
+
+        if ("CANCELLED".equals(appointment.getStatus())) {
+            throw new DuplicateResourceException("Appointment is already cancelled.");
+        }
+
+
+        LocalDateTime deadline = LocalDateTime.now().plusMinutes(30);
+        if (deadline.isAfter(appointment.getStartTime())) {
+            throw new InvalidRequestException("Cannot cancel appointment less than 30 minutes before start time.");
+        }
+
+
+        appointment.setStatus("CANCELLED");
+
+        appointmentRepository.save(appointment);
+    }
+    /**
+     * Get past appointments (History).
+     */
+    public List<BookingResponseDto> getAppointmentHistory(String userEmail) {
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Appointment> appointments = appointmentRepository
+                .findByCustomer_User_EmailAndStartTimeBeforeOrderByStartTimeDesc(
+                        userEmail,
+                        now
+                );
+
+        return appointments.stream()
+                .map(appt -> BookingResponseDto.builder()
+                        .id(appt.getAppointmentId())
+                        .serviceName(appt.getService().getName())
+                        .startTime(appt.getStartTime())
+                        .duration(appt.getService().getDurationMinutes())
+                        .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Unknown")
+                        .status(appt.getStatus()) //Cancelled, COMPLETED
+                        .build())
+                .collect(Collectors.toList());
+    }
     /**
      * Helper method: count busy technicians during a time slot.
      */
