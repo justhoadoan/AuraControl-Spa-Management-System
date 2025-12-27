@@ -106,7 +106,6 @@ const ServiceManagement = () => {
 
     // --- 5. DELETE SERVICE ---
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this service?")) {
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`http://localhost:8081/api/admin/services/${id}`, {
@@ -118,7 +117,6 @@ const ServiceManagement = () => {
                 console.error("Error deleting service:", error);
                 toast.error("Failed to delete this service.");
             }
-        }
     };
 
     return (

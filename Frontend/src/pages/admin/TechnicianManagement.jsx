@@ -74,10 +74,13 @@ const TechnicianManagement = () => {
         const isChecked = e.target.checked;
 
         setFormData(prev => {
+            const currentIds = prev.serviceIds || [];
             if (isChecked) {
-                return { ...prev, serviceIds: [...prev.serviceIds, selectedId] };
+                // Prevent duplicates
+                if (currentIds.includes(selectedId)) return prev;
+                return { ...prev, serviceIds: [...currentIds, selectedId] };
             } else {
-                return { ...prev, serviceIds: prev.serviceIds.filter(id => id !== selectedId) };
+                return { ...prev, serviceIds: currentIds.filter(id => id !== selectedId) };
             }
         });
     };
@@ -108,6 +111,23 @@ const TechnicianManagement = () => {
 
     const closeModal = () => {
         setIsModalOpen(false);
+    };
+
+    // Delete Technician
+    const handleDelete = async (id) => {
+        if (window.confirm("Are you sure you want to delete this technician? This action cannot be undone.")) {
+            try {
+                const token = localStorage.getItem('token');
+                await axios.delete(`http://localhost:8081/api/admin/technicians/${id}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                toast.success("Technician deleted successfully!");
+                fetchTechnicians();
+            } catch (error) {
+                console.error("Error deleting technician:", error);
+                toast.error("Failed to delete technician.");
+            }
+        }
     };
 
     // Submit Form
@@ -203,7 +223,12 @@ const TechnicianManagement = () => {
                                                 >
                                                     <span className="material-symbols-outlined text-lg">edit</span>
                                                 </button>
-                                                {/* Delete button can be added here similar to ServiceManagement */}
+                                                <button 
+                                                    onClick={() => handleDelete(tech.technicianId)}
+                                                    className="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+                                                >
+                                                    <span className="material-symbols-outlined text-lg">delete</span>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
@@ -273,16 +298,16 @@ const TechnicianManagement = () => {
                                         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Specializations (Services)</label>
                                         <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-3 border border-gray-300 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900/50">
                                             {services.map((service) => (
-                                                <div key={service.id} className="flex items-center">
+                                                <div key={service.serviceId} className="flex items-center">
                                                     <input 
                                                         type="checkbox" 
-                                                        id={`service-${service.id}`} 
-                                                        value={service.id}
-                                                        checked={formData.serviceIds.includes(service.id)}
+                                                        id={`service-${service.serviceId}`} 
+                                                        value={service.serviceId}
+                                                        checked={formData.serviceIds.includes(service.serviceId)}
                                                         onChange={handleServiceChange}
                                                         className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                                                     />
-                                                    <label htmlFor={`service-${service.id}`} className="ml-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
+                                                    <label htmlFor={`service-${service.serviceId}`} className="ml-2 text-sm text-gray-700 dark:text-gray-300 cursor-pointer select-none">
                                                         {service.name}
                                                     </label>
                                                 </div>
