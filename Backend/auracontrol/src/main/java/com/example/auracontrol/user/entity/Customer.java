@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class Customer {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Integer customer_id;
+    private Integer customerId;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")

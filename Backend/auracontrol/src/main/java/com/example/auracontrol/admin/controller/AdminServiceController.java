@@ -1,4 +1,4 @@
-package com.example.auracontrol.admin;
+package com.example.auracontrol.admin.controller;
 
 import com.example.auracontrol.service.Service;
 import com.example.auracontrol.service.ServiceService;

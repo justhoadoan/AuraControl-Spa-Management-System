@@ -1,4 +1,4 @@
-package com.example.auracontrol.admin;
+package com.example.auracontrol.admin.service;
 
 import com.example.auracontrol.admin.dto.ResourceDto;
 import com.example.auracontrol.booking.entity.Resource;

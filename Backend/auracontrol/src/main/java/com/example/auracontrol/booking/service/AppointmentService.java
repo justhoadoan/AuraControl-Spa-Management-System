@@ -3,13 +3,11 @@ package com.example.auracontrol.booking.service;
 import com.example.auracontrol.booking.dto.BookingRequest;
 import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
+import com.example.auracontrol.booking.entity.AbsenceRequest;
 import com.example.auracontrol.booking.entity.Appointment;
 import com.example.auracontrol.booking.entity.AppointmentResource;
 import com.example.auracontrol.booking.entity.Resource;
-import com.example.auracontrol.booking.repository.AppointmentRepository;
-import com.example.auracontrol.booking.repository.AppointmentResourceRepository;
-import com.example.auracontrol.booking.repository.ResourceRepository;
-import com.example.auracontrol.booking.repository.ServiceResourceRequirementRepository;
+import com.example.auracontrol.booking.repository.*;
 import com.example.auracontrol.exception.DuplicateResourceException;
 import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.user.repository.CustomerRepository;
@@ -43,6 +41,7 @@ public class AppointmentService {
     private final ServiceResourceRequirementRepository serviceResourceRequirementRepository;
     private final ResourceRepository resourceRepository;
     private final AppointmentResourceRepository appointmentResourceRepository;
+    private final AbsenceRequestRepository absenceRequestRepository;
 
     /**
      * Get list of available technicians for a given service and time.
@@ -205,6 +204,17 @@ public class AppointmentService {
                         endOfDay,
                         "CANCELLED"
                 );
+        List<Integer> skilledTechIds = skilledTechs.stream()
+                .map(Technician::getTechnicianId)
+                .collect(Collectors.toList());
+
+        List<AbsenceRequest> todaysAbsences = absenceRequestRepository
+                .findByTechnicianIdInAndStatusAndDateRange(
+                        skilledTechIds,
+                        "APPROVED",
+                        startOfDay,
+                        endOfDay
+                );
 
         // Resource-related preparation
         boolean requiresResource = false;
@@ -248,6 +258,7 @@ public class AppointmentService {
                     countBusyTechnicians(
                             skilledTechs,
                             todaysAppointments,
+                            todaysAbsences,
                             currentSlot,
                             slotEnd
                     );
@@ -368,20 +379,29 @@ public class AppointmentService {
     private long countBusyTechnicians(
             List<Technician> skilledTechs,
             List<Appointment> appointments,
+            List<AbsenceRequest> absences,
             LocalDateTime slotStart,
             LocalDateTime slotEnd
     ) {
-        return appointments.stream()
-                .filter(appt ->
-                        skilledTechs.stream()
-                                .anyMatch(t ->
-                                        t.getTechnicianId()
-                                                .equals(appt.getTechnician().getTechnicianId())
-                                ) &&
-                                appt.getStartTime().isBefore(slotEnd) &&
-                                appt.getEndTime().isAfter(slotStart)
-                )
-                .count();
+        return skilledTechs.stream().filter(tech -> {
+            Integer techId = tech.getTechnicianId();
+
+            boolean hasAppointment = appointments.stream().anyMatch(appt ->
+                    appt.getTechnician().getTechnicianId().equals(techId) &&
+                            appt.getStartTime().isBefore(slotEnd) &&
+                            appt.getEndTime().isAfter(slotStart)
+            );
+
+            if (hasAppointment) return true;
+
+            boolean isAbsent = absences.stream().anyMatch(abs ->
+                    abs.getTechnician().getTechnicianId().equals(techId) &&
+                            abs.getStartDate().isBefore(slotEnd) &&
+                            abs.getEndDate().isAfter(slotStart)
+            );
+
+            return isAbsent;
+        }).count();
     }
 
     /**
