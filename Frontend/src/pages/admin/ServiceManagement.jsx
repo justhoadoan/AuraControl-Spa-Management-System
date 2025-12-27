@@ -27,8 +27,7 @@ const ServiceManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            // UPDATED: Assuming backend runs on 8080 based on previous context, check if it's 8081
-            const response = await axios.get('http://localhost:8080/api/admin/services', {
+            const response = await axios.get('http://localhost:8081/api/admin/services', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setServices(response.data);
@@ -90,11 +89,11 @@ const ServiceManagement = () => {
         try {
             if (isEditing) {
                 // UPDATE
-                await axios.put(`http://localhost:8080/api/admin/services/${currentId}`, formData, { headers });
+                await axios.put(`http://localhost:8081/api/admin/services/${currentId}`, formData, { headers });
                 toast.success("Service updated successfully!");
             } else {
                 // CREATE
-                await axios.post('http://localhost:8080/api/admin/services', formData, { headers });
+                await axios.post('http://localhost:8081/api/admin/services', formData, { headers });
                 toast.success("Service created successfully!");
             }
             fetchServices(); // Reload list
@@ -110,7 +109,7 @@ const ServiceManagement = () => {
         if (window.confirm("Are you sure you want to delete this service?")) {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8080/api/admin/services/${id}`, {
+                await axios.delete(`http://localhost:8081/api/admin/services/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 toast.success("Service deleted successfully.");

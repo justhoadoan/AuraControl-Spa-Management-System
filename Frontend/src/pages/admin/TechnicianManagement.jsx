@@ -30,7 +30,7 @@ const TechnicianManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/admin/technicians?size=100', { // Fetching more for simplicity
+            const response = await axios.get('http://localhost:8081/api/admin/technicians?size=100', { // Fetching more for simplicity
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Backend returns Page<TechnicianResponse>, so we access .content
@@ -47,7 +47,7 @@ const TechnicianManagement = () => {
     const fetchServices = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8080/api/admin/services', {
+            const response = await axios.get('http://localhost:8081/api/admin/services', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setServices(response.data);
@@ -119,11 +119,11 @@ const TechnicianManagement = () => {
         try {
             if (isEditing) {
                 // UPDATE
-                await axios.put(`http://localhost:8080/api/admin/technicians/${currentId}`, formData, { headers });
+                await axios.put(`http://localhost:8081/api/admin/technicians/${currentId}`, formData, { headers });
                 toast.success("Technician updated successfully!");
             } else {
                 // CREATE
-                await axios.post('http://localhost:8080/api/admin/technicians', formData, { headers });
+                await axios.post('http://localhost:8081/api/admin/technicians', formData, { headers });
                 toast.success("Technician created successfully!");
             }
             fetchTechnicians();
