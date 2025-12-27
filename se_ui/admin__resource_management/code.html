@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin: Resource Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+                "primary": "#ef3976",
+                "background-light": "#f8f6f6",
+                "background-dark": "#221016",
+                "primary-soft": "#f3e7eb",
+                "primary-soft-dark": "rgba(239, 57, 118, 0.1)",
+                "text-light": "#1b0d12",
+                "text-dark": "#f8f6f6",
+                "text-subtle-light": "#9a4c66",
+                "text-subtle-dark": "#a88e99",
+                "border-light": "#e7cfd7",
+                "border-dark": "#392a30",
+                "success": "#078859",
+                "pending": "#f59e0b",
+                "text-secondary-light": "#9a4c66",
+                "text-secondary-dark": "#b88a9a",
+                "surface-light": "#ffffff",
+                "confirmed": "#3b82f6"
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display">
+<div class="relative flex h-auto min-h-screen w-full flex-col bg-background-light dark:bg-background-dark group/design-root overflow-x-hidden">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="bg-surface-light flex h-screen w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark sticky top-0">
+    <div class="flex flex-col gap-4 p-4 h-full">
+        <div class="flex items-center gap-3 px-2">
+            <span class="material-symbols-outlined text-primary text-3xl">spa</span>
+            <div class="flex flex-col">
+                <h1 class="text-base font-bold">Serenity Spa</h1>
+                <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Admin Panel</p>
+            </div>
+        </div>
+        <nav class="flex flex-col gap-2 mt-4 flex-grow">
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">dashboard</span>
+                <p class="text-sm font-medium">Dashboard</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <p class="text-sm font-medium">Appointments</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined fill">group</span>
+                <p class="text-sm font-medium">Customers</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">spa</span>
+                <p class="text-sm font-medium">Services</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">badge</span>
+                <p class="text-sm font-medium">Technicians</p>
+            </a>
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/20 dark:bg-primary/30 text-primary dark:text-white" href="#">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">bed</span>
+                <p class="text-sm font-bold leading-normal">Resources</p>
+            </a>
+        </nav>
+        <div class="flex flex-col gap-1">
+
+            <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+                <span class="material-symbols-outlined">logout</span>
+                <p class="text-sm font-medium">Logout</p>
+            </a>
+        </div>
+    </div>
+</aside>
+
+<!-- Main Content -->
+<main class="flex-1 p-8">
+<div class="mx-auto max-w-7xl">
+<!-- PageHeading -->
+<div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+  <h1 class="text-4xl font-black leading-tight tracking-[-0.033em] text-gray-900 dark:text-white">Resource Management</h1>
+  <button id="addResourceBtn" class="flex min-w-[84px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90">
+    <span class="material-symbols-outlined mr-2 text-base">add</span>
+    <span class="truncate">Add New Resource</span>
+  </button>
+</div>
+<!-- Table -->
+<div class="w-full @container">
+<div class="overflow-hidden rounded-xl border border-primary/20 dark:border-primary/30 bg-white dark:bg-background-dark">
+<table class="min-w-full">
+<thead class="bg-primary/10 dark:bg-primary/20">
+<tr>
+<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 dark:text-gray-200">Resource Name</th>
+<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 dark:text-gray-200">Type</th>
+<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 dark:text-gray-200">Status</th>
+<th class="px-6 py-4 text-left text-sm font-semibold text-gray-800 dark:text-gray-200">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/20 dark:divide-primary/30">
+<tr>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">Massage Room 01</td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">massage_room</td>
+  <td class="whitespace-nowrap px-6 py-4">
+    <span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-medium text-green-800 dark:text-green-300">Available</span>
+  </td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+    <div class="flex items-center gap-4">
+      <button class="edit-resource-btn text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+              data-name="Massage Room 01"
+              data-type="massage_room"
+              data-status="available">
+        <span class="material-symbols-outlined text-xl">edit</span>
+      </button>
+      <button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+        <span class="material-symbols-outlined text-xl">delete</span>
+      </button>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">Manicure Station A</td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">manicure_station</td>
+  <td class="whitespace-nowrap px-6 py-4">
+    <span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-medium text-green-800 dark:text-green-300">Available</span>
+  </td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+    <div class="flex items-center gap-4">
+      <button class="edit-resource-btn text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+              data-name="Manicure Station A"
+              data-type="manicure_station"
+              data-status="available">
+        <span class="material-symbols-outlined text-xl">edit</span>
+      </button>
+      <button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+        <span class="material-symbols-outlined text-xl">delete</span>
+      </button>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">Sauna</td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">amenity</td>
+  <td class="whitespace-nowrap px-6 py-4">
+    <span class="inline-flex items-center rounded-full bg-yellow-100 dark:bg-yellow-900/50 px-3 py-1 text-xs font-medium text-yellow-800 dark:text-yellow-300">Under Maintenance</span>
+  </td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+    <div class="flex items-center gap-4">
+      <button class="edit-resource-btn text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+              data-name="Sauna"
+              data-type="amenity"
+              data-status="under_maintenance">
+        <span class="material-symbols-outlined text-xl">edit</span>
+      </button>
+      <button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+        <span class="material-symbols-outlined text-xl">delete</span>
+      </button>
+    </div>
+  </td>
+</tr>
+<tr>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">Massage Room 02</td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">massage_room</td>
+  <td class="whitespace-nowrap px-6 py-4">
+    <span class="inline-flex items-center rounded-full bg-gray-200 dark:bg-gray-700/50 px-3 py-1 text-xs font-medium text-gray-800 dark:text-gray-300">Inactive</span>
+  </td>
+  <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+    <div class="flex items-center gap-4">
+      <button class="edit-resource-btn text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary"
+              data-name="Massage Room 02"
+              data-type="massage_room"
+              data-status="inactive">
+        <span class="material-symbols-outlined text-xl">edit</span>
+      </button>
+      <button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+        <span class="material-symbols-outlined text-xl">delete</span>
+      </button>
+    </div>
+  </td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Pagination -->
+<div class="flex items-center justify-center p-4 mt-4">
+<a class="flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined">chevron_left</span>
+</a>
+<a class="text-sm font-bold leading-normal tracking-[0.015em] flex size-10 items-center justify-center text-white bg-primary rounded-full" href="#">1</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-full" href="#">2</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-full" href="#">3</a>
+<span class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400" href="#">...</span>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-full" href="#">8</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-full" href="#">9</a>
+<a class="text-sm font-normal leading-normal flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:bg-primary/20 dark:hover:bg-primary/30 rounded-full" href="#">10</a>
+<a class="flex size-10 items-center justify-center text-gray-600 dark:text-gray-400 hover:text-primary dark:hover:text-primary" href="#">
+<span class="material-symbols-outlined">chevron_right</span>
+</a>
+</div>
+</div>
+</main>
+</div>
+<!-- Add / Edit Resource Modal -->
+<div id="resourceModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-md rounded-xl bg-white dark:bg-background-dark p-6 shadow-2xl">
+    <div class="flex items-center justify-between pb-4 border-b border-primary/20 dark:border-primary/30">
+      <h3 id="resourceModalTitle" class="text-lg font-bold text-gray-900 dark:text-white">Add a New Resource</h3>
+      <button id="closeResourceModalBtn" class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form id="resourceForm" class="mt-6 space-y-6">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="resource-name">Resource Name</label>
+        <div class="mt-1">
+          <input class="block w-full rounded-md border-primary/30 shadow-sm focus:border-primary focus:ring-primary sm:text-sm dark:bg-background-dark/50 dark:border-primary/40 dark:text-white" id="resource-name" name="resource-name" placeholder="e.g., Massage Room 03" type="text"/>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="resource-type">Resource Type</label>
+        <div class="mt-1">
+          <select class="block w-full rounded-md border-primary/30 shadow-sm focus:border-primary focus:ring-primary sm:text-sm dark:bg-background-dark/50 dark:border-primary/40 dark:text-white" id="resource-type" name="resource-type">
+            <option value="massage_room">massage_room</option>
+            <option value="manicure_station">manicure_station</option>
+            <option value="amenity">amenity</option>
+            <option value="pedicure_chair">pedicure_chair</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="resource-status">Status</label>
+        <div class="mt-1">
+          <select class="block w-full rounded-md border-primary/30 shadow-sm focus:border-primary focus:ring-primary sm:text-sm dark:bg-background-dark/50 dark:border-primary/40 dark:text-white" id="resource-status" name="resource-status">
+            <option value="available">Available</option>
+            <option value="under_maintenance">Under Maintenance</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex justify-end gap-4 pt-4 border-t border-primary/20 dark:border-primary/30">
+        <button id="cancelResourceModalBtn" class="flex min-w-[84px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-gray-200 dark:bg-gray-700/50 text-gray-800 dark:text-gray-200 text-sm font-bold leading-normal tracking-[0.015em] hover:bg-gray-300 dark:hover:bg-gray-600/50" type="button">Cancel</button>
+        <button class="flex min-w-[84px] items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90" type="submit">
+          <span class="material-symbols-outlined mr-1 text-sm">save</span>
+          <span>Save Resource</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+</div>
+<script>
+  (function () {
+    const modal = document.getElementById('resourceModal');
+    const form = document.getElementById('resourceForm');
+    const titleEl = document.getElementById('resourceModalTitle');
+    const openBtn = document.getElementById('addResourceBtn');
+    const closeBtn = document.getElementById('closeResourceModalBtn');
+    const cancelBtn = document.getElementById('cancelResourceModalBtn');
+    const saveBtn = form.querySelector('button[type="submit"]');
+    const tbody = document.querySelector('table tbody');
+
+    let currentEditingRow = null; // null = add, otherwise edit
+
+    function getStatusBadgeHtml(status) {
+      if (status === 'available') {
+        return '<span class="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/50 px-3 py-1 text-xs font-medium text-green-800 dark:text-green-300">Available</span>';
+      }
+      if (status === 'under_maintenance') {
+        return '<span class="inline-flex items-center rounded-full bg-yellow-100 dark:bg-yellow-900/50 px-3 py-1 text-xs font-medium text-yellow-800 dark:text-yellow-300">Under Maintenance</span>';
+      }
+      return '<span class="inline-flex items-center rounded-full bg-gray-200 dark:bg-gray-700/50 px-3 py-1 text-xs font-medium text-gray-800 dark:text-gray-300">Inactive</span>';
+    }
+
+    function openModal(mode, data, rowEl) {
+      currentEditingRow = rowEl || null;
+      form.reset();
+
+      if (mode === 'edit' && data) {
+        titleEl.textContent = 'Edit Resource';
+        saveBtn.querySelector('span:last-child').textContent = 'Save Changes';
+
+        document.getElementById('resource-name').value = data.name || '';
+        document.getElementById('resource-type').value = data.type || 'massage_room';
+        document.getElementById('resource-status').value = data.status || 'available';
+      } else {
+        titleEl.textContent = 'Add a New Resource';
+        saveBtn.querySelector('span:last-child').textContent = 'Save Resource';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      currentEditingRow = null;
+    }
+
+    // Open in Add mode
+    openBtn.addEventListener('click', () => {
+      openModal('add');
+    });
+
+    // Wire up existing edit buttons
+    document.querySelectorAll('.edit-resource-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const button = e.currentTarget;
+        const row = button.closest('tr');
+        const data = {
+          name: button.getAttribute('data-name'),
+          type: button.getAttribute('data-type'),
+          status: button.getAttribute('data-status')
+        };
+        openModal('edit', data, row);
+      });
+    });
+
+    // Close handlers
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Submit handler: add or update row
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('resource-name').value.trim();
+      const type = document.getElementById('resource-type').value;
+      const status = document.getElementById('resource-status').value;
+
+      if (!name || !type || !status) {
+        return;
+      }
+
+      const statusBadgeHtml = getStatusBadgeHtml(status);
+
+      if (currentEditingRow) {
+        const nameTd = currentEditingRow.querySelector('td:nth-child(1)');
+        const typeTd = currentEditingRow.querySelector('td:nth-child(2)');
+        const statusTd = currentEditingRow.querySelector('td:nth-child(3)');
+        const editBtn = currentEditingRow.querySelector('.edit-resource-btn');
+
+        if (nameTd) nameTd.textContent = name;
+        if (typeTd) typeTd.textContent = type;
+        if (statusTd) statusTd.innerHTML = statusBadgeHtml;
+
+        if (editBtn) {
+          editBtn.setAttribute('data-name', name);
+          editBtn.setAttribute('data-type', type);
+          editBtn.setAttribute('data-status', status);
+        }
+      } else {
+        const tr = document.createElement('tr');
+        tr.className = '';
+        tr.innerHTML = `
+          <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900 dark:text-white">${name}</td>
+          <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600 dark:text-gray-400">${type}</td>
+          <td class="whitespace-nowrap px-6 py-4">
+            ${statusBadgeHtml}
+          </td>
+          <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+            <div class="flex items-center gap-4">
+              <button class="edit-resource-btn text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+                <span class="material-symbols-outlined text-xl">edit</span>
+              </button>
+              <button class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
+                <span class="material-symbols-outlined text-xl">delete</span>
+              </button>
+            </div>
+          </td>
+        `;
+
+        const newEditBtn = tr.querySelector('.edit-resource-btn');
+        newEditBtn.setAttribute('data-name', name);
+        newEditBtn.setAttribute('data-type', type);
+        newEditBtn.setAttribute('data-status', status);
+
+        newEditBtn.addEventListener('click', (evt) => {
+          const button = evt.currentTarget;
+          const row = button.closest('tr');
+          const data = {
+            name: button.getAttribute('data-name'),
+            type: button.getAttribute('data-type'),
+            status: button.getAttribute('data-status')
+          };
+          openModal('edit', data, row);
+        });
+
+        tbody.appendChild(tr);
+      }
+
+      closeModal();
+    });
+  })();
+</script>
+</body></html>

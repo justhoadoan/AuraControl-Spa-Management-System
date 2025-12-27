@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking: Confirmation (Customer)</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#D94680", // Based on the buttons in the homepage design
+                        "background-light": "#FFF7F9", // Soft pink gradient, using a solid for simplicity
+                        "background-dark": "#2E2428", // Dark brownish-maroon from the dark mode reset password
+                    },
+                    fontFamily: {
+                        display: ["Poppins", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .gradient-bg-light {
+            background: linear-gradient(180deg, #FFFFFF 0%, #FDECF2 100%);
+        }
+        .gradient-bg-dark {
+            background-color: #2E2428;
+        }
+        .leaf-img {
+            position: absolute;
+            width: 15%;
+            height: auto;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 antialiased">
+<div class="relative min-h-screen overflow-x-hidden">
+<img alt="Decorative pink and gray leaves" class="leaf-img top-20 left-4 opacity-50 dark:opacity-30 mix-blend-multiply dark:mix-blend-lighten" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyVcFcEeizn2rqmg0nLDGIE_seqZhFMNIVffwxMWlOfBjBK_OURC_vXsO4FOKsERxU0rd7VlncNYsNRWw0awFUGAz9K0756wBZAxjU0cqibgBuSWUv5f1TEjkN8gxPUknsmB6S02gHerV46aw647htU2dxvg8-ibKGk8XXknF1FSwWjoAN_R4FciJS1xUsnzeEFYubmzaUhY-ICFbEbNJ_uS0AzDyKtNdfkzM74DrW2Z85R5cD2OBxAHnSTD0kZJI7VsoF-_Aiy2Vc" style="width: 12%; transform: rotate(-15deg);"/>
+<img alt="Decorative pink and gray leaves" class="leaf-img bottom-1/4 right-0 opacity-40 dark:opacity-20 mix-blend-multiply dark:mix-blend-lighten" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIquchasC-hIofsa0020lFFv_MpwkPPQHFuG9nA-obQw78vSFiP1YyO3EpFp_diaHgpI7btRlAiGtltTgfaSo5d4rjf5ZYM5KmemdzfoQOavikE4JU4RmoPY6CtU3ByU4AVvma_LaS4rwG_ZSSyVZ3zdl19hKtAlCO3jEp-QuodkEv4UjOTCFn7Sch2R5xw2FA7lQFMBjHWqygCZ06HleAqourStIQWcPfnh4cEEAZTB6UdDd91QLyeYVqbs4mIectV53l7vxXpx2D" style="width: 20%; transform: scaleX(-1) rotate(25deg);"/>
+<header class="relative z-10 py-6 px-4 sm:px-6 lg:px-8">
+<div class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-2">
+<span class="text-2xl font-bold text-primary">blys</span>
+</div>
+<nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-slate-600 dark:text-slate-300">
+<a class="hover:text-primary dark:hover:text-primary" href="#">In-Home</a>
+<a class="hover:text-primary dark:hover:text-primary" href="#">Features</a>
+<a class="hover:text-primary dark:hover:text-primary" href="#">Pricing &amp; Plans</a>
+<a class="hover:text-primary dark:hover:text-primary" href="#">Locations</a>
+<a class="hover:text-primary dark:hover:text-primary" href="#">Help &amp; Supports</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="px-4 py-2 text-sm font-semibold border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">LOGIN</button>
+<button class="px-4 py-2 text-sm font-semibold bg-primary text-white rounded-lg hover:opacity-90 transition-opacity">SIGN UP</button>
+</div>
+</div>
+</header>
+<main class="relative z-10 flex flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+<div class="w-full max-w-2xl mx-auto">
+<div class="text-center mb-10">
+<h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white">Confirm your booking</h1>
+<p class="mt-2 text-lg text-slate-600 dark:text-slate-400">Please review the details below before confirming.</p>
+</div>
+<div class="bg-white dark:bg-slate-800/50 backdrop-blur-sm rounded-lg shadow-xl p-8 sm:p-10 border border-slate-200 dark:border-slate-700">
+<h2 class="text-xl font-semibold text-slate-900 dark:text-white mb-6 pb-4 border-b border-slate-200 dark:border-slate-700">Booking Summary</h2>
+<div class="space-y-5">
+<div class="flex justify-between items-center">
+<span class="text-slate-500 dark:text-slate-400">Service</span>
+<span class="font-semibold text-slate-800 dark:text-slate-100">Swedish Massage (60 min)</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500 dark:text-slate-400">Date</span>
+<span class="font-semibold text-slate-800 dark:text-slate-100">October 26, 2024</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-slate-500 dark:text-slate-400">Time</span>
+<span class="font-semibold text-slate-800 dark:text-slate-100">2:00 PM</span>
+</div>
+<div class="flex justify-between items-start">
+<span class="text-slate-500 dark:text-slate-400">Technician</span>
+<div class="flex items-center space-x-3 text-right">
+<span class="font-semibold text-slate-800 dark:text-slate-100">Jessica L.</span>
+<img alt="Avatar of technician Jessica L." class="w-10 h-10 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBysum9SOrIZY9q-evr6pIwuuenq59WkZTV942fKZTxFWyOzUekrjNpTaF8pZGmH-FlLXEkX23oJhNarUw0thVsnYsAA3-iDFsF_ho0vKax58cNY4ewwWCNlXMqxXZbCep9jrmnqxRqFZ7nxJfRZVeBRA72_Tti98ry9fVm190clV2NJGjYGhZTXldXiypzYy7QxgV3DpoV1wKdln8MYe5bU7ocvP54WCiBEkJ6fAwXwMLIq28XArcScZlBS1m4eZrEfUWpEeqEMEuz"/>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-700">
+<div class="flex justify-between items-center text-lg">
+<span class="font-medium text-slate-600 dark:text-slate-300">Total Price</span>
+<span class="text-2xl font-bold text-primary">$120.00</span>
+</div>
+</div>
+<div class="mt-10">
+<button class="w-full bg-primary text-white font-bold py-4 px-6 rounded-lg text-lg hover:opacity-90 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/50 flex items-center justify-center space-x-2">
+<span class="material-icons-outlined">check_circle</span>
+<span>Confirm Booking</span>
+</button>
+</div>
+<p class="text-center text-xs text-slate-500 dark:text-slate-400 mt-6">
+                        You won't be charged until your booking is confirmed. View our cancellation policy <a class="text-primary hover:underline" href="#">here</a>.
+                    </p>
+</div>
+</div>
+</main>
+<footer class="relative z-10 mt-20 py-10 text-center text-slate-600 dark:text-slate-400 text-sm">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<p>© 2024 Blys. All Rights Reserved.</p>
+<div class="mt-4 flex justify-center space-x-6">
+<a class="hover:text-primary" href="#">Privacy Policy</a>
+<a class="hover:text-primary" href="#">Terms of Service</a>
+<a class="hover:text-primary" href="#">Contact Us</a>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

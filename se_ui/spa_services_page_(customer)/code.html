@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Spa Services Page (Customer)</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#D14D72",
+            "background-light": "#FFF6F9",
+            "background-dark": "#1F1F1F",
+            "card-light": "#FFFFFF",
+            "card-dark": "#2D2D2D",
+            "text-light": "#1A1A1A",
+            "text-dark": "#EAEAEA",
+            "muted-light": "#6B7280",
+            "muted-dark": "#9CA3AF",
+            "border-light": "#E5E7EB",
+            "border-dark": "#4B5563",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.75rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    body {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark font-display">
+<div class="min-h-screen flex flex-col">
+<header class="bg-background-light dark:bg-background-dark py-4 px-4 sm:px-6 lg:px-12 border-b border-border-light dark:border-border-dark">
+<div class="container mx-auto flex justify-between items-center">
+<div class="flex items-center space-x-8">
+<h1 class="text-3xl font-bold text-primary">blys</h1>
+<nav class="hidden md:flex space-x-6">
+<a class="text-sm text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">In-Home</a>
+<a class="text-sm text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Features</a>
+<a class="text-sm text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Pricing &amp; Plans</a>
+<a class="text-sm text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Locations</a>
+<a class="text-sm text-muted-light dark:text-muted-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Help &amp; Supports</a>
+</nav>
+</div>
+<div class="flex items-center space-x-3">
+<a class="px-5 py-2 text-sm font-medium rounded-full text-text-light dark:text-text-dark border border-border-light dark:border-border-dark hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" href="#">LOGIN</a>
+<a class="px-5 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity" href="#">SIGN UP</a>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-12 py-12">
+<div class="text-center mb-12">
+<h2 class="text-4xl md:text-5xl font-bold text-text-light dark:text-text-dark">Explore Our Services</h2>
+<p class="mt-4 text-lg text-muted-light dark:text-muted-dark">Find the perfect treatment to rejuvenate your mind and body.</p>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm mb-10 flex flex-col md:flex-row items-center gap-4">
+<div class="relative w-full md:flex-grow">
+<span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-muted-light dark:text-muted-dark">search</span>
+<input class="w-full pl-10 pr-4 py-2.5 rounded-md border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary" placeholder="Search for a service..." type="text"/>
+</div>
+<div class="w-full md:w-auto flex flex-col sm:flex-row gap-4">
+<select class="w-full sm:w-48 rounded-md border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary">
+<option>Category</option>
+<option>Massage</option>
+<option>Facial</option>
+<option>Body Treatment</option>
+</select>
+<select class="w-full sm:w-48 rounded-md border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary">
+<option>Sort by Price</option>
+<option>Low to High</option>
+<option>High to Low</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Person receiving a relaxing massage" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARrjuB1VeIpNefARADY-WEfYZyAsbxdDYSopM_U8_HJi85v7YZUnw_k86QmW4td4vmhdKAjmO_t1sXJrvuAxbjGSE5IUmXsVlFjCJPuDOM2qVSPzsRLQOgu1KbTbfwGdffa76QtBLoe8dm7YjvDy3nBINqUmrpEOET1eI0bOh0uw4b9mpQbesu8l2lNMIDxeQYGlXobCE47Ev3deH9D5wwtus4Y-iggkcdjeJG0ZVC-RBlr15aYIHnjlsk9u6r8XBbMCF7I-both_w"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Swedish Massage</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">A gentle, full-body massage perfect for relaxation and relieving muscle tension.</p>
+<p class="text-2xl font-bold text-primary mt-4">$120</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Woman with a facial mask" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxtgh16Bfj42KioybzeSpuB-cQNZMrY_QA8udgUvqVi4CbkMafWGbXzmk8mLqF_gV84d3TKo-KrvtmOcK3pny9THJ1MkRz25fK7D-Boa9EiDJkjmfr64a5QZm4qKI9Dc_6EOjNFD-hR7gYwEOIcwviWGnSsMyIynOVjLJ8dd_S8wDoWIjyq_KjbHkjl_BB7mhPXwd7SaAJwuB6TIEF1SIurEyuPnKUNLILbt1Eaf42nW_mpfz4MsD6X2JlDpnxA7r31rBpRvc_qn31"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Hydrating Facial</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">Deeply moisturizes and revitalizes dry, dull skin for a radiant glow.</p>
+<p class="text-2xl font-bold text-primary mt-4">$95</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Hot stones placed on a person's back" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhJiU5h9ygEwtGso-yAcXUAjPA2-9uqbLiXB5FeQybMe0Ze57O0T9XHZqyJp7SsGS-iKbGwzfMQvMP6AfZV7LkrG1MEi8vRWkLGKQ5XQGZIBo-6zv_Et7EIHgPs-v6EcX-yjep6GQ-5abpfqh9MOorkLQ8GxPBh0wKxGaZPagEm4Oi5BF4VXHH3ES6ztvPsRjBRugSDgRfD2KJXxUBIu6D2xV2Ei4LJvZYpeqN_QxRGL-o6u_G7U3xaS62aTEl-Kv_xewdhFQ9-IP-"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Hot Stone Therapy</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">Heated stones are used to melt away tension and ease muscle stiffness.</p>
+<p class="text-2xl font-bold text-primary mt-4">$150</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Aromatherapy oils and candles" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpGtrk9E3mYVkCoMbN3Zi-PICVhuOAx4ZfmNZZ_ixAD8TCwB_XFG-WtxFIVKIW4IaftBekwgsBvCLvr-mKoKhoHD3JJm3L1Pamy_CwDNdaKUqtMb358jXYK_cGunwbX-c63w7oaeCKpBvQ5_9Rd5DFuxb4OADWG6Faz4oM0HVvIfj4XJLb7idbcxUGobgeTUGtrLdpxxBcVfz94hkKCpxfNkabdQ8l29CFljpMttAefF0YDG4A0pHhl25_pahaYVW-8r8lsosoWhhn"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Aromatherapy</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">Utilizes essential oils to enhance psychological and physical well-being.</p>
+<p class="text-2xl font-bold text-primary mt-4">$110</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Close-up of a person's foot during a pedicure" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYUi9UGQuvJKHIDjMUAoiwnvFISlUeyF3N3u6wiU_6bl8GFtoTT-tgF3Hs8i0V6MoXbnknWIyBciAwSJDT6YMk9a_9zET-eEgBTRCB-g8SS1EVI7YSMTJ-91XU6kKs_q7vtT4wZydgkRSUiVxbnFEIQk8iK87NwpaJIgTOR54ZErUyRJpAolOnXxr-07fER0n5ARcCDCNpCctzdC_y0JBIP0u_EMt3Sy5gMZPbgZ9lfEr-f3cJ4dFG6qEvnFsWW_I0TwZ5UkySOcyj"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Luxury Pedicure</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">An indulgent treatment for your feet, including exfoliation, massage, and polish.</p>
+<p class="text-2xl font-bold text-primary mt-4">$75</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-card-light dark:bg-card-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
+<img alt="Person wrapped in towels for a body wrap treatment" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4WcUjV68WY1BokAhtccL1fBp6GXbaa1ysNKbhXMm-cMLh8rMuP_enGKea6--TYezPCQtgiTaOMC-Ww5A3rVoT22N4NO-HOuT08J8gYA653r6HPmFLf5B88prcnfXi0vMKY6H7H2cSG2SalSM9_5Y6m4BEmnaStUh84iKvv-nsik3AuLvxskJZXo9Nf-00pgG-rJ8YwpX2WszC2kWFKTE9g-jcvLTuKV2wBM64g_qFSrDAU8B-ExbrryYQvakGS0dJLyTa6TpGtogG"/>
+<div class="p-6 flex flex-col flex-grow">
+<h3 class="text-xl font-semibold text-text-light dark:text-text-dark">Detox Body Wrap</h3>
+<p class="text-muted-light dark:text-muted-dark mt-2 text-sm flex-grow">A cleansing wrap that helps to draw out impurities and detoxify the body.</p>
+<p class="text-2xl font-bold text-primary mt-4">$180</p>
+<div class="mt-6 flex flex-col sm:flex-row gap-3">
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full border border-primary text-primary hover:bg-primary hover:text-white transition-colors">View Details</button>
+<button class="w-full px-4 py-2 text-sm font-medium rounded-full bg-primary text-white hover:opacity-90 transition-opacity">Book Now</button>
+</div>
+</div>
+</div>
+</div>
+<nav aria-label="Pagination" class="flex items-center justify-center mt-12">
+<a class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark hover:bg-gray-50 dark:hover:bg-gray-700" href="#">
+<span class="material-icons-outlined text-base">chevron_left</span>
+</a>
+<a aria-current="page" class="relative z-10 inline-flex items-center px-4 py-2 border border-primary bg-primary bg-opacity-10 text-sm font-medium text-primary" href="#">1</a>
+<a class="relative inline-flex items-center px-4 py-2 border-y border-r border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark hover:bg-gray-50 dark:hover:bg-gray-700" href="#">2</a>
+<a class="relative hidden items-center px-4 py-2 border-y border-r border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark hover:bg-gray-50 dark:hover:bg-gray-700 md:inline-flex" href="#">3</a>
+<span class="relative inline-flex items-center px-4 py-2 border-y border-r border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark">...</span>
+<a class="relative hidden items-center px-4 py-2 border-y border-r border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark hover:bg-gray-50 dark:hover:bg-gray-700 md:inline-flex" href="#">8</a>
+<a class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark text-sm font-medium text-muted-light dark:text-muted-dark hover:bg-gray-50 dark:hover:bg-gray-700" href="#">
+<span class="material-icons-outlined text-base">chevron_right</span>
+</a>
+</nav>
+</main>
+<footer class="bg-card-light dark:bg-card-dark border-t border-border-light dark:border-border-dark">
+<div class="container mx-auto px-4 sm:px-6 lg:px-12 py-12">
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+<div class="col-span-2 md:col-span-4 lg:col-span-1">
+<h2 class="text-3xl font-bold text-primary">blys</h2>
+<p class="mt-4 text-sm text-muted-light dark:text-muted-dark">Australia's #1 platform for in-home massage, beauty and wellness.</p>
+</div>
+<div>
+<h3 class="font-semibold text-text-light dark:text-text-dark">Company</h3>
+<ul class="mt-4 space-y-3 text-sm">
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">About Us</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Careers</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Blog</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-text-light dark:text-text-dark">Services</h3>
+<ul class="mt-4 space-y-3 text-sm">
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Massage</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Beauty</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Wellness</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-text-light dark:text-text-dark">Support</h3>
+<ul class="mt-4 space-y-3 text-sm">
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Help Center</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Contact Us</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">FAQ</a></li>
+</ul>
+</div>
+<div>
+<h3 class="font-semibold text-text-light dark:text-text-dark">Legal</h3>
+<ul class="mt-4 space-y-3 text-sm">
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Terms of Service</a></li>
+<li><a class="text-muted-light dark:text-muted-dark hover:text-primary" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-border-light dark:border-border-dark text-center text-sm text-muted-light dark:text-muted-dark">
+<p>© 2024 Blys. All rights reserved.</p>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

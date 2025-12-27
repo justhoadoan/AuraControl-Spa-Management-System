@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Technician Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#ef3976",
+            "background-light": "#fcf8f9",
+            "background-dark": "#221016",
+            "text-light": "#1b0d12",
+            "text-dark": "#f3e7eb",
+            "surface-light": "#f8f6f6",
+            "surface-dark": "#2c151c",
+            "border-light": "#f3e7eb",
+            "border-dark": "#3a1b26",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<div class="relative flex min-h-screen w-full">
+  <!-- Technician Sidebar (same shell style as admin, but for technician) -->
+  <aside class="flex h-screen w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark sticky top-0">
+    <div class="flex flex-col gap-4 p-4 h-full">
+      <div class="flex items-center gap-3 px-2">
+        <span class="material-symbols-outlined text-primary text-3xl">spa</span>
+        <div class="flex flex-col">
+          <h1 class="text-base font-bold">Serenity Spa</h1>
+          <p class="text-sm text-text-light/70 dark:text-text-dark/70">Technician Portal</p>
+        </div>
+      </div>
+      <nav class="flex flex-col gap-2 mt-4 flex-grow">
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:text-primary font-semibold transition-colors" href="#">
+          <span class="material-symbols-outlined">dashboard</span>
+          <p class="text-sm font-medium">Dashboard</p>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light/70 dark:text-text-dark/70 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">person</span>
+          <p class="text-sm font-medium">Profile</p>
+        </a>
+      </nav>
+      <div class="flex flex-col gap-1">
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-light/70 dark:text-text-dark/70 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">logout</span>
+          <p class="text-sm font-medium">Logout</p>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Technician Dashboard Content -->
+  <main class="flex-1 overflow-y-auto">
+    <div class="max-w-7xl mx-auto px-4 md:px-10 lg:px-12 py-6">
+      <!-- Top header inside main (optional, keeps existing top bar look lighter) -->
+      <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <div class="flex items-center gap-3">
+          <div class="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+            <span class="material-symbols-outlined text-xl">calendar_month</span>
+          </div>
+          <div>
+            <h1 class="text-2xl md:text-3xl font-black leading-tight tracking-[-0.03em]">Schedule Dashboard</h1>
+            <p class="text-xs md:text-sm text-text-light/70 dark:text-text-dark/70">View your appointments and manage time-off requests.</p>
+          </div>
+        </div>
+
+      </header>
+
+      <!-- Calendar Controls Row -->
+      <section class="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <button id="btn-today" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark text-sm font-bold leading-normal tracking-[0.015em] border border-border-light dark:border-border-dark">
+            <span class="truncate">Today</span>
+          </button>
+          <div class="flex items-center">
+            <button id="btn-prev" class="flex items-center justify-center size-10 rounded-l-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">
+              <span class="material-symbols-outlined text-xl">chevron_left</span>
+            </button>
+            <button id="btn-next" class="flex items-center justify-center size-10 rounded-r-lg bg-surface-light dark:bg-surface-dark border-y border-r border-border-light dark:border-border-dark">
+              <span class="material-symbols-outlined text-xl">chevron_right</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+          <div class="flex h-10 flex-1 items-center justify-center rounded-lg bg-surface-light dark:bg-surface-dark p-1 border border-border-light dark:border-border-dark">
+            <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-3 has-[:checked]:bg-background-light dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-text-light dark:has-[:checked]:text-text-dark text-text-light/70 dark:text-text-dark/70 text-sm font-medium leading-normal">
+              <span class="truncate">Day</span>
+              <input class="invisible w-0" name="calendar-view" type="radio" value="day"/>
+            </label>
+            <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-3 has-[:checked]:bg-background-light dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-text-light dark:has-[:checked]:text-text-dark text-text-light/70 dark:text-text-dark/70 text-sm font-medium leading-normal">
+              <span class="truncate">Week</span>
+              <input checked class="invisible w-0" name="calendar-view" type="radio" value="week"/>
+            </label>
+            <label class="flex cursor-pointer h-full grow items-center justify-center overflow-hidden rounded-md px-3 has-[:checked]:bg-background-light dark:has-[:checked]:bg-background-dark has-[:checked]:shadow-sm has-[:checked]:text-text-light dark:has-[:checked]:text-text-dark text-text-light/70 dark:text-text-dark/70 text-sm font-medium leading-normal">
+              <span class="truncate">Month</span>
+              <input class="invisible w-0" name="calendar-view" type="radio" value="month"/>
+            </label>
+          </div>
+          <button id="btn-request-leave" class="flex min-w-[140px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-sm hover:bg-primary/90">
+            <span class="material-symbols-outlined text-sm mr-1">event_busy</span>
+            <span class="truncate">Request Time Off</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- View mode label (UI hint only for now) -->
+      <p id="calendar-view-label" class="mt-1 mb-3 text-[11px] md:text-xs text-text-light/60 dark:text-text-dark/60">
+        Showing: Week view
+      </p>
+
+      <!-- Main Calendar Area -->
+      <section class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark p-4">
+        <div class="flex w-full flex-col gap-1">
+          <div class="flex items-center px-1 justify-between mb-2">
+            <p id="calendar-month-label" class="text-text-light dark:text-text-dark text-base font-bold leading-tight flex-1 text-center">October 2024</p>
+          </div>
+
+          <!-- Month view (default) -->
+          <div id="calendar-month-view">
+            <div class="grid grid-cols-7 border-t border-border-light dark:border-border-dark text-xs md:text-[13px]">
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">SUN</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">MON</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">TUE</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">WED</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">THU</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">FRI</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold leading-normal tracking-[0.015em] flex h-10 w-full items-center justify-center">SAT</p>
+
+              <!-- Example month grid with assigned appointments + approved leave -->
+              <!-- Row 1: last days of previous month + 1–5 Oct -->
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark p-1 text-[11px] md:text-sm col-start-3 text-text-light/60 dark:text-text-dark/50">29</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark p-1 text-[11px] md:text-sm text-text-light/60 dark:text-text-dark/50">30</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">1</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">2</div>
+              <div class="h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">3</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">4</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">5</div>
+              <!-- Row 2: 6–12 Oct (with events + leave) -->
+              <button type="button" data-appointment-id="appt-1" class="calendar-appt relative h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 pb-1 text-[11px] md:text-sm text-left hover:bg-primary/5 flex flex-col items-start justify-between">
+                <span class="font-semibold">6</span>
+                <div class="w-full mt-1 flex-1 flex items-end">
+                  <div class="w-full p-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-[10px] md:text-xs text-primary-darker dark:text-primary-lighter">
+                    <p class="font-bold">A. Williams</p>
+                    <p>Swedish Massage</p>
+                  </div>
+                </div>
+              </button>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">7</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">8</div>
+              <div class="relative h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm bg-green-500/10 flex flex-col items-start justify-between">
+                <span class="font-semibold">9</span>
+                <div class="w-full mt-1 flex-1 flex items-end">
+                  <div class="w-full p-1.5 rounded-lg bg-green-500/20 text-[10px] md:text-xs text-green-800 dark:text-green-300">
+                    <p class="font-bold">Approved Leave</p>
+                  </div>
+                </div>
+              </div>
+              <div class="relative h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm bg-green-500/10 flex flex-col items-start justify-between">
+                <span class="font-semibold">10</span>
+                <div class="w-full mt-1 flex-1 flex items-end">
+                  <div class="w-full p-1.5 rounded-lg bg-green-500/20 text-[10px] md:text-xs text-green-800 dark:text-green-300">
+                    <p class="font-bold">Approved Leave</p>
+                  </div>
+                </div>
+              </div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">11</div>
+              <div class="h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex flex-col items-start justify-between">
+                <span class="font-semibold">12</span>
+                <button type="button" data-appointment-id="appt-2" class="calendar-appt mt-auto w-full p-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-[10px] md:text-xs text-primary-darker dark:text-primary-lighter text-left">
+                  <p class="font-bold">J. Miller</p>
+                  <p>Hot Stone Therapy</p>
+                </button>
+              </div>
+              <!-- Row 3: 13–19 Oct -->
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">13</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">14</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">15</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">16</div>
+              <div class="h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">17</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">18</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">19</div>
+              <!-- Row 4: 20–26 Oct -->
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">20</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">21</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">22</div>
+              <div class="h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">23</div>
+              <div class="h-28 border-r border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">24</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">25</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">26</div>
+              <!-- Row 5: 27–31 Oct + leading next-month days (optional faded) -->
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">27</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">28</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">29</div>
+              <div class="h-28 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">30</div>
+              <div class="h-28 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start justify-start">31</div>
+              <!-- End full month grid -->
+            </div>
+          </div>
+
+          <!-- Week view (simple prototype: show the same week that contains the 6th-13th block) -->
+          <div id="calendar-week-view" class="hidden">
+            <div class="grid grid-cols-7 border-t border-border-light dark:border-border-dark text-xs md:text-[13px]">
+              <!-- Weekday headers -->
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">SUN</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">MON</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">TUE</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">WED</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">THU</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">FRI</p>
+              <p class="text-text-light/70 dark:text-text-dark/70 font-bold flex h-10 items-center justify-center">SAT</p>
+
+              <!-- Simplified one-week row: 6–12 October 2024 -->
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start">6
+                <button type="button" data-appointment-id="appt-1" class="calendar-appt mt-auto w-full p-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-[10px] md:text-xs text-primary-darker dark:text-primary-lighter text-left">
+                  <p class="font-bold">A. Williams</p>
+                  <p>Swedish Massage</p>
+                </button>
+              </div>
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start">7</div>
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start">8</div>
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex flex-col items-start justify-between bg-green-500/10">
+                <span class="font-semibold">9</span>
+                <div class="w-full mt-1 flex-1 flex items-end">
+                  <div class="w-full p-1.5 rounded-lg bg-green-500/20 text-[10px] md:text-xs text-green-800 dark:text-green-300">
+                    <p class="font-bold">Approved Leave</p>
+                  </div>
+                </div>
+              </div>
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex flex-col items-start justify-between bg-green-500/10">
+                <span class="font-semibold">10</span>
+                <div class="w-full mt-1 flex-1 flex items-end">
+                  <div class="w-full p-1.5 rounded-lg bg-green-500/20 text-[10px] md:text-xs text-green-800 dark:text-green-300">
+                    <p class="font-bold">Approved Leave</p>
+                  </div>
+                </div>
+              </div>
+              <div class="h-32 border-r border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex items-start">11</div>
+              <div class="h-32 border-b border-border-light dark:border-border-dark px-1 pt-1 text-[11px] md:text-sm flex flex-col items-start justify-between">
+                <span class="font-semibold">12</span>
+                <button type="button" data-appointment-id="appt-2" class="calendar-appt mt-auto w-full p-1.5 rounded-lg bg-primary/20 dark:bg-primary/30 text-[10px] md:text-xs text-primary-darker dark:text-primary-lighter text-left">
+                  <p class="font-bold">J. Miller</p>
+                  <p>Hot Stone Therapy</p>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Day view (simple prototype: focuses on a single day timeline) -->
+          <div id="calendar-day-view" class="hidden">
+            <div class="border-t border-border-light dark:border-border-dark pt-2">
+              <p id="day-view-label" class="text-xs md:text-sm font-semibold mb-2">October 6, 2024</p>
+              <div class="space-y-2 text-xs md:text-sm">
+                <!-- Simple time slots; in a real app this would be data-driven -->
+                <div class="flex items-start gap-3">
+                  <span class="w-14 text-right text-text-light/60 dark:text-text-dark/60">14:00</span>
+                  <button type="button" data-appointment-id="appt-1" class="calendar-appt flex-1 rounded-lg bg-primary/20 dark:bg-primary/30 px-3 py-2 text-left text-[11px] md:text-xs text-primary-darker dark:text-primary-lighter">
+                    <p class="font-bold">Swedish Massage</p>
+                    <p class="text-[11px]">Client: Amelia Williams · 60 min</p>
+                  </button>
+                </div>
+                <div class="flex items-start gap-3">
+                  <span class="w-14 text-right text-text-light/60 dark:text-text-dark/60">16:30</span>
+                  <button type="button" data-appointment-id="appt-2" class="calendar-appt flex-1 rounded-lg bg-primary/10 dark:bg-primary/20 px-3 py-2 text-left text-[11px] md:text-xs text-primary-darker dark:text-primary-lighter">
+                    <p class="font-bold">Hot Stone Therapy</p>
+                    <p class="text-[11px]">Client: Jacob Miller · 75 min</p>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </div>
+
+    <!-- Appointment Details Modal (from previous design) -->
+    <div id="appointment-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="w-full max-w-md rounded-xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark shadow-2xl">
+        <div class="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
+          <h2 class="text-text-light dark:text-text-dark text-[22px] font-bold leading-tight tracking-[-0.015em]">Appointment Details</h2>
+          <button id="appointment-modal-close" class="flex items-center justify-center size-8 rounded-full hover:bg-surface-light dark:hover:bg-surface-dark">
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+        <div class="p-6 flex flex-col gap-4 text-sm">
+          <div class="flex justify-between items-center">
+            <span class="text-text-light/70 dark:text-text-dark/70">Client Name</span>
+            <span id="appt-client" class="font-semibold">Amelia Williams</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-text-light/70 dark:text-text-dark/70">Service</span>
+            <span id="appt-service" class="font-semibold">Swedish Massage</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-text-light/70 dark:text-text-dark/70">Date &amp; Time</span>
+            <span id="appt-datetime" class="font-semibold">October 6, 2024 at 2:00 PM</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-text-light/70 dark:text-text-dark/70">Duration</span>
+            <span id="appt-duration" class="font-semibold">60 minutes</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-text-light/70 dark:text-text-dark/70">Room</span>
+            <span id="appt-room" class="font-semibold">Tranquility Suite</span>
+          </div>
+          <div class="flex flex-col gap-1">
+            <span class="text-text-light/70 dark:text-text-dark/70">Client Notes</span>
+            <p id="appt-notes" class="p-3 rounded-lg bg-surface-light dark:bg-surface-dark border border-border-light dark:border-border-dark">Prefers light pressure on the upper back due to a recent minor injury.</p>
+          </div>
+        </div>
+        <div class="p-4 border-t border-border-light dark:border-border-dark flex justify-end">
+          <button id="appointment-modal-close-footer" class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em]">
+            <span class="truncate">Close</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Request Time Off Modal -->
+    <div id="timeoff-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div class="w-full max-w-md rounded-xl bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark shadow-2xl">
+        <div class="flex items-center justify-between p-4 border-b border-border-light dark:border-border-dark">
+          <h2 class="text-text-light dark:text-text-dark text-[20px] font-bold leading-tight tracking-[-0.015em]">Request Time Off</h2>
+          <button id="timeoff-modal-close" class="flex items-center justify-center size-8 rounded-full hover:bg-surface-light dark:hover:bg-surface-dark">
+            <span class="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+        <form id="timeoff-form" class="p-6 flex flex-col gap-4 text-sm">
+          <div class="flex flex-col gap-1">
+            <label for="timeoff-start" class="text-text-light dark:text-text-dark text-sm font-medium">Start date</label>
+            <input id="timeoff-start" name="start" type="date" required class="rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary"/>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="timeoff-end" class="text-text-light dark:text-text-dark text-sm font-medium">End date</label>
+            <input id="timeoff-end" name="end" type="date" required class="rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary"/>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="timeoff-reason" class="text-text-light dark:text-text-dark text-sm font-medium">Reason</label>
+            <textarea id="timeoff-reason" name="reason" rows="3" required class="rounded-lg border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary" placeholder="Briefly describe why you need time off"></textarea>
+          </div>
+          <p id="timeoff-error" class="hidden text-xs text-red-500">Please fill all fields and ensure the end date is not earlier than the start date.</p>
+          <div class="flex justify-end gap-3 pt-2 border-t border-border-light dark:border-border-dark mt-2">
+            <button type="button" id="timeoff-cancel" class="flex min-w-[84px] items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-transparent px-4 py-2 text-sm font-medium text-text-light/80 dark:text-text-dark/80 hover:bg-background-light/80 dark:hover:bg-background-dark/60 transition-colors">Cancel</button>
+            <button type="submit" class="flex min-w-[84px] items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary/90 transition-colors">
+              <span class="truncate">Submit Request</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  (function () {
+    // Simple mapping for demo; in real app this would come from backend
+    const APPOINTMENTS = {
+      'appt-1': {
+        client: 'Amelia Williams',
+        service: 'Swedish Massage',
+        datetime: 'October 6, 2024 at 2:00 PM',
+        duration: '60 minutes',
+        room: 'Tranquility Suite',
+        notes: 'Prefers light pressure on the upper back due to a recent minor injury.'
+      },
+      'appt-2': {
+        client: 'Jacob Miller',
+        service: 'Hot Stone Therapy',
+        datetime: 'October 13, 2024 at 4:30 PM',
+        duration: '75 minutes',
+        room: 'Harmony Room',
+        notes: 'Loves extra focus on shoulders and neck.'
+      }
+    };
+
+    // Appointment modal wiring
+    const apptModal = document.getElementById('appointment-modal');
+    const apptCloseBtn = document.getElementById('appointment-modal-close');
+    const apptCloseFooterBtn = document.getElementById('appointment-modal-close-footer');
+
+    function openAppointmentModal(id) {
+      const data = APPOINTMENTS[id];
+      if (!data) return;
+      document.getElementById('appt-client').textContent = data.client;
+      document.getElementById('appt-service').textContent = data.service;
+      document.getElementById('appt-datetime').textContent = data.datetime;
+      document.getElementById('appt-duration').textContent = data.duration;
+      document.getElementById('appt-room').textContent = data.room;
+      document.getElementById('appt-notes').textContent = data.notes;
+      apptModal.classList.remove('hidden');
+    }
+
+    function closeAppointmentModal() {
+      apptModal.classList.add('hidden');
+    }
+
+    document.querySelectorAll('.calendar-appt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.getAttribute('data-appointment-id');
+        if (id) openAppointmentModal(id);
+      });
+    });
+
+    apptCloseBtn.addEventListener('click', closeAppointmentModal);
+    apptCloseFooterBtn.addEventListener('click', closeAppointmentModal);
+
+    // Time-off request modal wiring
+    const timeoffModal = document.getElementById('timeoff-modal');
+    const timeoffOpenBtn = document.getElementById('btn-request-leave');
+    const timeoffCloseBtn = document.getElementById('timeoff-modal-close');
+    const timeoffCancelBtn = document.getElementById('timeoff-cancel');
+    const timeoffForm = document.getElementById('timeoff-form');
+    const timeoffError = document.getElementById('timeoff-error');
+
+    function openTimeoffModal() {
+      timeoffForm.reset();
+      timeoffError.classList.add('hidden');
+      timeoffModal.classList.remove('hidden');
+    }
+
+    function closeTimeoffModal() {
+      timeoffModal.classList.add('hidden');
+    }
+
+    timeoffOpenBtn.addEventListener('click', openTimeoffModal);
+    timeoffCloseBtn.addEventListener('click', closeTimeoffModal);
+    timeoffCancelBtn.addEventListener('click', closeTimeoffModal);
+
+    timeoffForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const start = document.getElementById('timeoff-start').value;
+      const end = document.getElementById('timeoff-end').value;
+      const reason = document.getElementById('timeoff-reason').value.trim();
+
+      if (!start || !end || !reason || new Date(end) < new Date(start)) {
+        timeoffError.classList.remove('hidden');
+        return;
+      }
+
+      // For now, just close the modal. In a real app, send to backend here.
+      closeTimeoffModal();
+    });
+
+    // Calendar navigation + view mode stubs (visual only for now)
+    const todayBtn = document.getElementById('btn-today');
+    const prevBtn = document.getElementById('btn-prev');
+    const nextBtn = document.getElementById('btn-next');
+
+    const monthLabel = document.getElementById('calendar-month-label');
+    let currentDate = new Date(2024, 9, 6); // 6 Oct 2024;
+
+    function updateMonthLabel() {
+      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      monthLabel.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+    }
+
+    todayBtn.addEventListener('click', () => {
+      currentDate = new Date();
+      updateMonthLabel();
+    });
+
+    prevBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      updateMonthLabel();
+    });
+
+    nextBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      updateMonthLabel();
+    });
+
+    updateMonthLabel();
+
+    // View mode label (Day / Week / Month) and calendar view switching
+    const viewRadios = document.querySelectorAll('input[name="calendar-view"]');
+    const viewLabel = document.getElementById('calendar-view-label');
+    const monthView = document.getElementById('calendar-month-view');
+    const weekView = document.getElementById('calendar-week-view');
+    const dayView = document.getElementById('calendar-day-view');
+    let currentViewMode = 'week';
+
+    function updateViewLabel() {
+      if (!viewLabel) return;
+      const pretty = currentViewMode.charAt(0).toUpperCase() + currentViewMode.slice(1);
+      viewLabel.textContent = `Showing: ${pretty} view`;
+    }
+
+    function applyViewVisibility() {
+      if (monthView) monthView.classList.toggle('hidden', currentViewMode !== 'month');
+      if (weekView) weekView.classList.toggle('hidden', currentViewMode !== 'week');
+      if (dayView) dayView.classList.toggle('hidden', currentViewMode !== 'day');
+    }
+
+    viewRadios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (!radio.checked) return;
+        currentViewMode = radio.value;
+        updateViewLabel();
+        applyViewVisibility();
+      });
+    });
+
+    // Initialise UI to match default 'week' view
+    updateViewLabel();
+    applyViewVisibility();
+  })();
+</script>
+</body>
+</html>

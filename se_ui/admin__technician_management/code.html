@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin: Technician Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+    </style>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ef3976",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221016",
+              "primary-soft": "#f3e7eb",
+              "primary-soft-dark": "rgba(239, 57, 118, 0.1)",
+              "text-light": "#1b0d12",
+              "text-dark": "#f8f6f6",
+              "text-subtle-light": "#9a4c66",
+              "text-subtle-dark": "#a88e99",
+              "border-light": "#e7cfd7",
+              "border-dark": "#392a30",
+              "success": "#078859",
+              "pending": "#f59e0b",
+              "text-secondary-light": "#9a4c66",
+              "text-secondary-dark": "#b88a9a",
+              "surface-light": "#ffffff",
+              "confirmed": "#3b82f6"
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full">
+<!-- SideNavBar -->
+<aside class="bg-surface-light flex h-screen w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark sticky top-0">
+<div class="flex flex-col gap-4 p-4 h-full">
+  <div class="flex items-center gap-3 px-2">
+    <span class="material-symbols-outlined text-primary text-3xl">spa</span>
+    <div class="flex flex-col">
+      <h1 class="text-base font-bold">Serenity Spa</h1>
+      <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Admin Panel</p>
+    </div>
+  </div>
+  <nav class="flex flex-col gap-2 mt-4 flex-grow">
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined">dashboard</span>
+      <p class="text-sm font-medium">Dashboard</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined">calendar_month</span>
+      <p class="text-sm font-medium">Appointments</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined fill">group</span>
+      <p class="text-sm font-medium">Customers</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined">spa</span>
+      <p class="text-sm font-medium">Services</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:text-primary font-semibold transition-colors" href="#">
+      <span class="material-symbols-outlined">badge</span>
+      <p class="text-sm font-medium">Technicians</p>
+    </a>
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined">bed</span>
+      <p class="text-sm font-medium">Resources</p>
+    </a>
+  </nav>
+  <div class="flex flex-col gap-1">
+    <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+      <span class="material-symbols-outlined">logout</span>
+      <p class="text-sm font-medium">Logout</p>
+    </a>
+  </div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-8 overflow-y-auto">
+  <div class="max-w-7xl mx-auto">
+    <div class="dark:bg-surface-dark rounded-xl p-6 bg-surface-light">
+      <!-- PageHeading -->
+      <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+        <h1 class="text-[#1b0d12] dark:text-white text-4xl font-black leading-tight tracking-[-0.033em]">Technician Management</h1>
+        <button id="openTechnicianModal" class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-6 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-primary/90 transition-colors">
+          <span class="material-symbols-outlined mr-2">add</span>
+          <span class="truncate">Add New Technician</span>
+        </button>
+      </div>
+
+      <!-- Tabs under heading (Profiles / Time-off) -->
+      <div class="mb-4 border-b border-border-light dark:border-border-dark">
+        <nav class="flex flex-wrap gap-2">
+          <button type="button" data-tab="profiles" class="tech-tab border-b-2 border-primary text-primary dark:text-primary px-3 pb-2 text-sm font-semibold">
+            Profiles &amp; Specializations
+          </button>
+          <button type="button" data-tab="timeoff" class="tech-tab text-text-secondary-light dark:text-text-secondary-dark px-3 pb-2 text-sm font-medium hover:text-primary dark:hover:text-primary">
+            Time-off Approval
+          </button>
+        </nav>
+      </div>
+
+      <!-- Tab Panels -->
+      <div class="space-y-6">
+        <!-- Tab Panel: Profiles & Specializations -->
+        <div id="panel-profiles" class="tab-panel">
+          <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm @container border border-border-light dark:border-border-dark">
+            <div class="overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+              <table class="w-full" id="technician-table">
+                <thead class="bg-background-light dark:bg-background-dark">
+                  <tr>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-text-secondary-dark">Technician Name</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-text-secondary-dark">Email</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark">Phone</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark">Specialization</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+<td class="h-[72px] px-4 py-2 text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Photo of Olivia Chen" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDFU0IjxIetgeIcrBaTqS27yeRLzMtQ4l2dFPHTBij8yk8GowLznhfbv3H0jw0WXsKXLtyy_MMwA-x6fQly_sT7BcJT5f4JVNi6jZ2uewL7IGTRpt2UylDNeoCiks2MiQLFYfRNgDxFw3RAx5GN61TSacZcZ6wIh4EFzjpWZlNA5k6clOvI_LX5kFawydogKtfKLRz0CsLUN3g27F_GLZJQc8P22LJjlh7cWR1a9V9MNpGdaUPXpDz-Mqg7WB6gu1beFVgTfvfeuRmP");'></div>
+<span class="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">Olivia Chen</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">olivia.c@serenespa.com</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">(555) 123-4567</td>
+<td class="h-[72px] px-4 py-2 align-middle">
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Massage</span>
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Facials</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 align-middle text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="edit-technician-btn flex items-center justify-center size-8 rounded-lg text-primary hover:bg-primary/10 hover:text-primary transition-colors" data-name="Olivia Chen" data-email="olivia.c@serenespa.com" data-phone="(555) 123-4567" data-specializations='["Massage","Facials"]'>
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+<td class="h-[72px] px-4 py-2 text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Photo of Ben Carter" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDecjS_s42ncRd4LtjgSP6-8AEAhN-paB5ZKBeB5Qcfh52y7IFkLq9Nfn7_yDG5c5YfXRCSK0_wsTw_uUEZ1AoHOIL1aykLR3QZa-MCtm0qW6lQqgXGD51sqsejyPrrJ-x73ryqTW3Fc-ItB6R3ahW34KBuIhF8mLJCcUDPPUdevLwrRN3isBFOqOT9g2OdT5B72r8aJfEvQA7m3p5ysCoN5i61ag4dYjNZZiQCc4nvJsqbjUgQxLQzdMvlhSKM5K0pXZ1no4gt71jm");'></div>
+<span class="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">Ben Carter</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">ben.c@serenespa.com</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">(555) 987-6543</td>
+<td class="h-[72px] px-4 py-2 align-middle">
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Aromatherapy</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 align-middle text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="edit-technician-btn flex items-center justify-center size-8 rounded-lg text-primary hover:bg-primary/10 hover:text-primary transition-colors" data-name="Ben Carter" data-email="ben.c@serenespa.com" data-phone="(555) 987-6543" data-specializations='["Aromatherapy"]'>
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+<td class="h-[72px] px-4 py-2 text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Photo of Sophia Rodriguez" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBDVgk37Kp5N1gc85So-n0x28uNEUgh2dCyLwI1dy0Z_RmSANjcUP5xxunZDPEqL6h_pSMbfmwku6atF5cDlliNXGpZzkPyX_74zZ5TrNB8MnEfbQY0HnYz7dKA6eC9uuCpxdm3jFTUzq3P9-ui0dtgoCnrOotUc0C61Y3ZWj2pTNyXYzXKyYgahyTVw0EbltQnthfXdgTBC2Tv98xkrsENr-xsiWYXrIqevmriD0KJjcsn6lwJGk2F55kpvgRTtXAfapy1_kYYxigz");'></div>
+<span class="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">Sophia Rodriguez</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">sophia.r@serenespa.com</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">(555) 234-5678</td>
+<td class="h-[72px] px-4 py-2 align-middle">
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Manicure</span>
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Pedicure</span>
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Waxing</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 align-middle text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="edit-technician-btn flex items-center justify-center size-8 rounded-lg text-primary hover:bg-primary/10 hover:text-primary transition-colors" data-name="Sophia Rodriguez" data-email="sophia.r@serenespa.com" data-phone="(555) 234-5678" data-specializations='["Manicure","Pedicure","Waxing"]'>
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+<td class="h-[72px] px-4 py-2 text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+<div class="flex items-center gap-3">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Photo of Liam Goldberg" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC0sRof2dQ3mkD4u93q7Xzmef8j-_LZ09bepwN44adiLVrVf4d7QOGn2h6vwC2RdqPBXlOHZPDcfBvEQYGY1JIEh9VKy6srfZQVnVcspVtmLt7bOhGWQdxM64baxPpRpxUWY_i3DofTg3-zdFXG7qIugbjIaXfUoPy233YDg-BOnQdAXXf8sUN7ij4xFf0shPXXVGaS-TO14jgfcDzyJDSpwUvfEC2A2DyQ3yBEpP2MnLa3De67mKahFVAHvAIhqIlFuy0o8DkvkQv4");'></div>
+<span class="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">Liam Goldberg</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">liam.g@serenespa.com</td>
+<td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-textsecondary-dark">(555) 876-5432</td>
+<td class="h-[72px] px-4 py-2 align-middle">
+<div class="flex flex-wrap gap-2">
+<span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">Hot Stone Massage</span>
+</div>
+</td>
+<td class="h-[72px] px-4 py-2 align-middle text-right">
+<div class="flex items-center justify-end gap-2">
+<button class="edit-technician-btn flex items-center justify-center size-8 rounded-lg text-primary hover:bg-primary/10 hover:text-primary transition-colors" data-name="Liam Goldberg" data-email="liam.g@serenespa.com" data-phone="(555) 876-5432" data-specializations='["Hot Stone Massage"]'>
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+<span class="material-symbols-outlined text-lg">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+        <!-- Tab Panel: Time-off Approval (all English) -->
+        <div id="panel-timeoff" class="tab-panel hidden">
+          <div class="bg-surface-light dark:bg-surface-dark rounded-xl p-4 shadow-sm border border-border-light dark:border-border-dark">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-base font-semibold text-text-primary-light dark:text-text-primary-dark">Technician Time-off Requests</h2>
+              <p class="text-xs text-text-subtle-light dark:text-text-subtle-dark">Prototype UI only</p>
+            </div>
+            <div class="overflow-hidden rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark">
+              <table class="w-full text-left">
+                <thead class="bg-background-light dark:bg-background-dark">
+                  <tr>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-text-secondary-dark">Technician</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark">Time-off Period</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark">Reason</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark">Status</th>
+                    <th class="px-4 py-3 text-sm font-semibold text-[#1b0d12] dark:text-textsecondary-dark text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+                    <td class="px-4 py-3 text-sm text-text-primary-light dark:text-text-primary-dark">Olivia Chen</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Jan 12, 2025 - Jan 14, 2025</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Personal leave</td>
+                    <td class="px-4 py-3 text-sm">
+                      <span class="timeoff-status inline-flex items-center rounded-full bg-pending/10 px-3 py-1 text-xs font-medium text-pending" data-status="pending">Pending</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right">
+                      <div class="flex justify-end gap-2">
+                        <button type="button" class="timeoff-approve-btn inline-flex items-center rounded-lg bg-success/90 hover:bg-success px-3 py-1 text-xs font-semibold text-white">Approve</button>
+                        <button type="button" class="timeoff-reject-btn inline-flex items-center rounded-lg bg-red-500/90 hover:bg-red-500 px-3 py-1 text-xs font-semibold text-white">Reject</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+                    <td class="px-4 py-3 text-sm text-text-primary-light dark:text-text-primary-dark">Ben Carter</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Jan 20, 2025 - Jan 21, 2025</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Annual health checkup</td>
+                    <td class="px-4 py-3 text-sm">
+                      <span class="timeoff-status inline-flex items-center rounded-full bg-pending/10 px-3 py-1 text-xs font-medium text-pending" data-status="pending">Pending</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right">
+                      <div class="flex justify-end gap-2">
+                        <button type="button" class="timeoff-approve-btn inline-flex items-center rounded-lg bg-success/90 hover:bg-success px-3 py-1 text-xs font-semibold text-white">Approve</button>
+                        <button type="button" class="timeoff-reject-btn inline-flex items-center rounded-lg bg-red-500/90 hover:bg-red-500 px-3 py-1 text-xs font-semibold text-white">Reject</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr class="border-t border-border-light dark:border-border-dark hover:bg-primary/5">
+                    <td class="px-4 py-3 text-sm text-text-primary-light dark:text-text-primary-dark">Sophia Rodriguez</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Feb 05, 2025 - Feb 07, 2025</td>
+                    <td class="px-4 py-3 text-sm text-text-secondary-light dark:text-textsecondary-dark">Family trip</td>
+                    <td class="px-4 py-3 text-sm">
+                      <span class="timeoff-status inline-flex items-center rounded-full bg-pending/10 px-3 py-1 text-xs font-medium text-pending" data-status="pending">Pending</span>
+                    </td>
+                    <td class="px-4 py-3 text-sm text-right">
+                      <div class="flex justify-end gap-2">
+                        <button type="button" class="timeoff-approve-btn inline-flex items-center rounded-lg bg-success/90 hover:bg-success px-3 py-1 text-xs font-semibold text-white">Approve</button>
+                        <button type="button" class="timeoff-reject-btn inline-flex items-center rounded-lg bg-red-500/90 hover:bg-red-500 px-3 py-1 text-xs font-semibold text-white">Reject</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<!-- Add / Edit Technician Modal -->
+<div id="technicianModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+  <div class="w-full max-w-2xl rounded-xl bg-white dark:bg-background-dark p-6 shadow-2xl">
+    <div class="flex items-center justify-between pb-4 border-b border-border-light dark:border-border-dark">
+      <h3 id="technicianModalTitle" class="text-lg font-bold text-text-light dark:text-text-dark">Add New Technician</h3>
+      <button id="closeTechnicianModal" class="text-gray-500 hover:text-primary transition-colors">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+    <form id="technicianForm" class="mt-6 space-y-6">
+      <div class="grid grid-cols-1 gap-4 ">
+        <div>
+          <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="technician-name">Full Name</label>
+          <input id="technician-name" name="name" type="text" required class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary" placeholder="e.g., Olivia Chen"/>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="technician-email">Email (Account)</label>
+          <input id="technician-email" name="email" type="email" required class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary" placeholder="e.g., olivia.c@serenespa.com"/>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="technician-password">Password</label>
+          <input id="technician-password" name="password" type="password" required class="block w-full rounded-lg border border-border-light dark:border-border-dark bg-white dark:bg-background-dark px-3 py-2 text-sm focus:border-primary focus:ring-primary" placeholder="Temporary password for new account"/>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark mb-1" for="technician-specialization">Specializations</label>
+          <div id="technician-specialization" class="grid grid-cols-2 gap-2">
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Massage" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Massage</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Facials" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Facials</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Aromatherapy" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Aromatherapy</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Manicure" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Manicure</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Pedicure" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Pedicure</span>
+            </label>
+            <label class="flex items-center gap-2">
+              <input type="checkbox" name="specialization" value="Waxing" class="rounded border-border-light dark:border-border-dark text-primary focus:ring-primary">
+              <span class="text-sm text-text-secondary-light dark:text-textsecondary-dark">Waxing</span>
+            </label>
+          </div>
+          <p class="mt-1 text-xs text-text-subtle-light dark:text-text-subtle-dark">Select one or more specializations.</p>
+        </div>
+
+      </div>
+
+      <div class="flex justify-end gap-4 pt-4 border-t border-border-light dark:border-border-dark">
+        <button id="cancelTechnicianModal" type="button" class="flex min-w-[84px] items-center justify-center rounded-lg border border-border-light dark:border-border-dark bg-transparent px-4 py-2 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:bg-background-light/80 dark:hover:bg-background-dark/60 transition-colors">Cancel</button>
+        <button type="submit" class="flex min-w-[84px] items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-bold text-white hover:bg-primary/90 transition-colors">
+          <span class="material-symbols-outlined mr-1 text-sm">save</span>
+          <span>Save Technician</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const modal = document.getElementById('technicianModal');
+    const form = document.getElementById('technicianForm');
+    const titleEl = document.getElementById('technicianModalTitle');
+    const openBtn = document.getElementById('openTechnicianModal');
+    const closeBtn = document.getElementById('closeTechnicianModal');
+    const cancelBtn = document.getElementById('cancelTechnicianModal');
+    const saveBtn = form.querySelector('button[type="submit"]');
+    const tbody = document.querySelector('table tbody');
+
+    let currentEditingRow = null; // null = add mode, otherwise edit mode
+
+    function openModal(mode, data, rowEl) {
+      currentEditingRow = rowEl || null;
+
+      // Reset form and checkboxes
+      form.reset();
+      document.querySelectorAll('input[name="specialization"]').forEach(cb => {
+        cb.checked = false;
+      });
+
+      if (mode === 'edit' && data) {
+        titleEl.textContent = 'Edit Technician';
+        saveBtn.querySelector('span:last-child').textContent = 'Save Changes';
+
+        document.getElementById('technician-name').value = data.name || '';
+        document.getElementById('technician-email').value = data.email || '';
+        // For UI prototype: allow changing phone even though there's no input yet
+        // document.getElementById('technician-phone').value = data.phone || '';
+        document.getElementById('technician-password').value = '';
+
+        const specializations = Array.isArray(data.specializations)
+          ? data.specializations
+          : [];
+
+        document.querySelectorAll('input[name="specialization"]').forEach(cb => {
+          cb.checked = specializations.includes(cb.value);
+        });
+      } else {
+        titleEl.textContent = 'Add New Technician';
+        saveBtn.querySelector('span:last-child').textContent = 'Save Technician';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeModal() {
+      modal.classList.add('hidden');
+      currentEditingRow = null;
+    }
+
+    // Open in Add mode
+    openBtn.addEventListener('click', () => {
+      openModal('add');
+    });
+
+    // Wire up static edit buttons (existing rows)
+    document.querySelectorAll('.edit-technician-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const button = e.currentTarget;
+        const row = button.closest('tr');
+        const data = {
+          name: button.getAttribute('data-name'),
+          email: button.getAttribute('data-email'),
+          phone: button.getAttribute('data-phone'),
+          specializations: JSON.parse(button.getAttribute('data-specializations') || '[]')
+        };
+        openModal('edit', data, row);
+      });
+    });
+
+    // Close handlers
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+
+    // Submit handler: add or update row in table
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('technician-name').value.trim();
+      const email = document.getElementById('technician-email').value.trim();
+      const phone = ''; // no phone input in the form yet
+      const specializations = Array.from(document.querySelectorAll('input[name="specialization"]:checked')).map(cb => cb.value);
+
+      if (!name || !email) {
+        return; // simple guard
+      }
+
+      const specBadgesHtml = specializations.map(spec => `
+        <span class="inline-flex items-center rounded-full bg-accent/20 px-3 py-1 text-xs font-medium text-accent dark:text-accent">${spec}</span>
+      `).join('');
+
+      if (currentEditingRow) {
+        // Update existing row
+        const nameSpan = currentEditingRow.querySelector('td:nth-child(1) span.text-sm.font-bold');
+        const emailTd = currentEditingRow.querySelector('td:nth-child(2)');
+        const phoneTd = currentEditingRow.querySelector('td:nth-child(3)');
+        const specContainer = currentEditingRow.querySelector('td:nth-child(4) .flex.flex-wrap');
+        const editBtn = currentEditingRow.querySelector('.edit-technician-btn');
+
+        if (nameSpan) nameSpan.textContent = name;
+        if (emailTd) emailTd.textContent = email;
+        if (phoneTd) phoneTd.textContent = phone || phoneTd.textContent;
+        if (specContainer) specContainer.innerHTML = specBadgesHtml;
+
+        if (editBtn) {
+          editBtn.setAttribute('data-name', name);
+          editBtn.setAttribute('data-email', email);
+          editBtn.setAttribute('data-phone', phone || phoneTd.textContent);
+          editBtn.setAttribute('data-specializations', JSON.stringify(specializations));
+        }
+      } else {
+        // Create a new row (simple prototype row without avatar)
+        const tr = document.createElement('tr');
+        tr.className = 'border-t border-border-light dark:border-border-dark hover:bg-primary/5';
+        tr.innerHTML = `
+          <td class="h-[72px] px-4 py-2 text-sm font-bold text-text-primary-light dark:text-text-primary-dark">
+            <div class="flex items-center gap-3">
+              <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" data-alt="Technician avatar" style="background-image: url('https://via.placeholder.com/80');"></div>
+              <span class="text-sm font-bold text-text-primary-light dark:text-text-primary-dark">${name}</span>
+            </div>
+          </td>
+          <td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-text-primary-dark">${email}</td>
+          <td class="h-[72px] px-4 py-2 text-sm text-text-secondary-light dark:text-text-primary-dark">${phone || '(N/A)'}</td>
+          <td class="h-[72px] px-4 py-2 align-middle">
+            <div class="flex flex-wrap gap-2">
+              ${specBadgesHtml}
+            </div>
+          </td>
+          <td class="h-[72px] px-4 py-2 align-middle text-right">
+            <div class="flex items-center justify-end gap-2">
+              <button class="edit-technician-btn flex items-center justify-center size-8 rounded-lg text-primary hover:bg-primary/10 hover:text-primary transition-colors">
+                <span class="material-symbols-outlined text-lg">edit</span>
+              </button>
+              <button class="flex items-center justify-center size-8 rounded-lg text-red-500 hover:bg-red-100 dark:hover:bg-red-900/50 hover:text-red-600 dark:hover:text-red-500 transition-colors">
+                <span class="material-symbols-outlined text-lg">delete</span>
+              </button>
+            </div>
+          </td>
+        `;
+
+        const newEditBtn = tr.querySelector('.edit-technician-btn');
+        newEditBtn.setAttribute('data-name', name);
+        newEditBtn.setAttribute('data-email', email);
+        newEditBtn.setAttribute('data-phone', phone || '(N/A)');
+        newEditBtn.setAttribute('data-specializations', JSON.stringify(specializations));
+
+        newEditBtn.addEventListener('click', (evt) => {
+          const button = evt.currentTarget;
+          const row = button.closest('tr');
+          const data = {
+            name: button.getAttribute('data-name'),
+            email: button.getAttribute('data-email'),
+            phone: button.getAttribute('data-phone'),
+            specializations: JSON.parse(button.getAttribute('data-specializations') || '[]')
+          };
+          openModal('edit', data, row);
+        });
+
+        tbody.appendChild(tr);
+      }
+
+      closeModal();
+    });
+  })();
+</script>
+
+<script>
+  (function () {
+    // Tabs + time-off status handling
+    (function () {
+      const tabs = document.querySelectorAll('.tech-tab');
+      const panels = {
+        profiles: document.getElementById('panel-profiles'),
+        timeoff: document.getElementById('panel-timeoff')
+      };
+
+      function activateTab(key) {
+        tabs.forEach(btn => {
+          const isActive = btn.getAttribute('data-tab') === key;
+          btn.classList.toggle('border-b-2', isActive);
+          btn.classList.toggle('border-primary', isActive);
+          btn.classList.toggle('text-primary', isActive);
+          btn.classList.toggle('dark:text-primary', isActive);
+          btn.classList.toggle('font-semibold', isActive);
+        });
+
+        Object.keys(panels).forEach(k => {
+          if (!panels[k]) return;
+          panels[k].classList.toggle('hidden', k !== key);
+        });
+      }
+
+      tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const key = btn.getAttribute('data-tab');
+          if (!key) return;
+          activateTab(key);
+        });
+      });
+
+      // Initialise default tab
+      activateTab('profiles');
+
+      // Time-off actions (English labels)
+      document.querySelectorAll('.timeoff-approve-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = btn.closest('tr');
+          const statusEl = row && row.querySelector('.timeoff-status');
+          if (!statusEl) return;
+          statusEl.textContent = 'Approved';
+          statusEl.dataset.status = 'approved';
+          statusEl.className = 'timeoff-status inline-flex items-center rounded-full bg-success/10 px-3 py-1 text-xs font-medium text-success';
+        });
+      });
+
+      document.querySelectorAll('.timeoff-reject-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const row = btn.closest('tr');
+          const statusEl = row && row.querySelector('.timeoff-status');
+          if (!statusEl) return;
+          statusEl.textContent = 'Rejected';
+          statusEl.dataset.status = 'rejected';
+          statusEl.className = 'timeoff-status inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/40 px-3 py-1 text-xs font-medium text-red-600 dark:text-red-300';
+        });
+      });
+    })();
+  })();
+</script>
+</body>
+</html>

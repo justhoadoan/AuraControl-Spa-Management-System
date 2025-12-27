@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>blyss - In-Home Spa &amp; Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#C37C90",
+              "background-light": "#FFF7F9",
+              "background-dark": "#1A1A1A",
+              "surface-light": "#FFFFFF",
+              "surface-dark": "#2C2C2C",
+              "text-light": "#1F2937",
+              "text-dark": "#E5E7EB",
+              "subtle-light": "#6B7280",
+              "subtle-dark": "#9CA3AF"
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.5rem",
+            },
+          },
+        },
+      };
+    </script>
+<style>
+        .group:hover .group-hover-visible {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark antialiased">
+<div class="relative" id="root">
+<header class="sticky top-0 z-50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md shadow-sm">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a class="text-2xl font-bold text-primary" href="#">blyss</a>
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Home</a>
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors" href="#">Services</a>
+</div>
+<div class="flex items-center space-x-4">
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium" href="#">Log in</a>
+<a class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity" href="#">Register</a>
+</div>
+</nav>
+</header>
+<main>
+<section class="relative h-[70vh] min-h-[500px] flex items-center justify-center text-center text-white">
+<div class="absolute inset-0 bg-black/50 z-10"></div>
+<img alt="Two women in bathrobes enjoying a spa day at home" class="absolute inset-0 w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeivOZfCj3cudFyXJIzzfW3FraaNciIq-jkqKRYP5wsvOgYkhXS4iyLmRS_-MGnFCzJl64kKVCuu_gWcZxfy8NP07YK600vQvlXMWFeP0H2TfXD9dn-hXdcoukDBrRMM34XqH7DBXjW5vLYvuDa0-naJZ7x3pXoo0P49CLMi7hB0ckDlVlS-_ojWfrNaM9nSuEUKbV3dDeuOzV-1j7cEagaKUKANPytYGMYWXoa07UjJrRiKGs3viwtxbnoRZVlP0bXYyuhPze1NdA"/>
+<div class="relative z-20 px-6 max-w-3xl">
+<h1 class="text-4xl md:text-6xl font-bold leading-tight mb-4">Wellness That Comes to You</h1>
+<p class="text-lg md:text-xl mb-8 text-gray-200">Book professional massage &amp; beauty therapists in your home, hotel, or office.</p>
+<div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+<a class="w-full sm:w-auto bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity" href="#">Book Now</a>
+<a class="w-full sm:w-auto bg-white/20 backdrop-blur-sm text-white px-8 py-3 rounded-lg font-semibold border border-white/30 hover:bg-white/30 transition-colors" href="#">Explore Services</a>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-6 text-center max-w-3xl">
+<h2 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark mb-4">Self-Care, Simplified.</h2>
+<p class="text-lg text-subtle-light dark:text-subtle-dark">
+                    We believe wellness should be effortless. That's why we bring certified, vetted professionals directly to your door. Enjoy a five-star spa experience without leaving the comfort of your home. Relax, rejuvenate, and find your bliss on your own schedule.
+                </p>
+</div>
+</section>
+<section class="py-16 sm:py-24 bg-surface-light dark:bg-surface-dark">
+<div class="container mx-auto px-6">
+<h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-text-light dark:text-text-dark">Featured Services</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
+<img alt="Woman receiving a relaxing shoulder massage" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUjGhyee05EGcCmXK9rY_1_Hcq7ifb6dRa5kpFC5Xl5LJw0TyPSFWmxPf5tyzADgnVTT-eLDoEQWENqinPRpeWkRa4clNTV3VPtSzzRkCyFw20zf4Q4ufZ-Enomfjl2jUExDS9QB2DFDaL9pnaPtzZWCr3szeyHmn0063UPOuU6QSRq6sjJSXVzE1CP0Kbx6JWpJiBqgwGHFqPsO-sDGn3vS7mygCZGRdNXQRiAcjsIxAl8mdIfVfvfTnYiaYUr1z57A7KXwNDX07H"/>
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Swedish Massage</h3>
+<p class="text-subtle-light dark:text-subtle-dark mb-4 text-sm">A gentle, full-body massage perfect for relaxation and stress relief.</p>
+<a class="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity" href="#">Learn More</a>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
+<img alt="Close up of a woman receiving a facial treatment" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDYBtDlxuvgsjuRc1LGHvJSSXPOQuo4gBojaN_Yd7VsuUjirNPAAwnj5aNhdMfaFE4f7ig_sz3Vnj855JldqIjNTjHMHXTDMHJBgI7SDeCjiU8cOd30RRxmJFDpI2oMDoFxbeauTDs9JRw6O-Lpzb4DQ5M9Us8Tk1l8L8t_nvRQukECwg425TUxGX4eLSku1GJ2W4lbSeonzVxdPuCDgnwh9m8nsnwB9cO0inHfKbJWW0_4B-MTrfoQ8WjaX1a12_-NQp1NDcmIi0gm"/>
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Hydrating Facial</h3>
+<p class="text-subtle-light dark:text-subtle-dark mb-4 text-sm">Deeply cleanse, exfoliate, and nourish your skin for a radiant glow.</p>
+<a class="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity" href="#">Learn More</a>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
+<img alt="Manicurist carefully painting a client's nails" class="w-full h-56 object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBsxGiL6L-EpfkA2UdUxoPKmvJ7lJcmbLNr6slWNTXa2XnaeQTkOSizyVfXvDQbWPEXCvMhYnbNSZbPQyCv50LLhxEktL459ibo_3QkTj1ev7epIthTd-M9FTil4lz1P24YUMMPc1yTgvhRSXtWOcXwY2tvWVWnGakFxR5bvrtN9zXnaskiAd2KDb05v8PExiRZlZWeuoWR48NPZXst_DiQfe3AtPVwE0YbT3oQaV22_lM3ML0UPyvVETTpBi5HPIoV_yh_ou3ul03"/>
+<div class="p-6">
+<h3 class="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Luxury Manicure</h3>
+<p class="text-subtle-light dark:text-subtle-dark mb-4 text-sm">Indulge in a premium nail treatment, including shaping, cuticle care, and polish.</p>
+<a class="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity" href="#">Learn More</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-16 sm:py-24">
+<div class="container mx-auto px-6">
+<h2 class="text-3xl sm:text-4xl font-bold text-center mb-12 text-text-light dark:text-text-dark">What Our Clients Say</h2>
+<div class="relative max-w-3xl mx-auto">
+<div class="bg-surface-light dark:bg-surface-dark p-8 rounded-lg shadow-lg text-center">
+<img alt="Happy customer" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary/50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRbvejauTqETRMi_zUEWh7nNYBQkma9E-ac1ARRthV-T5WaS9ns_i6KmjGKIg5IzSlDDUEdsRwmSVGrOPixuRGrcIc4vRkou3oj4_P9FM6EzelgcFvdBYfLlVEG9qLbWhAihbPdS28EaIcmrIF0sPI8JevXiLCl6A_EyMI6urKMSjLdAsCPEjmmzE7TIFl43vj-7yqlJBACMzhhHQsIOwvS4ksWIbD-ztwRO4CKG8Y88spbGDiumLFhZOaUaMb_DvHmjIlmcuuzz8n"/>
+<p class="text-lg italic text-subtle-light dark:text-subtle-dark mb-4">"The most relaxing massage I've ever had, and I didn't even have to leave my house! The therapist was professional and created a wonderfully serene atmosphere. I'll definitely be booking again."</p>
+<p class="font-semibold text-text-light dark:text-text-dark">- Jessica L.</p>
+</div>
+<button class="absolute top-1/2 -translate-y-1/2 -left-4 sm:-left-12 p-2 bg-surface-light dark:bg-surface-dark rounded-full shadow-md hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+<span class="material-icons-outlined text-subtle-light dark:text-subtle-dark">chevron_left</span>
+</button>
+<button class="absolute top-1/2 -translate-y-1/2 -right-4 sm:-right-12 p-2 bg-surface-light dark:bg-surface-dark rounded-full shadow-md hover:bg-background-light dark:hover:bg-background-dark transition-colors">
+<span class="material-icons-outlined text-subtle-light dark:text-subtle-dark">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-surface-light dark:bg-surface-dark border-t border-gray-200 dark:border-gray-700">
+<div class="container mx-auto px-6 py-12">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
+<div>
+<a class="inline-block text-2xl font-bold text-primary mb-4" href="#">blyss</a>
+<p class="text-sm text-subtle-light dark:text-subtle-dark max-w-xs mx-auto md:mx-0">Bringing the best in-home massage, beauty, and wellness services to you.</p>
+</div>
+<div>
+<h4 class="font-semibold text-text-light dark:text-text-dark mb-4">Contact Us</h4>
+<ul class="space-y-2 text-sm text-subtle-light dark:text-subtle-dark">
+<li><a class="hover:text-primary transition-colors" href="mailto:hello@blyss.com">hello@blyss.com</a></li>
+<li><a class="hover:text-primary transition-colors" href="tel:1800123456">1-800-123-456</a></li>
+<li>Help Center</li>
+</ul>
+</div>
+<div>
+<h4 class="font-semibold text-text-light dark:text-text-dark mb-4">Follow Us</h4>
+<div class="flex justify-center md:justify-start space-x-4">
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" fill-rule="evenodd"></path></svg>
+</a>
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.71v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" href="#">
+<svg aria-hidden="true" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.024.06 1.378.06 3.808s-.012 2.784-.06 3.808c-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.024.048-1.378.06-3.808.06s-2.784-.012-3.808-.06c-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.048-1.024-.06-1.378-.06-3.808s.012-2.784.06-3.808c.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 016.345 4.22c.636-.247 1.363-.416 2.427-.465C9.793 3.716 10.147 3.7 12.573 3.7h.002zm-.717 1.442c-2.401 0-2.678.01-3.633.058-1.1.05-1.631.25-2.146.465a3.37 3.37 0 00-1.206.862 3.37 3.37 0 00-.861 1.206c-.215.515-.415 1.046-.465 2.146-.047.955-.058 1.232-.058 3.633s.011 2.678.058 3.633c.05 1.1.25 1.631.465 2.146.215.515.465.955.861 1.206a3.37 3.37 0 001.206.862c.515.215 1.046.415 2.146.465.955.047 1.232.058 3.633.058s2.678-.011 3.633-.058c1.1-.05 1.631-.25 2.146-.465.515-.215.955-.465 1.206-.862a3.37 3.37 0 00.862-1.206c.215-.515.415-1.046.465-2.146.047-.955.058-1.232.058-3.633s-.011-2.678-.058-3.633c-.05-1.1-.25-1.631-.465-2.146a3.374 3.374 0 00-.862-1.206 3.374 3.374 0 00-1.206-.862c-.515-.215-1.046-.415-2.146-.465-.955-.047-1.232-.058-3.633-.058zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM12 14a2 2 0 110-4 2 2 0 010 4zm6.406-7.18a.938.938 0 100-1.875.938.938 0 000 1.875z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700 text-center text-sm text-subtle-light dark:text-subtle-dark">
+                © 2024 blyss. All Rights Reserved.
+            </div>
+</div>
+</footer>
+</div>
+
+</body></html>

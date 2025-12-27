@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking: Date &amp; Time</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Poppins:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#C37C90",
+            "background-light": "#FFF7FA",
+            "background-dark": "#251D20",
+          },
+          fontFamily: {
+            display: ["Playfair Display", "serif"],
+            sans: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.5rem",
+          },
+        },
+      },
+    };
+  </script>
+<style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-sans text-gray-800 dark:text-gray-300 antialiased">
+<div class="min-h-screen flex flex-col relative overflow-x-hidden">
+<img alt="Pink leaf motif" class="absolute top-20 right-0 transform translate-x-1/4 -translate-y-1/4 w-64 h-auto opacity-30 dark:opacity-20 z-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSxrSmdR0kuz6wLPIvk2-TGRd9PrpCEti2ItcujehDtQNHH-4NpOyfmuq3cScjy9JZAYUPK0Sdjm7UcRJGZbQ1T_RuH-u1sOes87fChV8ZhMzItBppy60KWSE5Qyh1D2U562JC0f342dlUdne82ziJAFbDJx7RsevvWyjhaZuymILpPNx3blYv4SmrGxjPjzL_a3Mz0jeg6N_Jp8GPbm1_V5zqqlW5kLXKovKe9W0QtKqfLSjij3oC6Oud2G-g38JbANBC9cTFusoU"/>
+<img alt="Grey leaf motif" class="absolute bottom-0 left-0 transform -translate-x-1/4 translate-y-1/4 w-48 h-auto opacity-30 dark:opacity-20 z-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC7a9uLP43gVvYV1MNTkSUkwYs_xale1V9vQ749LqkISSxo47YOvS4JoGVVB2b4I0kBpFttH20072Ul42OgYXsPXGq_9P7-xFxB9TPPWtUD6DqKjOR64Pb50NG-JFZx0OorCLIbEzds8NTRnLV_QxbEp5My8NGH2dEIMTnkNqjEUEdLHLCdSsTtqTCflM7CUbo9iqSEnfq0HaKg7rpOKuaxLEOBw5qawaNq-qnHPj_fip6t-JobtYwPmYLeo4cYI4fCfZUaSEpgX87a"/>
+<header class="bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-40">
+<nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+<a class="text-3xl font-bold font-display text-primary" href="#">blys</a>
+<div class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-700 dark:text-gray-300">
+<a class="hover:text-primary transition-colors" href="#">In-Home</a>
+<a class="hover:text-primary transition-colors" href="#">Features</a>
+<a class="hover:text-primary transition-colors" href="#">Pricing &amp; Plans</a>
+<a class="hover:text-primary transition-colors" href="#">Locations</a>
+<a class="hover:text-primary transition-colors" href="#">Help &amp; Supports</a>
+</div>
+<div class="flex items-center space-x-3">
+<button class="px-5 py-2 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">LOGIN</button>
+<button class="px-5 py-2 text-sm font-semibold text-white bg-primary rounded-lg hover:opacity-90 transition-opacity">SIGN UP</button>
+</div>
+</nav>
+</header>
+<main class="flex-grow container mx-auto px-6 py-12 md:py-20 z-10">
+<div class="flex flex-col lg:flex-row gap-8 lg:gap-16">
+<div class="w-full lg:w-2/3">
+<h1 class="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white mb-2">Select a date &amp; time</h1>
+<p class="text-gray-600 dark:text-gray-400 mb-8">Select from the available time slots below.</p>
+<div class="bg-white dark:bg-gray-800/50 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+<div class="flex items-center justify-between mb-6">
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+<span class="material-icons-outlined text-gray-600 dark:text-gray-400">chevron_left</span>
+</button>
+<h2 class="text-xl font-semibold text-gray-900 dark:text-white">June 2024</h2>
+<button class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+<span class="material-icons-outlined text-gray-600 dark:text-gray-400">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center text-sm">
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Sun</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Mon</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Tue</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Wed</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Thu</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Fri</div>
+<div class="font-medium text-gray-500 dark:text-gray-400 py-2">Sat</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">26</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">27</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">28</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">29</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">30</div>
+<div class="text-gray-400 dark:text-gray-600 py-2">31</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">1</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">2</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">3</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">4</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">5</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">6</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">7</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">8</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">9</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">10</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">11</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">12</div>
+<div class="py-2 cursor-pointer rounded-full bg-primary text-white">13</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">14</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">15</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">16</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">17</div>
+<div class="py-2 cursor-pointer rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">18</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">19</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">20</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">21</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">22</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">23</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">24</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">25</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">26</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">27</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">28</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">29</div>
+<div class="py-2 text-gray-400 dark:text-gray-600">30</div>
+</div>
+</div>
+<div class="mt-8">
+<h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">Available Times</h3>
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500">09:00 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">09:30 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">10:00 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-primary bg-primary text-white rounded-lg text-center transition-colors">10:30 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">11:00 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">11:30 AM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center cursor-not-allowed bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500">12:00 PM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">12:30 PM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">01:00 PM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">01:30 PM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">02:00 PM</button>
+<button class="px-4 py-3 text-sm font-semibold border border-gray-300 dark:border-gray-600 rounded-lg text-center hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">02:30 PM</button>
+</div>
+</div>
+</div>
+<aside class="w-full lg:w-1/3 lg:sticky lg:top-24 h-fit">
+<div class="bg-white dark:bg-gray-800/50 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+<h2 class="text-2xl font-display font-bold text-gray-900 dark:text-white mb-6">Booking Summary</h2>
+<div class="space-y-4">
+<div class="flex justify-between items-center">
+<span class="text-gray-600 dark:text-gray-400">Service</span>
+<span class="font-semibold text-gray-800 dark:text-gray-200">Swedish Massage</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-600 dark:text-gray-400">Duration</span>
+<span class="font-semibold text-gray-800 dark:text-gray-200">60 minutes</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-600 dark:text-gray-400">Date</span>
+<span class="font-semibold text-gray-800 dark:text-gray-200">June 13, 2024</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-gray-600 dark:text-gray-400">Time</span>
+<span class="font-semibold text-gray-800 dark:text-gray-200">10:30 AM</span>
+</div>
+</div>
+<hr class="my-6 border-gray-200 dark:border-gray-700"/>
+<div class="flex justify-between items-center text-lg">
+<span class="font-semibold text-gray-700 dark:text-gray-300">Total Price</span>
+<span class="font-bold text-2xl text-gray-900 dark:text-white">$120</span>
+</div>
+<button class="w-full mt-8 bg-primary text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+              Continue to Details
+            </button>
+<p class="text-xs text-center mt-4 text-gray-500 dark:text-gray-400">You won't be charged until your booking is confirmed.</p>
+</div>
+</aside>
+</div>
+</main>
+<footer class="bg-white dark:bg-gray-900/50 mt-auto">
+<div class="container mx-auto px-6 py-8">
+<div class="flex flex-col md:flex-row justify-between items-center">
+<div class="text-sm text-gray-600 dark:text-gray-400">© 2024 Blys. All rights reserved.</div>
+<div class="flex space-x-6 mt-4 md:mt-0">
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors" href="#">Contact</a>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

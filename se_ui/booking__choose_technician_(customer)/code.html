@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Booking: Choose Technician</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#D94682", // From the reference images (pink)
+              "background-light": "#FFF7F9", // A very light pink/white
+              "background-dark": "#1A1A1A", // A very dark gray
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem", // 12px
+            },
+          },
+        },
+      };
+    </script>
+<style>
+      .group:has(input:checked) {
+        border-color: #D94682;
+        background-color: #FEF2F6;}
+      .dark .group:has(input:checked) {
+        border-color: #D94682;
+        background-color: #2e2126;}
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-700 dark:text-gray-300">
+<div class="flex flex-col min-h-screen">
+<header class="w-full bg-background-light dark:bg-background-dark/80 backdrop-blur-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<a class="text-3xl font-bold text-primary" href="#">blys</a>
+<nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-gray-600 dark:text-gray-300">
+<a class="hover:text-primary transition-colors" href="#">In-Home</a>
+<a class="hover:text-primary transition-colors" href="#">Features</a>
+<a class="hover:text-primary transition-colors" href="#">Pricing &amp; Plans</a>
+<a class="hover:text-primary transition-colors" href="#">Locations</a>
+<a class="hover:text-primary transition-colors" href="#">Help &amp; Supports</a>
+</nav>
+<div class="flex items-center space-x-4">
+<a class="px-5 py-2 text-sm font-medium border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" href="#">LOGIN</a>
+<a class="px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg hover:opacity-90 transition-opacity" href="#">SIGN UP</a>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-12">
+<aside class="lg:col-span-1">
+<div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+<h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-6">Your Booking</h2>
+<div class="space-y-4 text-gray-600 dark:text-gray-400">
+<div class="flex justify-between items-center">
+<span class="font-medium">Service</span>
+<span>Swedish Massage</span>
+</div>
+<hr class="border-gray-200 dark:border-gray-700"/>
+<div class="flex justify-between items-center">
+<span class="font-medium">Date</span>
+<span>Tue, 28 Oct 2024</span>
+</div>
+<hr class="border-gray-200 dark:border-gray-700"/>
+<div class="flex justify-between items-center">
+<span class="font-medium">Time</span>
+<span>10:00 AM</span>
+</div>
+<hr class="border-gray-200 dark:border-gray-700"/>
+<div class="flex justify-between items-center">
+<span class="font-medium">Duration</span>
+<span>60 minutes</span>
+</div>
+<hr class="border-gray-200 dark:border-gray-700"/>
+<div class="flex justify-between items-center text-lg font-semibold text-gray-900 dark:text-white">
+<span>Total</span>
+<span>$119</span>
+</div>
+</div>
+</div>
+</aside>
+<section class="lg:col-span-2">
+<div class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+<h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Choose your technician</h1>
+<p class="text-gray-500 dark:text-gray-400 mb-8">This step is optional. You can skip to confirm your booking.</p>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+<label class="group relative cursor-pointer">
+<input class="sr-only" name="technician" type="radio" value="emily"/>
+<div class="flex flex-col items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200">
+<img alt="Avatar of Emily Carter" class="w-20 h-20 rounded-full object-cover mb-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-EgPhJWvKZwSVyZf9UJoK8MW5b8xPICffWLHaSMx0uMQJGzf6oK42gY3MOclx1_pkseYAg7IgkwTdf2w2pzwGJo0FXaqEzY9O9NISMgAuOkzA2iqHRzRSsA4gouHlo7GCKEWIWY2AaSs1skudd0Nsck4CgOROim_pIjy517Bem0B7LqaUYAKN_SsqT0QQX6W8e6hOGdCa0UO9rdhmvgo9KcbFfi6IavCnKMCNn4kXP_Pj6cZfUgu3nFODKyKtOqa9sG2IOjSqoHZ6"/>
+<span class="font-semibold text-gray-800 dark:text-gray-200">Emily C.</span>
+</div>
+<span class="material-icons-outlined absolute top-2 right-2 text-primary opacity-0 group-has-[input:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+<label class="group relative cursor-pointer">
+<input class="sr-only" name="technician" type="radio" value="sophia"/>
+<div class="flex flex-col items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200">
+<img alt="Avatar of Sophia Lee" class="w-20 h-20 rounded-full object-cover mb-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6oIOTMgPuZREvZZU0cZ_g66kd0zxfxSj0BrI-6vu9jr5VNUEtMgUemc3Mu6hNym0A60dWwQbYT7vz-oMkK4xdi5BVhly8hMIoSpKOikXP1Iz_truxpzEvbN28RWJKtKq8Y9lerPdeCefbWqdrjyaeQAwou9847I6HllmH8myMj9xZyDhNaL-zTLgDEdCcCmCbIO0ZxJkIoEKLoI8SWWLwBFyA2s2WzweGYrYVKejzrL0tGuYb25ym2aKca7dg1KWq5Kpyy-3VedYw"/>
+<span class="font-semibold text-gray-800 dark:text-gray-200">Sophia L.</span>
+</div>
+<span class="material-icons-outlined absolute top-2 right-2 text-primary opacity-0 group-has-[input:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+<label class="group relative cursor-pointer">
+<input class="sr-only" name="technician" type="radio" value="ava"/>
+<div class="flex flex-col items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200">
+<img alt="Avatar of Ava Chen" class="w-20 h-20 rounded-full object-cover mb-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvZZsgqLtAF41kNwei4UUoxJP6GHjPIobfzVgd87w9S6Kki9C3Bop4eJEpe15aJpHzviP5fZHmiftZ472A48ESgDHebMs4hBFjpboEf234AXQTFdHT0lxGnbnAPWiegpQO0XsSoXP38_Gug6lUb7PkTVieADhGSJ-FMy1_qPd40ttxq9hg1Q17iQWMzEM6vpW6BpE_hMx5F526xrMgbwk2emvSmdpVQToLHp-zOhX5a3_N9NxbrOnZzXITzhQ0B5YgBMi4HjCOpUlD"/>
+<span class="font-semibold text-gray-800 dark:text-gray-200">Ava C.</span>
+</div>
+<span class="material-icons-outlined absolute top-2 right-2 text-primary opacity-0 group-has-[input:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+<label class="group relative cursor-pointer">
+<input class="sr-only" name="technician" type="radio" value="jessica"/>
+<div class="flex flex-col items-center p-4 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 hover:border-primary/50 dark:hover:border-primary/50 transition-all duration-200">
+<img alt="Avatar of Jessica Miller" class="w-20 h-20 rounded-full object-cover mb-3" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA7cyOQcqijs20oxppaKnPgN-ZXqmsPOo3gvpowibN3muAa-jmwJW2gWN_uP6rDRYVVOCBRivAUM2q2TYsxZbgQhtfBImCfYNzXiDWRHAPloEPo-Q7O6LWr1YpDjK9KXmNUyA0HqXL1PBMi-uXMfaTCGqskDmNFMRd1dP-48jT5BjtAGNZxCNq6OPyOS4Ntv944UDY6r5jSZp6RVkUp-ocTYkPFVSsiVeMzYoyJOL7PvwT7k7EIyWhZw-8_XV2Sdj-4uQTKZcyX95PE"/>
+<span class="font-semibold text-gray-800 dark:text-gray-200">Jessica M.</span>
+</div>
+<span class="material-icons-outlined absolute top-2 right-2 text-primary opacity-0 group-has-[input:checked]:opacity-100 transition-opacity">check_circle</span>
+</label>
+</div>
+<div class="mt-10 flex flex-col sm:flex-row items-center gap-4">
+<button class="w-full sm:w-auto px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:opacity-90 transition-opacity flex-1">
+                                Continue to payment
+                            </button>
+<button class="w-full sm:w-auto px-8 py-3 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-semibold rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex-1">
+                                Skip &amp; Book Now
+                            </button>
+</div>
+</div>
+</section>
+</div>
+</main>
+</div>
+
+</body></html>

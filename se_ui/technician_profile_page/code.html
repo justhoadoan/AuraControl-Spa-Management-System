@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Technician Profile Page</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "primary": "#ef3976",
+          "background-light": "#f8f6f6",
+          "background-dark": "#221016",
+          "surface-light": "#ffffff",
+          "surface-dark": "#2a151b",
+          "text-light": "#1b0d12",
+          "text-dark": "#f8f6f6",
+          "subtext-light": "#9a4c66",
+          "subtext-dark": "#a88da0",
+          "border-light": "#e7cfd7",
+          "border-dark": "#4d323d",
+        },
+        fontFamily: {
+          "display": ["Manrope", "sans-serif"]
+        },
+        borderRadius: {
+          "DEFAULT": "0.25rem",
+          "lg": "0.5rem",
+          "xl": "0.75rem",
+          "full": "9999px",
+        },
+      },
+    },
+  }
+</script>
+<style>
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+</style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<div class="flex min-h-screen">
+  <!-- Technician Sidebar -->
+  <aside class="flex h-screen w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark sticky top-0">
+    <div class="flex flex-col gap-4 p-4 h-full">
+      <div class="flex items-center gap-3 px-2">
+        <span class="material-symbols-outlined text-primary text-3xl">spa</span>
+        <div class="flex flex-col">
+          <h1 class="text-base font-bold">Serenity Spa</h1>
+          <p class="text-sm text-subtext-light dark:text-subtext-dark">Technician Portal</p>
+        </div>
+      </div>
+      <nav class="flex flex-col gap-2 mt-4 flex-grow">
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">dashboard</span>
+          <p class="text-sm font-medium">Dashboard</p>
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:text-primary font-semibold transition-colors" href="#">
+          <span class="material-symbols-outlined">person</span>
+          <p class="text-sm font-medium">My Profile</p>
+        </a>
+      </nav>
+      <div class="flex flex-col gap-1">
+        <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">logout</span>
+          <p class="text-sm font-medium">Logout</p>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content: Name + Skills only -->
+  <main class="flex-1 p-8 overflow-y-auto">
+    <div class="max-w-4xl mx-auto">
+      <div class="rounded-xl border border-border-light dark:border-border-dark bg-surface-light dark:bg-card-dark p-6 shadow-sm">
+        <!-- Header: Name -->
+        <div class="flex items-center gap-4 mb-6">
+          <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-16" data-alt="Technician profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCJa8Uej2KjvK3yeq-_FHTmgdb_50OIeiKP0QT6KYNq1UYXIp2hnDA0F7uaKmWgGNJzrzdVi2Xf9LYy1ejlswXYoM1VcgBquOwQQssnbIiHYqL30yXEfW7Q38Mby9hUrwVb0-QHXoQAqZJsbdmseqBLSTAgYWIo2DWdrkh-dERvwpM1Oq-Vt5y3VyPOBXao96LYKyp5Sybk118mC2G7Xc4MtUCjhIj9-q9rDC-AbKa5hZIfTJyvH4zbzeTZHb6AITI_V1IToy33R_E1");'></div>
+          <div class="flex flex-col">
+            <h1 class="text-2xl md:text-3xl font-black leading-tight tracking-[-0.03em] text-text-light dark:text-text-dark">Jane Doe</h1>
+            <p class="text-sm text-subtext-light dark:text-subtext-dark">Senior Spa Technician</p>
+          </div>
+        </div>
+
+        <!-- Skills Section only -->
+        <section class="mt-4">
+          <h2 class="text-text-light dark:text-text-dark text-[20px] font-bold leading-tight tracking-[-0.015em] pb-3">My Specialized Skills</h2>
+          <p class="text-xs text-subtext-light dark:text-subtext-dark pb-4">These skills are assigned by the administrator.</p>
+          <div class="flex flex-wrap gap-3">
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Hot Stone Massage</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Aromatherapy</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Deep Tissue Massage</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Facials</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Manicure &amp; Pedicure</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Swedish Massage</div>
+            <div class="flex items-center justify-center rounded-full bg-primary/10 dark:bg-primary/20 px-4 py-2 text-sm font-medium text-primary dark:text-pink-200">Reflexology</div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+</body></html>

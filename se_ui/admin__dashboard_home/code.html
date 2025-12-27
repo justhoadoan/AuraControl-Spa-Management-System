@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin: Dashboard Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#ef3976",
+              "background-light": "#f8f6f6",
+              "background-dark": "#221016",
+              "surface-light": "#ffffff",
+              "surface-dark": "#2a151b",
+              "text-primary-light": "#1b0d12",
+              "text-primary-dark": "#f8f6f6",
+              "text-secondary-light": "#9a4c66",
+              "text-secondary-dark": "#b88a9a",
+              "border-light": "#e7cfd7",
+              "border-dark": "#4a2a36"
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex h-screen w-64 flex-col border-r border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark sticky top-0">
+  <div class="flex flex-col gap-4 p-4 h-full">
+    <div class="flex items-center gap-3 px-2">
+      <span class="material-symbols-outlined text-primary text-3xl">spa</span>
+      <div class="flex flex-col">
+        <h1 class="text-base font-bold">Serenity Spa</h1>
+        <p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">Admin Panel</p>
+      </div>
+    </div>
+      <nav class="flex flex-col gap-2 mt-4 flex-grow">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary dark:text-primary font-semibold transition-colors" href="#">
+        <span class="material-symbols-outlined">dashboard</span>
+        <p class="text-sm font-medium">Dashboard</p>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">calendar_month</span>
+          <p class="text-sm font-medium">Appointments</p>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined fill">group</span>
+          <p class="text-sm font-medium">Customers</p>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">spa</span>
+          <p class="text-sm font-medium">Services</p>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">badge</span>
+          <p class="text-sm font-medium">Technicians</p>
+      </a>
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+          <span class="material-symbols-outlined">bed</span>
+          <p class="text-sm font-medium">Resources</p>
+      </a>
+      </nav>
+    <div class="flex flex-col gap-1">
+      <a class="flex items-center gap-3 px-3 py-2 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-primary/20 hover:text-primary dark:hover:text-primary transition-colors" href="#">
+        <span class="material-symbols-outlined">logout</span>
+        <p class="text-sm font-medium">Logout</p>
+      </a>
+    </div>
+  </div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 p-8">
+<div class="w-full max-w-7xl mx-auto">
+<!-- PageHeading -->
+<div class="flex flex-wrap justify-between items-center gap-4 mb-8">
+<div class="flex flex-col">
+<h1 class="text-text-light dark:text-text-dark text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]">Dashboard</h1>
+<p class="text-text-subtle-light dark:text-text-subtle-dark text-base font-normal leading-normal mt-1">Welcome back, Admin. Here's a look at your business today.</p>
+</div>
+</div>
+<!-- Stats -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 ">
+<div class="flex flex-col gap-2 rounded-xl p-6 border bg-background-light/70 bg-surface-light dark:bg-background-dark/50 border-border-light dark:border-border-dark">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">Today's Revenue</p>
+<p id="stat-today-revenue" class="text-text-light dark:text-text-dark tracking-light text-3xl font-bold leading-tight">$1,250</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm flex flex-col gap-2 rounded-xl p-6 border bg-background-light/70 dark:bg-background-dark/50 border-border-light dark:border-border-dark">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">New Appointments</p>
+<p id="stat-new-appointments" class="text-text-light dark:text-text-dark tracking-light text-3xl font-bold leading-tight">12</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm flex flex-col gap-2 rounded-xl p-6 border bg-background-light/70 dark:bg-background-dark/50 border-border-light dark:border-border-dark">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">New Customers</p>
+<p id="stat-new-customers" class="text-text-light dark:text-text-dark tracking-light text-3xl font-bold leading-tight">5</p>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm flex flex-col gap-2 rounded-xl p-6 border bg-background-light/70 dark:bg-background-dark/50 border-border-light dark:border-border-dark">
+<p class="text-text-light dark:text-text-dark text-base font-medium leading-normal">Pending Requests</p>
+<p id="stat-pending-requests" class="text-text-light dark:text-text-dark tracking-light text-3xl font-bold leading-tight">3</p>
+</div>
+</div>
+<!-- Revenue Chart Container -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm bg-background-light/70 dark:bg-background-dark/50 border border-border-light dark:border-border-dark rounded-xl p-6 mb-8">
+  <div class="flex flex-wrap justify-between items-center gap-4 mb-4">
+    <h2 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight">Revenue Overview</h2>
+    <div class="flex items-center gap-2 text-sm">
+      <span class="text-text-secondary-light dark:text-text-secondary-dark">Range:</span>
+      <div class="inline-flex rounded-full border border-border-light dark:border-border-dark bg-background-light dark:bg-background-dark p-0.5">
+        <button type="button" data-range="week" class="revenue-range-btn px-3 py-1 rounded-full text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark bg-primary text-white">Week</button>
+        <button type="button" data-range="month" class="revenue-range-btn px-3 py-1 rounded-full text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark">Month</button>
+        <button type="button" data-range="year" class="revenue-range-btn px-3 py-1 rounded-full text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark">Year</button>
+      </div>
+    </div>
+  </div>
+  <!-- Simple Bar Chart -->
+  <div id="revenue-chart" class="flex items-end justify-between gap-3 h-64 px-4 pb-4 border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-background-dark">
+    <!-- Bars will be populated by JS -->
+  </div>
+</div>
+<!-- Recent Appointments Table -->
+<div class="bg-surface-light dark:bg-surface-dark rounded-xl p-6 shadow-sm bg-background-light/70 dark:bg-background-dark/50 border border-border-light dark:border-border-dark rounded-xl p-6">
+<h2 class="text-text-light dark:text-text-dark text-lg font-bold leading-tight mb-4">Upcoming Appointments</h2>
+<div class="overflow-x-auto rounded-lg border border-border-light dark:border-border-dark">
+<table class="w-full text-left">
+<thead class="bg-background-light dark:bg-background-dark">
+<tr class="border-b border-border-light dark:border-border-dark">
+<th class="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Time</th>
+<th class="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Customer</th>
+<th class="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Service</th>
+<th class="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="p-3 text-sm">09:00 AM</td>
+<td class="p-3 text-sm">Olivia Chen</td>
+<td class="p-3 text-sm">Deep Tissue Massage</td>
+<td class="p-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full bg-confirmed/20 text-confirmed">Confirmed</span></td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="p-3 text-sm">10:30 AM</td>
+<td class="p-3 text-sm">Benjamin Carter</td>
+<td class="p-3 text-sm">Aromatherapy Facial</td>
+<td class="p-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full bg-pending/20 text-pending">Pending</span></td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="p-3 text-sm">11:00 AM</td>
+<td class="p-3 text-sm">Sophia Rodriguez</td>
+<td class="p-3 text-sm">Luxury Manicure</td>
+<td class="p-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full bg-confirmed/20 text-confirmed">Confirmed</span></td>
+</tr>
+<tr class="border-b border-border-light dark:border-border-dark">
+<td class="p-3 text-sm">01:00 PM</td>
+<td class="p-3 text-sm">Liam Goldberg</td>
+<td class="p-3 text-sm">Hot Stone Massage</td>
+<td class="p-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full bg-confirmed/20 text-confirmed">Confirmed</span></td>
+</tr>
+<tr>
+<td class="p-3 text-sm">02:30 PM</td>
+<td class="p-3 text-sm">Ava Nguyen</td>
+<td class="p-3 text-sm">Hydrating Body Wrap</td>
+<td class="p-3 text-sm"><span class="px-2 py-1 text-xs font-medium rounded-full bg-success/20 text-success">Completed</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</main>
+</div>
+<script>
+  (function () {
+    const chartEl = document.getElementById('revenue-chart');
+    const rangeButtons = document.querySelectorAll('.revenue-range-btn');
+
+    if (!chartEl || !rangeButtons.length) return;
+
+    const datasets = {
+      week: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        values: [180, 220, 150, 260, 310, 280, 190]
+      },
+      month: {
+        labels: ['W1', 'W2', 'W3', 'W4'],
+        values: [3200, 2800, 3500, 3900]
+      },
+      year: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        values: [12000, 11500, 14000, 15500, 16200, 17000, 18000, 17500, 16000, 15800, 14900, 16500]
+      }
+    };
+
+    function setActiveRange(activeKey) {
+      rangeButtons.forEach(btn => {
+        const isActive = btn.getAttribute('data-range') === activeKey;
+        btn.classList.toggle('bg-primary', isActive);
+        btn.classList.toggle('text-white', isActive);
+        btn.classList.toggle('text-text-secondary-light', !isActive);
+        btn.classList.toggle('dark:text-text-secondary-dark', !isActive);
+      });
+    }
+
+    function renderChart(rangeKey) {
+      const data = datasets[rangeKey] || datasets.week;
+      const max = Math.max(...data.values) || 1;
+
+      chartEl.innerHTML = '';
+
+      data.labels.forEach((label, idx) => {
+        const value = data.values[idx];
+        const heightPercent = (value / max) * 100;
+
+        const barWrapper = document.createElement('div');
+        barWrapper.className = 'flex flex-1 flex-col items-center justify-end gap-2 min-w-[2rem]';
+
+        const valueLabel = document.createElement('div');
+        valueLabel.className = 'text-[11px] text-text-secondary-light dark:text-text-secondary-dark';
+        valueLabel.textContent = `$${value.toLocaleString()}`;
+
+        const barTrack = document.createElement('div');
+        barTrack.className = 'w-6 h-full flex items-end justify-center overflow-hidden rounded-t-full bg-primary/10 dark:bg-primary/20';
+
+        const barFill = document.createElement('div');
+        barFill.className = 'w-full bg-primary dark:bg-primary rounded-t-full';
+        barFill.style.height = heightPercent + '%';
+
+        barTrack.appendChild(barFill);
+
+        const labelEl = document.createElement('div');
+        labelEl.className = 'text-[11px] text-text-secondary-light dark:text-text-secondary-dark';
+        labelEl.textContent = label;
+
+        barWrapper.appendChild(valueLabel);
+        barWrapper.appendChild(barTrack);
+        barWrapper.appendChild(labelEl);
+
+        chartEl.appendChild(barWrapper);
+      });
+    }
+
+    let currentRange = 'week';
+    setActiveRange(currentRange);
+    renderChart(currentRange);
+
+    rangeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const rangeKey = btn.getAttribute('data-range');
+        if (!rangeKey || rangeKey === currentRange) return;
+        currentRange = rangeKey;
+        setActiveRange(currentRange);
+        renderChart(currentRange);
+      });
+    });
+  })();
+</script>
+</body></html>
