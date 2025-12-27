@@ -29,7 +29,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Value("${app.technician.email:tech@example.com}")
     private String techEmail;
 
-    @Value("${app.technician.password:123456}")
+    @Value("${app.technician.password:123456789}")
     private String techPassword;
 
     @Override
