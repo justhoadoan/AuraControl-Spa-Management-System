@@ -25,6 +25,7 @@ import Unauthorized from './pages/Unauthorized.jsx';
 import AccountDashboard from './pages/customer/AccountDashboard.jsx';
 import Profile from './pages/customer/Profile.jsx';
 import SpaServices from './pages/customer/SpaServices.jsx';
+import AppointmentHistory from './pages/customer/AppointmentHistory.jsx';
 
 // Pages - Admin
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
@@ -107,6 +108,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/history"
+            element={
+              <ProtectedRoute>
+                <AppointmentHistory />
               </ProtectedRoute>
             }
           />
