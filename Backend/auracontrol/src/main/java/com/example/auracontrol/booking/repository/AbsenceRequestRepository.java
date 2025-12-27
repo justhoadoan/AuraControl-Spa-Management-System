@@ -46,6 +46,8 @@ public interface AbsenceRequestRepository extends JpaRepository<AbsenceRequest, 
             @Param("endOfDay") LocalDateTime endOfDay
     );
 
+    @Query("SELECT a FROM AbsenceRequest a ORDER BY CASE WHEN a.status = 'PENDING' THEN 0 ELSE 1 END, a.createdAt DESC")
+    List<AbsenceRequest> findAllRequestsOrdered();
 
 
 }
