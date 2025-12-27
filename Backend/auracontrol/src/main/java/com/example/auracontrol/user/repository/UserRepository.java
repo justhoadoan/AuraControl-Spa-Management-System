@@ -1,6 +1,8 @@
 package com.example.auracontrol.user.repository;
 
 import com.example.auracontrol.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -39,4 +41,11 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByVerificationToken(String token);
     @Query("SELECT u FROM User u WHERE u.resetPasswordToken = :token")
     Optional<User> findByResetPasswordToken(@Param("token") String token);
+
+    @Query("SELECT u FROM User u WHERE u.role = 'CUSTOMER' " +
+            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "LOWER(u.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<User> searchCustomers(@Param("keyword") String keyword, Pageable pageable);
+
 }

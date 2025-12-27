@@ -26,4 +26,8 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             LocalDateTime now,
             String status
     );
+
+    long countByCustomer_CustomerId(Integer customerId);
+
+    List<Appointment> findByCustomer_CustomerIdOrderByStartTimeDesc(Integer customerId);
 }
