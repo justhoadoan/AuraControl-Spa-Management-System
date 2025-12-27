@@ -1,4 +1,4 @@
-package com.example.auracontrol.admin;
+package com.example.auracontrol.admin.service;
 
 import com.example.auracontrol.admin.dto.TechnicianRequest;
 import com.example.auracontrol.admin.dto.TechnicianResponse;
@@ -12,6 +12,8 @@ import com.example.auracontrol.user.entity.User;
 import com.example.auracontrol.user.repository.TechnicianRepository;
 import com.example.auracontrol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,16 +27,17 @@ import java.util.stream.Collectors;
 public class AdminTechnicianService {
     private final TechnicianRepository technicianRepository;
     private final UserRepository userRepository;
-    private final ServiceRepository serviceRepository; // Để tìm dịch vụ
+    private final ServiceRepository serviceRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<TechnicianResponse> getAllTechnicians() {
-        return technicianRepository.
-                findAll().
-                stream().
-                map(this::mapToResponse).
-                collect(Collectors.toList());
+
+    @Transactional(readOnly = true)
+    public Page<TechnicianResponse> getAllTechnicians(Pageable pageable) {
+        Page<Technician> pageResult = technicianRepository.findAll(pageable);
+        return pageResult.map(this::mapToResponse);
     }
+
+    //Create
     @Transactional
     public TechnicianResponse createTechnician(TechnicianRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -75,7 +78,7 @@ public class AdminTechnicianService {
     public TechnicianResponse updateTechnician(Integer id, TechnicianRequest request) {
 
         Technician tech = technicianRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("KTV không tồn tại"));
+                .orElseThrow(() -> new ResourceNotFoundException("KTV does not exists"));
 
         User user = tech.getUser();
         if (request.getFullName() != null && !request.getFullName().isBlank()) {

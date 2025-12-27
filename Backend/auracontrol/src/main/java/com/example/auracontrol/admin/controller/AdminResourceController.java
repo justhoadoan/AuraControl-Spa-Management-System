@@ -1,8 +1,8 @@
-package com.example.auracontrol.admin;
+package com.example.auracontrol.admin.controller;
 
+import com.example.auracontrol.admin.service.ResourceAdminService;
 import com.example.auracontrol.admin.dto.ResourceDto;
 import com.example.auracontrol.booking.entity.Resource;
-import com.example.auracontrol.booking.repository.ResourceRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
