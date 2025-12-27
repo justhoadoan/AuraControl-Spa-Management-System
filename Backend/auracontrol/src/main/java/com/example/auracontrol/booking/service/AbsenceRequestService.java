@@ -57,11 +57,11 @@ public class AbsenceRequestService {
     @Transactional
     public void reviewRequest(Integer requestId, String status) {
         if (!status.equals("APPROVED") && !status.equals("REJECTED")) {
-            throw new IllegalArgumentException("Trạng thái không hợp lệ");
+            throw new InvalidRequestException("Invalid stats   ");
         }
 
         AbsenceRequest request = absenceRequestRepository.findById(requestId)
-                .orElseThrow(() -> new RuntimeException("Yêu cầu không tìm thấy"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot find request with id: " + requestId));
 
         request.setStatus(status);
         absenceRequestRepository.save(request);
