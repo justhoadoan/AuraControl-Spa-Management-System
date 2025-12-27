@@ -66,7 +66,10 @@ const AccountDashboard = () => {
         <AccountLayout>
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">Upcoming Appointments</h1>
-                <button className="bg-primary text-white px-5 py-2.5 rounded-md font-semibold text-sm hover:bg-opacity-90 transition-colors shadow-sm flex items-center">
+                <button 
+                    onClick={() => navigate('/services')}
+                    className="bg-primary text-white px-5 py-2.5 rounded-md font-semibold text-sm hover:bg-opacity-90 transition-colors shadow-sm flex items-center"
+                >
                     <span className="material-icons-outlined mr-2 text-base">add</span>
                     Book New
                 </button>

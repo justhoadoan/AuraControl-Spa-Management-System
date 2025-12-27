@@ -56,7 +56,7 @@ public class AdminTechnicianService {
 
 
         if (request.getServiceIds() != null) {
-            List<com.example.auracontrol.service.Service> services = serviceRepository.findAllById(request.getServiceIds());
+            List<com.example.auracontrol.service.Service> services = serviceRepository.findByServiceIdInAndIsActiveTrue(request.getServiceIds());
 
             tech.setSkills(services.stream()
                     .map(service -> {
@@ -78,7 +78,7 @@ public class AdminTechnicianService {
     public TechnicianResponse updateTechnician(Integer id, TechnicianRequest request) {
 
         Technician tech = technicianRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("KTV does not exists"));
+                .orElseThrow(() -> new ResourceNotFoundException("Technician does not exists"));
 
         User user = tech.getUser();
         if (request.getFullName() != null && !request.getFullName().isBlank()) {
@@ -93,7 +93,8 @@ public class AdminTechnicianService {
         if (request.getServiceIds() != null) {
             tech.getSkills().clear();
 
-            List<com.example.auracontrol.service.Service> newServices = serviceRepository.findAllById(request.getServiceIds());
+            List<com.example.auracontrol.service.Service> newServices =
+                    serviceRepository.findByServiceIdInAndIsActiveTrue(request.getServiceIds());
 
 
             for (com.example.auracontrol.service.Service service : newServices) {

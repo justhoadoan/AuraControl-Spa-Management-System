@@ -71,7 +71,7 @@ public class AdminServiceController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteService(@PathVariable Integer id) {
-        serviceService.delete(id);
+        serviceService.deleteService(id);
         // Return 204 No Content (Successful deletion, no body returned)
         return ResponseEntity.noContent().build();
     }

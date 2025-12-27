@@ -40,5 +40,9 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
     @Query("DELETE FROM Service s WHERE s.serviceId = :id")
     void deleteById(@Param("id") Integer id);
 
+    List<Service> findByIsActiveTrue();
+
+    List<com.example.auracontrol.service.Service> findByServiceIdInAndIsActiveTrue(List<Integer> ids);
+
 
 }

@@ -57,11 +57,15 @@ public class ServiceService {
         }
     }
     @Transactional
-    public void delete(Integer id) {
-        if (!serviceRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Không tìm thấy dịch vụ để xóa.");
-        }
-        // Gọi hàm delete custom
-        serviceRepository.deleteById(id);
+    public void deleteService(Integer serviceId) {
+        // 1. Tìm service
+        com.example.auracontrol.service.Service service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Service doesnot exists: " + serviceId));
+
+
+        service.setIsActive(false);
+
+        // 3. Lưu lại
+        serviceRepository.save(service);
     }
 }

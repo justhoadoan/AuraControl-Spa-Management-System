@@ -11,8 +11,8 @@ BEGIN
     IF p_type = 'DAY' THEN
         RETURN QUERY
 SELECT
-    TO_CHAR(d.day, 'dd/MM') AS label,
-    COALESCE(SUM(a.final_price), 0) AS value
+    CAST(TO_CHAR(d.day, 'dd/MM') AS VARCHAR) AS label,
+    CAST(COALESCE(SUM(a.final_price), 0) AS DECIMAL(15, 2)) AS value
 FROM generate_series(p_start_date, p_end_date, INTERVAL '1 day') d(day)
     LEFT JOIN appointment a ON
     a.end_time >= d.day
@@ -24,8 +24,8 @@ ORDER BY d.day;
 ELSIF p_type = 'MONTH' THEN
         RETURN QUERY
 SELECT
-    TO_CHAR(d.month, 'MM/yyyy') AS label,
-    COALESCE(SUM(a.final_price), 0) AS value
+    CAST(TO_CHAR(d.month, 'MM/yyyy') AS VARCHAR) AS label,
+    CAST(COALESCE(SUM(a.final_price), 0) AS DECIMAL(15, 2)) AS value
 FROM generate_series(p_start_date, p_end_date, INTERVAL '1 month') d(month)
     LEFT JOIN appointment a ON
     a.end_time >= d.month
@@ -33,8 +33,13 @@ FROM generate_series(p_start_date, p_end_date, INTERVAL '1 month') d(month)
     AND a.status = 'COMPLETED'
 GROUP BY d.month
 ORDER BY d.month;
+
+ELSE
+        RAISE EXCEPTION 'Invalid p_type value: %, expected DAY or MONTH', p_type;
 END IF;
 END;
 $$ LANGUAGE plpgsql;
-CREATE INDEX idx_appointment_end_time_status
+
+
+CREATE INDEX IF NOT EXISTS idx_appointment_end_time_status
     ON appointment (end_time, status);

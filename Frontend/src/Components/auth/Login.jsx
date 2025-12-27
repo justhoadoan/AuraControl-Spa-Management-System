@@ -54,7 +54,7 @@ const Login = () => {
                 navigate(from, { replace: true });
             } else {
                 switch (role) {
-                    case 'ADMIN': navigate('/admin', { replace: true }); break;
+                    case 'ADMIN': navigate('/admin/services', { replace: true }); break;
                     case 'TECHNICIAN': navigate('/staff', { replace: true }); break;
                     case 'CUSTOMER': default: navigate('/', { replace: true }); break;
                 }
