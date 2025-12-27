@@ -17,20 +17,8 @@ public interface AbsenceRequestRepository extends JpaRepository<AbsenceRequest, 
     // 2. Retrieve absence history of a specific technician
     List<AbsenceRequest> findByTechnician_TechnicianIdOrderByStartDateDesc(Integer technicianId);
 
-    // 3. OVERLAP CHECK (Important):
-// Check whether a technician has any absence request (APPROVED or PENDING)
-// that overlaps with the given start-end time range.
-// Logic: (AbsenceStart < CheckedEnd) AND (AbsenceEnd > CheckedStart)
-    @Query("SELECT COUNT(a) > 0 FROM AbsenceRequest a " +
-            "WHERE a.technician.technicianId = :techId " +
-            "AND a.status IN ('APPROVED', 'PENDING') " +
-            "AND a.startDate < :endTime " +
-            "AND a.endDate > :startTime")
-    boolean existsOverlappingRequest(@Param("techId") Integer technicianId,
-                                     @Param("startTime") LocalDateTime startTime,
-                                     @Param("endTime") LocalDateTime endTime);
 
-    // 4. Retrieve absence requests within a specific day
+    // 3. Retrieve absence requests within a specific day
 // (Used by getAvailableSlots method in AppointmentService)
 // This query finds all APPROVED absence requests of the given technicians
 // that overlap with the specified day
@@ -48,6 +36,11 @@ public interface AbsenceRequestRepository extends JpaRepository<AbsenceRequest, 
 
     @Query("SELECT a FROM AbsenceRequest a ORDER BY CASE WHEN a.status = 'PENDING' THEN 0 ELSE 1 END, a.createdAt DESC")
     List<AbsenceRequest> findAllRequestsOrdered();
+
+
+    @Query("SELECT ar FROM AbsenceRequest ar WHERE ar.technician.technicianId = :techId " +
+            "AND ar.endDate >= :from AND ar.startDate <= :to")
+    List<AbsenceRequest> findByTechnicianIdAndDateRange(Integer techId, LocalDateTime from, LocalDateTime to);
 
 
 }

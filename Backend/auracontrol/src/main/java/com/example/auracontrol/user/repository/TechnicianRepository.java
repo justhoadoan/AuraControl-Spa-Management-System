@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface TechnicianRepository extends JpaRepository<Technician, Integer> {
 
@@ -22,5 +23,7 @@ public interface TechnicianRepository extends JpaRepository<Technician, Integer>
             "WHERE ts.service_id = :serviceId",
             nativeQuery = true)
     List<Technician> findAllByServiceId(@Param("serviceId") Integer serviceId);
+
+    Optional<Technician> findByUser_Email(String email);
 }
 
