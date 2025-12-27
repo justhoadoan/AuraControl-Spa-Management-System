@@ -25,7 +25,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Value("${app.admin.password}")
     private String adminPassword;
 
-    // Config Technician mới (Có thể set giá trị mặc định để đỡ phải sửa file properties)
+
     @Value("${app.technician.email:tech@example.com}")
     private String techEmail;
 
