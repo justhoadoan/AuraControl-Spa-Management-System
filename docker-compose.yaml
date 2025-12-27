@@ -1,6 +1,6 @@
 services:
   postgres-db:
-    image: auracontrol-backend:lastest
+    image: postgres:17
     container_name: spa-postgres-db
     restart: always
     environment:
