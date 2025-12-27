@@ -1,6 +1,6 @@
 services:
   postgres-db:
-    image: auracontrol-backend:lastest
+    image: postgres:17
     container_name: spa-postgres-db
     restart: always
     environment:
@@ -14,7 +14,7 @@ services:
       - postgres-data:/var/lib/postgresql/data
 
   backend:
-    build: ./Backend/auracontrol
+    image: justhoadoan/auracontrol-backend:latest 
     container_name: spa-backend-app
     ports:
       - "8081:8081"
