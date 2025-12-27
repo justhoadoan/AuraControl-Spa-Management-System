@@ -106,7 +106,6 @@ const ServiceManagement = () => {
 
     // --- 5. DELETE SERVICE ---
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this service?")) {
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`http://localhost:8081/api/admin/services/${id}`, {
@@ -118,7 +117,6 @@ const ServiceManagement = () => {
                 console.error("Error deleting service:", error);
                 toast.error("Failed to delete this service.");
             }
-        }
     };
 
     return (
@@ -274,7 +272,7 @@ const ServiceManagement = () => {
                                 <div>
                                     <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">Duration (Min)</label>
                                     <input 
-                                        type="number" name="durationMinutes" required min="1" step="5"
+                                        type="number" name="durationMinutes" required min="5" step="5"
                                         value={formData.durationMinutes} onChange={handleInputChange}
                                         className="w-full px-3 py-2.5 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-shadow text-sm"
                                     />
