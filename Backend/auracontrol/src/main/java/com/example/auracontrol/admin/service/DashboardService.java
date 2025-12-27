@@ -8,6 +8,7 @@ import com.example.auracontrol.booking.repository.AppointmentRepository;
 import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,8 +26,8 @@ public class DashboardService {
     private final UserRepository userRepository;
 
     public List<RevenueStatDto> getRevenueChartData(String period) {
-        if (period == null) {
-            throw new InvalidRequestException("Period must not be null");
+        if (period == null || period.trim().isEmpty()) {
+            throw new InvalidRequestException("Period must not be null or empty");
         }
 
         LocalDate today = LocalDate.now();
@@ -56,7 +57,7 @@ public class DashboardService {
                 break;
 
             default:
-                throw new IllegalArgumentException("Invalid period: " + period);
+                throw new InvalidRequestException("Invalid period: " + period);
         }
 
         return appointmentRepository.getRevenueStatistics(start, end, type);
@@ -92,9 +93,10 @@ public class DashboardService {
 
         // Retrieve appointments from the current time onwards, excluding cancelled ones
         List<Appointment> appointments = appointmentRepository
-                .findTop10ByStartTimeAfterAndStatusNotOrderByStartTimeAsc(
+                .findUpcomingAppointments(
                         LocalDateTime.now(),
-                        "CANCELLED"
+                        "CANCELLED",
+                        PageRequest.of(0, 10)
                 );
 
         return appointments.stream().map(appt -> {

@@ -2,6 +2,7 @@ package com.example.auracontrol.booking.repository;
 
 import com.example.auracontrol.admin.dto.RevenueStatDto;
 import com.example.auracontrol.booking.entity.Appointment;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -51,10 +52,14 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             "AND a.startTime BETWEEN :start AND :end")
     long countAppointmentsBetween(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
 
-
-    List<Appointment> findTop10ByStartTimeAfterAndStatusNotOrderByStartTimeAsc(
-            LocalDateTime startAfter,
-            String excludeStatus
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE a.startTime >= :now " +
+            "AND a.status != :status " +
+            "ORDER BY a.startTime ASC")
+    List<Appointment> findUpcomingAppointments(
+            @Param("now") LocalDateTime now,
+            @Param("status") String status,
+            Pageable pageable
     );
 
 
