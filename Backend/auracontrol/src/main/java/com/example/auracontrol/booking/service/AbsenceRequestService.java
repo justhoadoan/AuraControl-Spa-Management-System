@@ -26,7 +26,7 @@ public class AbsenceRequestService {
 
     @Transactional
     public AbsenceRequest submitRequest(Integer technicianId, AbsenceRequestDto requestDto) {
-        // Validation cơ bản
+
         if (requestDto.getStartDate().isBefore(LocalDateTime.now())) {
             throw new InvalidRequestException("Can't submit request because start date is before now.");
         }
@@ -36,15 +36,6 @@ public class AbsenceRequestService {
 
         Technician technician = technicianRepository.findById(technicianId)
                 .orElseThrow(() -> new ResourceNotFoundException("Technician with id: " + technicianId + " not found."));
-
-
-        boolean isOverlap = absenceRequestRepository.existsOverlappingRequest(
-                technicianId, requestDto.getStartDate(), requestDto.getEndDate()
-        );
-
-        if (isOverlap) {
-            throw new DuplicateResourceException("You already have this absence request.");
-        }
 
 
         AbsenceRequest absence = AbsenceRequest.builder()
