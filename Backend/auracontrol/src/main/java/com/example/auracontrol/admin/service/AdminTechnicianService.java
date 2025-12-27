@@ -56,7 +56,7 @@ public class AdminTechnicianService {
 
 
         if (request.getServiceIds() != null) {
-            List<com.example.auracontrol.service.Service> services = serviceRepository.findAllById(request.getServiceIds());
+            List<com.example.auracontrol.service.Service> services = serviceRepository.findByServiceIdInAndIsActiveTrue(request.getServiceIds());
 
             tech.setSkills(services.stream()
                     .map(service -> {
