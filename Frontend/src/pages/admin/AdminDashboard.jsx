@@ -38,15 +38,23 @@ const AdminDashboard = () => {
                 const headers = { Authorization: `Bearer ${token}` };
 
                 // 1. Fetch Upcoming Appointments (Existing logic)
-                const appointmentsRes = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', { headers });
-                setAppointments(appointmentsRes.data);
+                try {
+                    const appointmentsRes = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', { headers });
+                    setAppointments(appointmentsRes.data);
+                } catch (appointmentsError) {
+                    console.error("Error fetching upcoming appointments:", appointmentsError);
+                }
 
                 // 2. Fetch Dashboard Stats (NEW LOGIC)
-                const statsRes = await axios.get('http://localhost:8081/api/admin/dashboard/stats', { headers });
-                setStats(statsRes.data);
+                try {
+                    const statsRes = await axios.get('http://localhost:8081/api/admin/dashboard/stats', { headers });
+                    setStats(statsRes.data);
+                } catch (statsError) {
+                    console.error("Error fetching dashboard stats:", statsError);
+                }
 
             } catch (error) {
-                console.error("Error fetching dashboard data:", error);
+                console.error("Unexpected error in fetchDashboardData:", error);
             } finally {
                 setIsLoading(false);
             }
