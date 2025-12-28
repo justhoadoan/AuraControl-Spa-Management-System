@@ -24,6 +24,8 @@ public class ServiceResourceRequirement {
     private String resourceType;
 
     @Column(nullable = false)
-    private Integer quantity = 1;
+    private Integer quantity;
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.auracontrol.service;
 
+import com.example.auracontrol.booking.entity.ServiceResourceRequirement;
 import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.service.dto.ServiceBookingResponse;
 import com.example.auracontrol.service.dto.ServiceRequest;
@@ -11,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,38 +39,64 @@ public class ServiceService {
                 .price(request.getPrice())
                 .durationMinutes(request.getDurationMinutes())
                 .isActive(request.getIsActive() != null ? request.getIsActive() : true)
+                .resourceRequirements(new ArrayList<>())
                 .build();
+        if (request.getResources() != null && !request.getResources().isEmpty()) {
+            for (ServiceRequest.ServiceResourceDto resDto : request.getResources()) {
 
+                ServiceResourceRequirement resource = new ServiceResourceRequirement();
+                resource.setResourceType(resDto.getResourceType());
+                resource.setQuantity(resDto.getQuantity());
+
+
+                resource.setService(newService);
+
+                newService.getResourceRequirements().add(resource);
+            }
+        }
         return serviceRepository.save(newService);
 
     }
     @Transactional
     public com.example.auracontrol.service.Service update(Integer id, ServiceRequest request) {
-        if (!serviceRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Cannot find service: " + id);
+
+        com.example.auracontrol.service.Service service = serviceRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cannot find service: " + id));
+
+
+        service.setName(request.getName());
+        service.setDescription(request.getDescription());
+        service.setPrice(request.getPrice());
+        service.setDurationMinutes(request.getDurationMinutes());
+        if (request.getIsActive() != null) {
+            service.setIsActive(request.getIsActive());
         }
 
-        int rowsAffected = serviceRepository.update(
-                id,
-                request.getName(),
-                request.getDescription(),
-                request.getPrice(),
-                request.getDurationMinutes(),
-                request.getIsActive()
-        );
+
+        if (request.getResources() != null) {
+            service.getResourceRequirements().clear();
 
 
-        if (rowsAffected > 0) {
-            return getServiceById(id);
-        } else {
-            throw new RuntimeException("Lỗi cập nhật dịch vụ.");
+            for (ServiceRequest.ServiceResourceDto resDto : request.getResources()) {
+                ServiceResourceRequirement resource = new ServiceResourceRequirement();
+                resource.setResourceType(resDto.getResourceType());
+                resource.setQuantity(resDto.getQuantity());
+
+
+                resource.setService(service);
+
+                service.getResourceRequirements().add(resource);
+            }
         }
+
+
+        return serviceRepository.save(service);
     }
     @Transactional
     public void deleteService(Integer serviceId) {
 
         com.example.auracontrol.service.Service service = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service doesnot exists: " + serviceId));
+                .orElseThrow(() -> new ResourceNotFoundException("Service does not exists: " + serviceId));
 
         service.setIsActive(false);
 

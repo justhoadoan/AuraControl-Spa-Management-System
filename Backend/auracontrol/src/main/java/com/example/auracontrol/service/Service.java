@@ -8,6 +8,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -47,8 +49,7 @@ public class Service {
     private Set<TechnicianServiceSkill> qualifiedTechnicians;
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ServiceResourceRequirement> resourceRequirements;
-
+    private List<ServiceResourceRequirement> resourceRequirements = new ArrayList<>();
 //    @OneToMany(mappedBy = "service")
 //    @JsonIgnore
 //    @ToString.Exclude

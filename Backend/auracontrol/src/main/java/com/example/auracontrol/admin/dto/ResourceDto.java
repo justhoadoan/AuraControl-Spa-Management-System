@@ -9,5 +9,5 @@ public class ResourceDto {
     private String name;
 
     @NotBlank(message = "Resource type is required")
-    private String type; // Ví dụ: "ROOM", "MACHINE", "BED"
+    private String type;
 }

@@ -1,6 +1,6 @@
 package com.example.auracontrol.admin.controller;
 
-import com.example.auracontrol.admin.service.ResourceAdminService;
+import com.example.auracontrol.admin.service.AdminResourceService;
 import com.example.auracontrol.admin.dto.ResourceDto;
 import com.example.auracontrol.booking.entity.Resource;
 import jakarta.validation.Valid;
@@ -15,23 +15,23 @@ import java.util.List;
 @RequestMapping("/api/admin/resources")
 @RequiredArgsConstructor
 public class AdminResourceController {
-    private final ResourceAdminService resourceAdminService;
+    private final AdminResourceService adminResourceService;
     // GET /api/admin/resources
     @GetMapping
     public ResponseEntity<List<Resource>> getAllResources() {
-        return ResponseEntity.ok(resourceAdminService.getAllResources());
+        return ResponseEntity.ok(adminResourceService.getAllResources());
     }
 
     // GET /api/admin/resources/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Resource> getResourceById(@PathVariable Integer id) {
-        return ResponseEntity.ok(resourceAdminService.getResourceById(id));
+        return ResponseEntity.ok(adminResourceService.getResourceById(id));
     }
 
     // POST /api/admin/resources
     @PostMapping
     public ResponseEntity<Resource> createResource(@RequestBody @Valid ResourceDto request) {
-        Resource newResource = resourceAdminService.createResource(request);
+        Resource newResource = adminResourceService.createResource(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(newResource);
     }
 
@@ -41,13 +41,13 @@ public class AdminResourceController {
             @PathVariable Integer id,
             @RequestBody @Valid ResourceDto request
     ) {
-        return ResponseEntity.ok(resourceAdminService.updateResource(id, request));
+        return ResponseEntity.ok(adminResourceService.updateResource(id, request));
     }
 
     // DELETE /api/admin/resources/{id}
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteResource(@PathVariable Integer id) {
-        resourceAdminService.deleteResource(id);
+        adminResourceService.deleteResource(id);
         return ResponseEntity.noContent().build();
     }
 }
