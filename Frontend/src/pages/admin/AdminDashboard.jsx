@@ -44,10 +44,16 @@ const AdminDashboard = () => {
     }, []);
 
     // --- HELPERS ---
-    const formatTime = (dateString) => {
+    const formatDateTime = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
 
     const getStatusColor = (status) => {
@@ -160,7 +166,7 @@ const AdminDashboard = () => {
                     <table className="w-full text-left">
                         <thead className="bg-background-light dark:bg-background-dark">
                             <tr className="border-b border-border-light dark:border-border-dark">
-                                <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Time</th>
+                                <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Date & Time</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Customer</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Service</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Technician</th>
@@ -180,7 +186,7 @@ const AdminDashboard = () => {
                                 appointments.map((appt) => (
                                     <tr key={appt.appointmentId} className="hover:bg-primary/5 transition-colors">
                                         <td className="p-3 text-sm text-text-primary-light dark:text-text-primary-dark">
-                                            {formatTime(appt.startTime)}
+                                            {formatDateTime(appt.startTime)}
                                         </td>
                                         <td className="p-3 text-sm text-text-primary-light dark:text-text-primary-dark font-medium">
                                             {appt.customerName}
