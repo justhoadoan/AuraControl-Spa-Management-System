@@ -97,72 +97,106 @@ CREATE TRIGGER trg_calculate_end_time
 CREATE OR REPLACE FUNCTION validate_appointment()
 RETURNS TRIGGER AS $$
 DECLARE
-v_req_type VARCHAR;      -- Required resource type for the service
-    v_available_count INT;   -- Number of available resources
+
+v_req_record RECORD;
+    v_available_count INT;
 BEGIN
     -- 1. Prevent booking in the past
     IF (TG_OP = 'INSERT' OR OLD.start_time IS DISTINCT FROM NEW.start_time) THEN
-        IF NEW.start_time < NOW() THEN
+        IF NEW.start_time < CURRENT_TIMESTAMP THEN
             RAISE EXCEPTION 'Cannot book an appointment in the past.';
 END IF;
 END IF;
 
-    -- 2. Check technician skill
-    IF NOT EXISTS (
-        SELECT 1
-        FROM technician_services ts
-        WHERE ts.technician_id = NEW.technician_id
-          AND ts.service_id = NEW.service_id
-    ) THEN
-        RAISE EXCEPTION 'This technician does not have the skill to perform this service.';
+    -- Lock OLD technician if technician is changed
+    IF TG_OP = 'UPDATE' AND OLD.technician_id IS DISTINCT FROM NEW.technician_id THEN
+        PERFORM 1 FROM technician WHERE technician_id = OLD.technician_id FOR UPDATE;
 END IF;
 
-    -- 3. Prevent overlapping appointments for the technician
+    -- 2. Lock NEW technician row (Concurrency Control)
+    PERFORM 1
+    FROM technician
+    WHERE technician_id = NEW.technician_id
+    FOR UPDATE;
+
+IF NOT FOUND THEN
+        RAISE EXCEPTION 'Technician not found.';
+END IF;
+
+    -- 3. Validate technician skill
+    IF NOT EXISTS (
+        SELECT 1
+        FROM technician_services
+        WHERE technician_id = NEW.technician_id
+          AND service_id = NEW.service_id
+    ) THEN
+        RAISE EXCEPTION 'Technician does not have required skill.';
+END IF;
+
+    -- 4. Check approved absence
+    IF EXISTS (
+        SELECT 1
+        FROM absence_request ar
+        WHERE ar.technician_id = NEW.technician_id
+          AND ar.status = 'APPROVED'
+          AND ar.start_date < NEW.end_time
+          AND ar.end_date > NEW.start_time
+    ) THEN
+        RAISE EXCEPTION 'Technician is on approved leave during this time.';
+END IF;
+
+    -- 5. Prevent overlapping appointments (Technician Busy Check)
     IF EXISTS (
         SELECT 1
         FROM appointment a
         WHERE a.technician_id = NEW.technician_id
           AND a.appointment_id != COALESCE(NEW.appointment_id, -1)
           AND a.status != 'CANCELLED'
-          AND (a.start_time < NEW.end_time)
-          AND (a.end_time > NEW.start_time)
+          AND a.start_time < NEW.end_time
+          AND a.end_time > NEW.start_time
     ) THEN
-        RAISE EXCEPTION 'The technician is busy during the selected time slot.';
+        RAISE EXCEPTION 'Technician is not available in this time slot.';
 END IF;
 
-    -- 4. Check required resource availability
--- 4. Check required resource availability
-SELECT resource_type
-INTO v_req_type
-FROM service_resource_requirement
-WHERE service_id = NEW.service_id;
 
-IF v_req_type IS NOT NULL THEN
+   -- 6. Validate Resource Availability (Capacity Check)
+
+FOR v_req_record IN
+SELECT resource_type, quantity
+FROM service_resource_requirement
+WHERE service_id = NEW.service_id
+    LOOP
+-- Count free resources
 SELECT COUNT(*)
 INTO v_available_count
 FROM resources r
-WHERE r.type = v_req_type
+WHERE r.type = v_req_record.resource_type
+  AND r.is_deleted = FALSE
+
   AND NOT EXISTS (
     SELECT 1
     FROM appointment_resource ar
              JOIN appointment a ON ar.appointment_id = a.appointment_id
     WHERE ar.resource_id = r.resource_id
       AND a.status != 'CANCELLED'
-          AND a.start_time < NEW.end_time
-          AND a.end_time > NEW.start_time
+                AND a.appointment_id != COALESCE(NEW.appointment_id, -1) -- Tránh đếm chính nó (khi update)
+                AND a.start_time < NEW.end_time
+                AND a.end_time > NEW.start_time
 );
 
-IF v_available_count = 0 THEN
-        RAISE EXCEPTION
-            'No available resources (room/equipment) for this service at the selected time.';
+
+IF v_available_count < v_req_record.quantity THEN
+             RAISE EXCEPTION 'Not enough resources (%s) available for this time slot. Required: %, Available: %',
+                             v_req_record.resource_type, v_req_record.quantity, v_available_count;
 END IF;
-END IF;
+END LOOP;
 
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 -- Trigger: validate appointment before insert or update
+DROP TRIGGER IF EXISTS trg_validate_appointment ON appointment;
 CREATE TRIGGER trg_validate_appointment
     BEFORE INSERT OR UPDATE ON appointment
                          FOR EACH ROW
@@ -176,50 +210,145 @@ CREATE TRIGGER trg_validate_appointment
 CREATE OR REPLACE FUNCTION auto_assign_resource_after_booking()
 RETURNS TRIGGER AS $$
 DECLARE
-v_req_type VARCHAR;
-    v_selected_resource_id INT;
+v_req_record RECORD;      -- Holds each required resource type
+    v_resource_id INT;        -- Holds the selected resource ID
 BEGIN
-    -- Get required resource type
+    -- 1. Iterate over ALL resource types required by the service
+    -- Example: Service requires 'BED' and 'SAUNA_MACHINE' → loop runs twice
+FOR v_req_record IN
 SELECT resource_type
-INTO v_req_type
 FROM service_resource_requirement
-WHERE service_id = NEW.service_id;
+WHERE service_id = NEW.service_id
+    LOOP
+        -- Reset resource ID for each iteration
+        v_resource_id := NULL;
 
-IF v_req_type IS NOT NULL THEN
-        -- Find an available resource
+-- 2. Find ONE available resource for the current resource type
+-- Using SKIP LOCKED to handle high concurrency safely
 SELECT r.resource_id
-INTO v_selected_resource_id
+INTO v_resource_id
 FROM resources r
-WHERE r.type = v_req_type
+WHERE r.type = v_req_record.resource_type
   AND NOT EXISTS (
     SELECT 1
     FROM appointment_resource ar
              JOIN appointment a ON ar.appointment_id = a.appointment_id
     WHERE ar.resource_id = r.resource_id
       AND a.status != 'CANCELLED'
-              AND a.start_time < NEW.end_time
-              AND a.end_time > NEW.start_time
+                AND a.start_time < NEW.end_time
+                AND a.end_time > NEW.start_time
 )
-    LIMIT 1;
+ORDER BY r.resource_id ASC  -- Deterministic ordering to reduce deadlock risk
+    FOR UPDATE SKIP LOCKED
+        LIMIT 1;
 
-IF v_selected_resource_id IS NOT NULL THEN
-            INSERT INTO appointment_resource (appointment_id, resource_id)
-            VALUES (NEW.appointment_id, v_selected_resource_id);
-ELSE
+-- 3. If no available resource is found → abort the booking
+IF v_resource_id IS NULL THEN
             RAISE EXCEPTION
-                'System Error: Resource became unavailable during transaction.';
+                'Booking failed: Not enough available resources (Type: %) for this time slot.',
+                v_req_record.resource_type;
 END IF;
-END IF;
+
+        -- 4. Assign the selected resource to the appointment
+        -- If a later iteration fails, this insert will be rolled back automatically
+INSERT INTO appointment_resource (appointment_id, resource_id)
+VALUES (NEW.appointment_id, v_resource_id);
+
+END LOOP;
 
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+-- Re-attach trigger (must be AFTER INSERT)
+DROP TRIGGER IF EXISTS trg_auto_assign_resource ON appointment;
 
--- Trigger: auto-assign resource after insert
 CREATE TRIGGER trg_auto_assign_resource
     AFTER INSERT ON appointment
     FOR EACH ROW
     EXECUTE FUNCTION auto_assign_resource_after_booking();
+--------------------------------------------------------------------------------------------------------------
+-- Function: handle_resource_on_update
+-- Purpose:
+--   Automatically assign an available resource
+--   after an appointment is successfully updated
+CREATE OR REPLACE FUNCTION handle_resource_on_update()
+RETURNS TRIGGER AS $$
+DECLARE
+v_req_record RECORD;          -- Holds each required resource type (e.g. BED, MACHINE)
+    v_new_resource_id INT;        -- Selected available resource ID
+BEGIN
+    -- 1. Only execute logic if the appointment time has changed
+    IF OLD.start_time IS NOT DISTINCT FROM NEW.start_time THEN
+        RETURN NEW;
+END IF;
+
+    -- 2. Check if the service requires any resources
+    -- If not, exit early to avoid unnecessary DELETE operations
+    PERFORM 1
+    FROM service_resource_requirement
+    WHERE service_id = NEW.service_id;
+
+    IF NOT FOUND THEN
+        RETURN NEW;
+END IF;
+
+    -- 3. Remove all previously assigned resources
+    -- Safe because this runs inside the same transaction
+    -- If anything fails below, this DELETE will be rolled back
+DELETE FROM appointment_resource
+WHERE appointment_id = NEW.appointment_id;
+
+-- 4. Loop through each required resource type for the service
+FOR v_req_record IN
+SELECT resource_type
+FROM service_resource_requirement
+WHERE service_id = NEW.service_id
+    LOOP
+        v_new_resource_id := NULL;
+
+-- 5. Find and immediately lock an available resource
+-- SKIP LOCKED prevents race conditions under concurrent rescheduling
+SELECT r.resource_id
+INTO v_new_resource_id
+FROM resources r
+WHERE r.type = v_req_record.resource_type
+  AND NOT EXISTS (
+    SELECT 1
+    FROM appointment_resource ar
+             JOIN appointment a ON ar.appointment_id = a.appointment_id
+    WHERE ar.resource_id = r.resource_id
+      AND a.status != 'CANCELLED'
+                AND a.appointment_id != NEW.appointment_id -- Avoid self-comparison
+                AND a.start_time < NEW.end_time
+                AND a.end_time > NEW.start_time
+)
+ORDER BY r.resource_id ASC   -- Ensures consistent lock order to prevent deadlocks
+    FOR UPDATE SKIP LOCKED
+        LIMIT 1;
+
+-- 6. If any required resource is unavailable, abort the reschedule
+IF v_new_resource_id IS NULL THEN
+            RAISE EXCEPTION
+                'Reschedule Failed: No available resources (Type: %) for the new time slot.',
+                v_req_record.resource_type;
+END IF;
+
+        -- 7. Assign the selected resource to the appointment
+INSERT INTO appointment_resource (appointment_id, resource_id)
+VALUES (NEW.appointment_id, v_new_resource_id);
+
+END LOOP;
+
+RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to reassign resources after appointment rescheduling
+DROP TRIGGER IF EXISTS trg_update_resource_on_reschedule ON appointment;
+CREATE TRIGGER trg_update_resource_on_reschedule
+    AFTER UPDATE ON appointment
+    FOR EACH ROW
+    EXECUTE FUNCTION handle_resource_on_update();
 
 
