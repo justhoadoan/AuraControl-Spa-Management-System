@@ -325,6 +325,7 @@ SELECT r.resource_id
 INTO v_new_resource_id
 FROM resources r
 WHERE r.type = v_req_record.resource_type
+  AND r.is_deleted = FALSE
   AND NOT EXISTS (
     SELECT 1
     FROM appointment_resource ar
