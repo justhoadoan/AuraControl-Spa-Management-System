@@ -17,7 +17,7 @@ SET work_mem = '256MB';
 -- PART 1: STATIC DATA
 -- =====================================================================================
 INSERT INTO services (name, description, price, duration_minutes, is_active)
-SELECT 'Service ' || gs, 'Auto generated ' || gs, (random() * 1000000 + 100000)::DECIMAL(10,2), (ARRAY[30,60,90,120])[floor(random()*4)+1], true
+SELECT 'Service ' || gs, 'Auto generated ' || gs, (random() * 500 + 50)::DECIMAL(10,2), (ARRAY[30,60,90,120])[floor(random()*4)+1], true
 FROM generate_series(1, 20) gs ON CONFLICT DO NOTHING;
 
 INSERT INTO resources (name, type, is_deleted)
