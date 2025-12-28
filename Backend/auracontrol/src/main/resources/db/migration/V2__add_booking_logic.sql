@@ -117,16 +117,21 @@ END IF;
         WHERE technician_id IN (OLD.technician_id, NEW.technician_id)
         ORDER BY technician_id
         FOR UPDATE;
+        
+        -- Verify both technicians exist
+        IF (SELECT COUNT(*) FROM technician WHERE technician_id IN (OLD.technician_id, NEW.technician_id)) < 2 THEN
+            RAISE EXCEPTION 'One or both technicians not found.';
+        END IF;
     ELSE
         -- For INSERT or UPDATE without technician change, just lock the NEW technician
         PERFORM 1
         FROM technician
         WHERE technician_id = NEW.technician_id
         FOR UPDATE;
-END IF;
-
-IF NOT FOUND THEN
-        RAISE EXCEPTION 'Technician not found.';
+        
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Technician not found.';
+        END IF;
 END IF;
 
     -- 3. Validate technician skill
