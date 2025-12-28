@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
-import { Outlet, NavLink, useNavigate, Link } from 'react-router-dom';
+import { Outlet, NavLink, useNavigate} from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
-const TechnicianSidebarLayout = () => {
+const TechnicianLayout = () => {
     const { logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
