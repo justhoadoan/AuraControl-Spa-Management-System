@@ -248,7 +248,7 @@ public class AppointmentService {
 
             // Skip past time slots
             if (currentSlot.isBefore(LocalDateTime.now())) {
-                currentSlot = currentSlot.plusMinutes(5);
+                currentSlot = currentSlot.plusMinutes(15);
                 continue;
             }
 
