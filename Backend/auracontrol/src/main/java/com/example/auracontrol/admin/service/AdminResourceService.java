@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ResourceAdminService {
+public class AdminResourceService {
     private final ResourceRepository resourceRepository;
 
     public List<Resource> getAllResources() {
@@ -59,8 +59,6 @@ public class ResourceAdminService {
         if (!resourceRepository.existsById(id)) {
             throw new ResourceNotFoundException("Resource not found with id: " + id);
         }
-
-
         resourceRepository.deleteById(id);
     }
 
