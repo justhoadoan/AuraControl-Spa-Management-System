@@ -1,8 +1,6 @@
 package com.example.auracontrol.admin.service;
 
-import com.example.auracontrol.admin.dto.DashboardAppointmentDto;
-import com.example.auracontrol.admin.dto.DashboardStatsDto;
-import com.example.auracontrol.admin.dto.RevenueStatDto;
+import com.example.auracontrol.admin.dto.*;
 import com.example.auracontrol.booking.entity.Appointment;
 import com.example.auracontrol.booking.repository.AppointmentRepository;
 import com.example.auracontrol.exception.InvalidRequestException;
@@ -67,22 +65,13 @@ public class DashboardService {
      */
     public DashboardStatsDto getDashboardStats() {
 
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
-
-        // 1. Today's revenue
-        BigDecimal revenue = appointmentRepository.sumRevenueBetween(startOfDay, endOfDay);
-
-        // 2. Today's appointments (number of customers coming today)
-        long appointments = appointmentRepository.countAppointmentsBetween(startOfDay, endOfDay);
-
-        // 3. New customers (accounts registered today)
-        long newCustomers = userRepository.countNewCustomers(startOfDay, endOfDay);
+        TodayStatsView stats = appointmentRepository.getTodayStatsView();
 
         return DashboardStatsDto.builder()
-                .todayRevenue(revenue)
-                .todayAppointments(appointments)
-                .newCustomers(newCustomers)
+
+                .todayRevenue(stats != null ? stats.getTodayRevenue() : BigDecimal.ZERO)
+                .todayAppointments(stats != null ? stats.getTodayAppointments() : 0L)
+                .newCustomers(stats != null ? stats.getNewCustomers() : 0L)
                 .build();
     }
 
@@ -91,31 +80,17 @@ public class DashboardService {
      */
     public List<DashboardAppointmentDto> getUpcomingAppointments() {
 
-        // Retrieve appointments from the current time onwards, excluding cancelled ones
-        List<Appointment> appointments = appointmentRepository
-                .findUpcomingAppointments(
-                        LocalDateTime.now(),
-                        "CANCELLED",
-                        PageRequest.of(0, 10)
-                );
+        List<UpcomingAppointmentView> views = appointmentRepository.getUpcomingAppointmentsView();
 
-        return appointments.stream().map(appt -> {
-
-            String techName = (appt.getTechnician() != null && appt.getTechnician().getUser() != null)
-                    ? appt.getTechnician().getUser().getName()
-                    : "Unassigned";
-
-            return DashboardAppointmentDto.builder()
-                    .appointmentId(appt.getAppointmentId())
-                    .startTime(appt.getStartTime())
-                    .customerName(appt.getCustomer().getUser().getName())
-                    .serviceName(appt.getService().getName())
-                    .technicianName(techName)
-                    .status(appt.getStatus())
-                    .build();
-
-        }).collect(Collectors.toList());
+        return views.stream().map(view -> DashboardAppointmentDto.builder()
+                .appointmentId(view.getAppointmentId())
+                .startTime(view.getStartTime())
+                .customerName(view.getCustomerName())
+                .serviceName(view.getServiceName())
+                .technicianName(view.getTechnicianName())
+                .status(view.getStatus())
+                .build()
+        ).collect(Collectors.toList());
+    }
     }
 
-
-}

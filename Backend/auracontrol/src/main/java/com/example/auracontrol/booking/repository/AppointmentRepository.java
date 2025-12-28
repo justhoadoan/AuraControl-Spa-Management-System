@@ -1,6 +1,8 @@
 package com.example.auracontrol.booking.repository;
 
 import com.example.auracontrol.admin.dto.RevenueStatDto;
+import com.example.auracontrol.admin.dto.TodayStatsView;
+import com.example.auracontrol.admin.dto.UpcomingAppointmentView;
 import com.example.auracontrol.booking.entity.Appointment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -68,4 +70,11 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findByTechnicianIdAndDateRange(Integer techId, LocalDateTime from, LocalDateTime to);
 
 
+    @Query(value = "SELECT * FROM v_upcoming_appointments ORDER BY start_time ASC LIMIT 10",
+            nativeQuery = true)
+    List<UpcomingAppointmentView> getUpcomingAppointmentsView();
+
+
+    @Query(value = "SELECT * FROM v_today_stats", nativeQuery = true)
+    TodayStatsView getTodayStatsView();
 }
