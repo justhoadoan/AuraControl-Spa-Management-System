@@ -2,10 +2,17 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = () => {
-    // --- STATE ---
+   // --- STATE ---
     const [appointments, setAppointments] = useState([]);
+    const [stats, setStats] = useState({
+        todayRevenue: 0,
+        todayAppointments: 0,
+        newCustomers: 0
+    }); // - State for Stats
+    
     const [isLoading, setIsLoading] = useState(true);
     const [chartRange, setChartRange] = useState('week'); // 'week', 'month', 'year'
+    const [revenueData, setRevenueData] = useState({ labels: [], values: [] });
 
     // --- CHART DATA (Static for now, moved from HTML script) ---
     const chartDatasets = {
@@ -28,11 +35,16 @@ const AdminDashboard = () => {
         const fetchDashboardData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                // 1. Fetch Upcoming Appointments
-                const response = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setAppointments(response.data);
+                const headers = { Authorization: `Bearer ${token}` };
+
+                // 1. Fetch Upcoming Appointments (Existing logic)
+                const appointmentsRes = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', { headers });
+                setAppointments(appointmentsRes.data);
+
+                // 2. Fetch Dashboard Stats (NEW LOGIC)
+                const statsRes = await axios.get('http://localhost:8081/api/admin/dashboard/stats', { headers });
+                setStats(statsRes.data);
+
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
             } finally {
@@ -44,16 +56,10 @@ const AdminDashboard = () => {
     }, []);
 
     // --- HELPERS ---
-    const formatDateTime = (dateString) => {
+    const formatTime = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleString('en-US', {
-            weekday: 'short',
-            month: 'short',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        });
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const getStatusColor = (status) => {
@@ -86,21 +92,36 @@ const AdminDashboard = () => {
 
             {/* --- STATS CARDS (Static placeholders - Connect API here if needed) --- */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                {/* Card 1: Today's Revenue */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Today's Revenue</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">$1,250</p>
+                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                        ${stats.todayRevenue ? stats.todayRevenue.toLocaleString() : '0'}
+                    </p>
                 </div>
+
+                {/* Card 2: New Appointments (Today's Appointments) */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
-                    <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">New Appointments</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">12</p>
+                    <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Today's Appointments</p>
+                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                        {stats.todayAppointments}
+                    </p>
                 </div>
+
+                {/* Card 3: New Customers */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">New Customers</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">5</p>
+                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                        {stats.newCustomers}
+                    </p>
                 </div>
+
+                {/* Card 4: Pending Requests (Static or Need another API) */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Pending Requests</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">3</p>
+                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                        - 
+                    </p>
                 </div>
             </div>
 
@@ -166,7 +187,7 @@ const AdminDashboard = () => {
                     <table className="w-full text-left">
                         <thead className="bg-background-light dark:bg-background-dark">
                             <tr className="border-b border-border-light dark:border-border-dark">
-                                <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Date & Time</th>
+                                <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Time</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Customer</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Service</th>
                                 <th className="p-3 text-sm font-semibold text-text-primary-light dark:text-text-primary-dark">Technician</th>
@@ -186,7 +207,7 @@ const AdminDashboard = () => {
                                 appointments.map((appt) => (
                                     <tr key={appt.appointmentId} className="hover:bg-primary/5 transition-colors">
                                         <td className="p-3 text-sm text-text-primary-light dark:text-text-primary-dark">
-                                            {formatDateTime(appt.startTime)}
+                                            {formatTime(appt.startTime)}
                                         </td>
                                         <td className="p-3 text-sm text-text-primary-light dark:text-text-primary-dark font-medium">
                                             {appt.customerName}
