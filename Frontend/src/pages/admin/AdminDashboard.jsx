@@ -5,6 +5,7 @@ const AdminDashboard = () => {
     // --- STATE ---
     const [appointments, setAppointments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingRevenue, setIsLoadingRevenue] = useState(true);
     const [chartRange, setChartRange] = useState('week'); // 'week', 'month', 'year'
     const [revenueData, setRevenueData] = useState({ labels: [], values: [] });
 
@@ -31,6 +32,7 @@ const AdminDashboard = () => {
     // 2. Fetch Revenue Data (When range changes)
     useEffect(() => {
         const fetchRevenue = async () => {
+            setIsLoadingRevenue(true);
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
@@ -45,6 +47,8 @@ const AdminDashboard = () => {
                 setRevenueData({ labels, values });
             } catch (error) {
                 console.error("Error fetching revenue:", error);
+            } finally {
+                setIsLoadingRevenue(false);
             }
         };
         fetchRevenue();
@@ -138,31 +142,37 @@ const AdminDashboard = () => {
                 
                 {/* Chart Bars */}
                 <div className="flex items-end justify-between gap-3 h-64 px-4 pb-4 border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-background-dark">
-                    {currentChartData.labels.map((label, index) => {
-                        const value = currentChartData.values[index];
-                        const heightPercent = (value / maxChartValue) * 100;
-                        
-                        return (
-                            <div key={index} className="flex flex-1 flex-col items-center justify-end gap-2 min-w-[2rem] h-full group">
-                                {/* Tooltip Value */}
-                                <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark opacity-0 group-hover:opacity-100 transition-opacity">
-                                    ${value.toLocaleString()}
+                    {isLoadingRevenue ? (
+                        <div className="flex items-center justify-center w-full h-full">
+                            <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading revenue data...</p>
+                        </div>
+                    ) : (
+                        currentChartData.labels.map((label, index) => {
+                            const value = currentChartData.values[index];
+                            const heightPercent = (value / maxChartValue) * 100;
+                            
+                            return (
+                                <div key={index} className="flex flex-1 flex-col items-center justify-end gap-2 min-w-[2rem] h-full group">
+                                    {/* Tooltip Value */}
+                                    <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark opacity-0 group-hover:opacity-100 transition-opacity">
+                                        ${value.toLocaleString()}
+                                    </div>
+                                    {/* Bar Track */}
+                                    <div className="w-6 h-full flex items-end justify-center overflow-hidden rounded-t-full bg-primary/10 dark:bg-primary/20 relative">
+                                        {/* Bar Fill */}
+                                        <div 
+                                            className="w-full bg-primary dark:bg-primary rounded-t-full transition-all duration-500 ease-out"
+                                            style={{ height: `${heightPercent}%` }}
+                                        ></div>
+                                    </div>
+                                    {/* Label */}
+                                    <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark">
+                                        {label}
+                                    </div>
                                 </div>
-                                {/* Bar Track */}
-                                <div className="w-6 h-full flex items-end justify-center overflow-hidden rounded-t-full bg-primary/10 dark:bg-primary/20 relative">
-                                    {/* Bar Fill */}
-                                    <div 
-                                        className="w-full bg-primary dark:bg-primary rounded-t-full transition-all duration-500 ease-out"
-                                        style={{ height: `${heightPercent}%` }}
-                                    ></div>
-                                </div>
-                                {/* Label */}
-                                <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark">
-                                    {label}
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
