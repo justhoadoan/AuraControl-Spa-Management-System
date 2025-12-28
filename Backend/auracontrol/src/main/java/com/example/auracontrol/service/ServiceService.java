@@ -44,7 +44,7 @@ public class ServiceService {
     @Transactional
     public com.example.auracontrol.service.Service update(Integer id, ServiceRequest request) {
         if (!serviceRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Can not find service");
+            throw new ResourceNotFoundException("Cannot find service: " + id);
         }
 
         int rowsAffected = serviceRepository.update(
