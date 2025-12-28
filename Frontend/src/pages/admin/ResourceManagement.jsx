@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useToast } from '../../Components/common/Toast';
 
@@ -23,7 +23,7 @@ const ResourceManagement = () => {
     // --- API CALLS ---
 
     // 1. Fetch Resources
-    const fetchResources = async () => {
+    const fetchResources = useCallback(async () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
@@ -37,11 +37,11 @@ const ResourceManagement = () => {
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [toast]);
 
     useEffect(() => {
         fetchResources();
-    }, []);
+    }, [fetchResources]);
 
     // --- HANDLERS ---
 
