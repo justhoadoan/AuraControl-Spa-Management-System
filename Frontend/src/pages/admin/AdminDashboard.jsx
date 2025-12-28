@@ -102,7 +102,6 @@ const AdminDashboard = () => {
     };
 
     // Logic to calculate bar height
-    const currentChartData = revenueData;
     const maxChartValue = Math.max(...(revenueData.values || [0]), 1);
 
     return (
@@ -170,13 +169,13 @@ const AdminDashboard = () => {
                         <div className="w-full h-full flex items-center justify-center">
                             <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading revenue data...</p>
                         </div>
-                    ) : currentChartData.labels.length === 0 ? (
+                    ) : revenueData.labels.length === 0 ? (
                         <div className="w-full h-full flex items-center justify-center">
                             <p className="text-text-secondary-light dark:text-text-secondary-dark">No revenue data available.</p>
                         </div>
                     ) : (
-                        currentChartData.labels.map((label, index) => {
-                            const value = currentChartData.values[index];
+                        revenueData.labels.map((label, index) => {
+                            const value = revenueData.values[index];
                             const heightPercent = (value / maxChartValue) * 100;
                             
                             return (
