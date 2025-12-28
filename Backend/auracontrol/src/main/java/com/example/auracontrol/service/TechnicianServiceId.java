@@ -16,7 +16,13 @@ public class TechnicianServiceId implements Serializable {
     private Integer technician;
     private Integer service;
 
-    // equals and hashCode methods are essential for composite keys
+    public TechnicianServiceId() {}
+
+    public TechnicianServiceId(Integer technician, Integer service) {
+        this.technician = technician;
+        this.service = service;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -30,5 +36,4 @@ public class TechnicianServiceId implements Serializable {
     public int hashCode() {
         return Objects.hash(technician, service);
     }
-
 }

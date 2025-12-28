@@ -18,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,46 +32,91 @@ public class AdminTechnicianService {
 
     @Transactional(readOnly = true)
     public Page<TechnicianResponse> getAllTechnicians(Pageable pageable) {
-        Page<Technician> pageResult = technicianRepository.findAll(pageable);
+        Page<Technician> pageResult = technicianRepository.findAllByUser_EnabledTrue(pageable);
         return pageResult.map(this::mapToResponse);
     }
 
-    //Create
     @Transactional
     public TechnicianResponse createTechnician(TechnicianRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new DuplicateResourceException("Email already exists");
-        }
-        User user = new User();
-        user.setName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.TECHNICIAN);
-        user.setEnabled(true);
-        userRepository.save(user);
 
-        Technician tech = new Technician();
-        tech.setUser(user);
+        Optional<User> existingUserOpt = userRepository.findByEmail(request.getEmail());
+
+        User user;
+        Technician tech;
+
+        if (existingUserOpt.isPresent()) {
+            User existingUser = existingUserOpt.get();
+            if (Boolean.TRUE.equals(existingUser.isEnabled())) {
+                throw new DuplicateResourceException("Email already exists and is active");
+            }
 
 
-        if (request.getServiceIds() != null) {
-            List<com.example.auracontrol.service.Service> services = serviceRepository.findByServiceIdInAndIsActiveTrue(request.getServiceIds());
+            user = existingUser;
+            user.setEnabled(true);
+            user.setName(request.getFullName());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            userRepository.save(user);
 
-            tech.setSkills(services.stream()
-                    .map(service -> {
-                        TechnicianServiceSkill skill = new TechnicianServiceSkill();
-                        skill.setTechnician(tech);
-                        skill.setService(service);
-                        return skill;
-                    })
-                    .collect(Collectors.toSet()));
+
+            tech = technicianRepository.findByUser_UserId(user.getUserId())
+                    .orElseGet(() -> {
+                        Technician newTech = new Technician();
+                        newTech.setUser(user);
+                        return newTech;
+                    });
+
         } else {
+
+            user = new User();
+            user.setName(request.getFullName());
+            user.setEmail(request.getEmail());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+            user.setRole(Role.TECHNICIAN);
+            user.setEnabled(true);
+            userRepository.save(user);
+
+            tech = new Technician();
+            tech.setUser(user);
             tech.setSkills(new HashSet<>());
+        }
+
+
+
+        if (tech.getSkills() == null) {
+            tech.setSkills(new HashSet<>());
+        }
+
+        Set<Integer> requestServiceIds = (request.getServiceIds() == null)
+                ? new HashSet<>()
+                : new HashSet<>(request.getServiceIds());
+
+
+        tech.getSkills().removeIf(skill -> !requestServiceIds.contains(skill.getService().getServiceId()));
+
+
+        Set<Integer> currentServiceIds = tech.getSkills().stream()
+                .map(skill -> skill.getService().getServiceId())
+                .collect(Collectors.toSet());
+
+        if (!requestServiceIds.isEmpty()) {
+
+            List<com.example.auracontrol.service.Service> servicesToAdd =
+                    serviceRepository.findByServiceIdInAndIsActiveTrue(new ArrayList<>(requestServiceIds));
+
+            for (com.example.auracontrol.service.Service service : servicesToAdd) {
+
+                if (!currentServiceIds.contains(service.getServiceId())) {
+                    TechnicianServiceSkill skill = new TechnicianServiceSkill();
+                    skill.setTechnician(tech);
+                    skill.setService(service);
+
+                    tech.getSkills().add(skill);
+                }
+            }
         }
 
         return mapToResponse(technicianRepository.save(tech));
     }
-
     // 3. UPDATE
     @Transactional
     public TechnicianResponse updateTechnician(Integer id, TechnicianRequest request) {
@@ -91,25 +135,51 @@ public class AdminTechnicianService {
         }
 
         if (request.getServiceIds() != null) {
-            tech.getSkills().clear();
-
-            List<com.example.auracontrol.service.Service> newServices =
-                    serviceRepository.findByServiceIdInAndIsActiveTrue(request.getServiceIds());
+            Set<Integer> newServiceIds = new HashSet<>(request.getServiceIds());
 
 
-            for (com.example.auracontrol.service.Service service : newServices) {
+            tech.getSkills().removeIf(skill -> !newServiceIds.contains(skill.getService().getServiceId()));
 
-                TechnicianServiceSkill skill = new TechnicianServiceSkill();
-                skill.setTechnician(tech);
-                skill.setService(service);
 
-                tech.getSkills().add(skill);
+            Set<Integer> existingServiceIds = tech.getSkills().stream()
+                    .map(skill -> skill.getService().getServiceId())
+                    .collect(Collectors.toSet());
+
+            List<Integer> idsToAdd = newServiceIds.stream()
+                    .filter(serviceId -> !existingServiceIds.contains(id))
+                    .collect(Collectors.toList());
+
+            if (!idsToAdd.isEmpty()) {
+                List<com.example.auracontrol.service.Service> servicesToAdd =
+                        serviceRepository.findByServiceIdInAndIsActiveTrue(idsToAdd);
+
+                for (com.example.auracontrol.service.Service service : servicesToAdd) {
+                    TechnicianServiceSkill skill = new TechnicianServiceSkill();
+                    skill.setTechnician(tech);
+                    skill.setService(service);
+                    tech.getSkills().add(skill);
+                }
             }
         }
 
         return mapToResponse(technicianRepository.save(tech));
     }
+    @Transactional
+    public void deleteTechnician(Integer technicianId) {
+        // 1. Tìm Technician
+        Technician tech = technicianRepository.findById(technicianId)
+                .orElseThrow(() -> new ResourceNotFoundException("Technician not found with id: " + technicianId));
 
+        User user = tech.getUser();
+
+        if (user == null) {
+            throw new ResourceNotFoundException("User associated with technician not found");
+        }
+
+        user.setEnabled(false);
+
+        technicianRepository.save(tech);
+    }
     private TechnicianResponse mapToResponse(Technician t) {
         TechnicianResponse res = new TechnicianResponse();
         res.setTechnicianId(t.getTechnicianId());
