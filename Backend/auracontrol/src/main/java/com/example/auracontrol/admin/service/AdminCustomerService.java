@@ -27,33 +27,9 @@ public class AdminCustomerService {
     private final AppointmentRepository appointmentRepository;
 
     public Page<CustomerListResponse> getCustomers(String keyword, Pageable pageable) {
-        Page<User> usersPage = userRepository.searchCustomers(keyword, pageable);
-
-        return usersPage.map(user -> {
-            CustomerListResponse res = new CustomerListResponse();
-            res.setUserId(user.getUserId());
-            res.setName(user.getName());
-            res.setEmail(user.getEmail());
-
-            Optional<Customer> customerOpt = customerRepository.findByUser_UserId(user.getUserId());
-
-            if (customerOpt.isPresent()) {
-                Customer customer = customerOpt.get();
-
-                res.setCustomerId(customer.getCustomerId());
-
-
-                long count = appointmentRepository.countByCustomer_CustomerId(customer.getCustomerId());
-                res.setTotalAppointments(count);
-            } else {
-
-                res.setCustomerId(null);
-                res.setTotalAppointments(0);
-            }
-
-            return res;
-        });
+        return userRepository.findAllCustomersWithAppointmentCount(keyword, pageable);
     }
+
     @Transactional(readOnly = true)
     public CustomerDetailResponse getCustomerDetail(Integer userId) {
         User user = userRepository.findById(userId)

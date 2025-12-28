@@ -9,7 +9,7 @@ const AdminDashboard = () => {
         todayAppointments: 0,
         newCustomers: 0
     }); // - State for Stats
-    
+    const isInitialMount = useRef(true);
     const [isLoading, setIsLoading] = useState(true);
     const [isRevenueLoading, setIsRevenueLoading] = useState(true);
     const [chartRange, setChartRange] = useState('week'); // 'week', 'month', 'year'
