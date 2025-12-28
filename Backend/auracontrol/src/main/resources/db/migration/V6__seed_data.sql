@@ -62,51 +62,88 @@ END $$;
 -- =====================================================================================
 DO $$
 DECLARE
-v_appt_id INT;
+    v_appt_id INT;
     v_cust_id INT;
     v_tech_id INT;
-    v_service RECORD;
+    v_service_id INT;
+    v_service_price NUMERIC;
+    v_service_duration INT;
     v_start_time TIMESTAMP;
     i INT;
+    -- Preloaded ID and attribute arrays for efficient random selection
+    v_customer_ids INT[];
+    v_technician_ids INT[];
+    v_service_ids INT[];
+    v_service_prices NUMERIC[];
+    v_service_durations INT[];
+    v_customer_count INT;
+    v_technician_count INT;
+    v_service_count INT;
+    v_cust_idx INT;
+    v_tech_idx INT;
+    v_service_idx INT;
 BEGIN
     -- [CRITICAL] Disable triggers to speed up insert by 100x
-ALTER TABLE appointment DISABLE TRIGGER ALL;
+    ALTER TABLE appointment DISABLE TRIGGER ALL;
 
-FOR i IN 1..200000 LOOP
-        -- Random selection using OFFSET is slow, but acceptable for seeding once.
-        -- Using ID range is faster but IDs might not be contiguous.
-        -- Here we assume IDs are somewhat contiguous for simplicity.
+    -- Preload IDs and service attributes once to avoid repeated ORDER BY random() in the loop
+    SELECT array_agg(customer_id), count(*) INTO v_customer_ids, v_customer_count FROM customer;
+    SELECT array_agg(technician_id), count(*) INTO v_technician_ids, v_technician_count FROM technician;
+    SELECT
+        array_agg(service_id),
+        array_agg(price),
+        array_agg(duration_minutes),
+        count(*)
+    INTO
+        v_service_ids,
+        v_service_prices,
+        v_service_durations,
+        v_service_count
+    FROM services;
 
-SELECT service_id, price, duration_minutes INTO v_service FROM services ORDER BY random() LIMIT 1;
+    FOR i IN 1..200000 LOOP
+        -- Choose random indices into the preloaded arrays
+        v_cust_idx := floor(random() * v_customer_count)::INT + 1;
+        v_tech_idx := floor(random() * v_technician_count)::INT + 1;
+        v_service_idx := floor(random() * v_service_count)::INT + 1;
 
--- Random time in last 2 years
-v_start_time := NOW() - (random() * 730 * INTERVAL '1 day') + (random() * 12 * INTERVAL '1 hour');
+        -- Resolve random customer, technician, and service from arrays
+        v_cust_id := v_customer_ids[v_cust_idx];
+        v_tech_id := v_technician_ids[v_tech_idx];
+        v_service_id := v_service_ids[v_service_idx];
+        v_service_price := v_service_prices[v_service_idx];
+        v_service_duration := v_service_durations[v_service_idx];
 
-INSERT INTO appointment (customer_id, technician_id, service_id, start_time, end_time, status, final_price, created_at)
-SELECT
-    (SELECT customer_id FROM customer ORDER BY random() LIMIT 1),
-            (SELECT technician_id FROM technician ORDER BY random() LIMIT 1),
-            v_service.service_id,
+        -- Random time in last 2 years
+        v_start_time := NOW() - (random() * 730 * INTERVAL '1 day') + (random() * 12 * INTERVAL '1 hour');
+
+        INSERT INTO appointment (customer_id, technician_id, service_id, start_time, end_time, status, final_price, created_at)
+        VALUES (
+            v_cust_id,
+            v_tech_id,
+            v_service_id,
             v_start_time,
-            v_start_time + (v_service.duration_minutes || ' minutes')::interval,
+            v_start_time + (v_service_duration || ' minutes')::interval,
             (ARRAY['COMPLETED','COMPLETED','COMPLETED','CANCELLED','CONFIRMED'])[floor(random()*5)+1], -- Weighted status
-            v_service.price,
+            v_service_price,
             v_start_time
+        )
         RETURNING appointment_id INTO v_appt_id;
 
+        INSERT INTO appointment_resource (appointment_id, resource_id)
+        SELECT v_appt_id, r.resource_id
+        FROM resources r
+                 JOIN service_resource_requirement srr ON srr.resource_type = r.type
+        WHERE srr.service_id = v_service_id
+        ORDER BY random() LIMIT 1;
 
-INSERT INTO appointment_resource (appointment_id, resource_id)
-SELECT v_appt_id, r.resource_id
-FROM resources r
-         JOIN service_resource_requirement srr ON srr.resource_type = r.type
-WHERE srr.service_id = v_service.service_id
-ORDER BY random() LIMIT 1;
-
-IF i % 10000 = 0 THEN RAISE NOTICE 'Inserted % appointments...', i; END IF;
-END LOOP;
+        IF i % 10000 = 0 THEN
+            RAISE NOTICE 'Inserted % appointments...', i;
+        END IF;
+    END LOOP;
 
     -- [CRITICAL] Re-enable triggers
-ALTER TABLE appointment ENABLE TRIGGER ALL;
+    ALTER TABLE appointment ENABLE TRIGGER ALL;
 
 -- Fix Sequences
 PERFORM setval('appointment_appointment_id_seq', (SELECT MAX(appointment_id) FROM appointment));
