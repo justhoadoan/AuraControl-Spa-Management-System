@@ -77,4 +77,4 @@ const TechnicianLayout = () => {
     );
 };
 
-export default TechnicianSidebarLayout;
+export default TechnicianLayout;

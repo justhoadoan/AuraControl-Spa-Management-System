@@ -10,39 +10,14 @@ const AuthProvider = ({children}) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    useEffect(() => {
-        const storedToken = localStorage.getItem('token');
 
-        if(storedToken) {
-            try {
-                // Decode token to get user info
-                const decoded = jwtDecode(storedToken);
-                
-                // Check if token is expired
-                const currentTime = Date.now() / 1000;
-                if(decoded.exp && decoded.exp < currentTime) {
-                    // Token expired, logout
-                    logout();
-                    setLoading(false);
-                    return;
-                }
-                
-                // Token is valid, restore state
-                setToken(storedToken);
-                setUserRole(decoded.role || decoded.authorities?.[0] || null);
-                setUser({
-                    id: decoded.sub || decoded.userId,
-                    email: decoded.email,
-                    ...decoded
-                });
-                setIsAuthenticated(true);
-            } catch (error) {
-                console.error('Invalid token:', error);
-                logout();
-            }
-        }
-        setLoading(false);
-    }, []);
+    const logout = () => {
+        setToken(null);
+        setUserRole(null);
+        setUser(null);
+        setIsAuthenticated(false);
+        localStorage.removeItem('token');
+    };
 
     const login = (authToken) =>{
         try {
@@ -76,13 +51,39 @@ const AuthProvider = ({children}) => {
         }
     };
 
-    const logout = () => {
-        setToken(null);
-        setUserRole(null);
-        setUser(null);
-        setIsAuthenticated(false);
-        localStorage.removeItem('token');
-    };
+    useEffect(() => {
+        const storedToken = localStorage.getItem('token');
+
+        if(storedToken) {
+            try {
+                // Decode token to get user info
+                const decoded = jwtDecode(storedToken);
+                
+                // Check if token is expired
+                const currentTime = Date.now() / 1000;
+                if(decoded.exp && decoded.exp < currentTime) {
+                    // Token expired, logout
+                    logout();
+                    setLoading(false);
+                    return;
+                }
+                
+                // Token is valid, restore state
+                setToken(storedToken);
+                setUserRole(decoded.role || decoded.authorities?.[0] || null);
+                setUser({
+                    id: decoded.sub || decoded.userId,
+                    email: decoded.email,
+                    ...decoded
+                });
+                setIsAuthenticated(true);
+            } catch (error) {
+                console.error('Invalid token:', error);
+                logout();
+            }
+        }
+        setLoading(false);
+    }, []);
     
     return (
         <AuthContext.Provider
