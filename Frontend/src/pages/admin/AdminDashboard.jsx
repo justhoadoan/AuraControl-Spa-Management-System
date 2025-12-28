@@ -75,7 +75,7 @@ const AdminDashboard = () => {
 
     // Logic to calculate bar height
     const currentChartData = revenueData;
-    const maxChartValue = Math.max(...(revenueData.values || []), 0) || 1;
+    const maxChartValue = Math.max(...(revenueData.values || [0]), 1);
 
     return (
         <>
