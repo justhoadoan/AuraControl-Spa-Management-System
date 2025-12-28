@@ -47,7 +47,7 @@ const AdminDashboard = () => {
     const formatDateTime = (dateString) => {
         if (!dateString) return '';
         const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
+        return date.toLocaleString('en-US', {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
