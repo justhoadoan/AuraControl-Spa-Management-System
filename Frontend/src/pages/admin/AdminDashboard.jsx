@@ -6,26 +6,11 @@ const AdminDashboard = () => {
     const [appointments, setAppointments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [chartRange, setChartRange] = useState('week'); // 'week', 'month', 'year'
-
-    // --- CHART DATA (Static for now, moved from HTML script) ---
-    const chartDatasets = {
-        week: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-            values: [180, 220, 150, 260, 310, 280, 190]
-        },
-        month: {
-            labels: ['W1', 'W2', 'W3', 'W4'],
-            values: [3200, 2800, 3500, 3900]
-        },
-        year: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            values: [12000, 11500, 14000, 15500, 16200, 17000, 18000, 17500, 16000, 15800, 14900, 16500]
-        }
-    };
+    const [revenueData, setRevenueData] = useState({ labels: [], values: [] });
 
     // --- API CALLS ---
     useEffect(() => {
-        const fetchDashboardData = async () => {
+        const fetchAppointments = async () => {
             try {
                 const token = localStorage.getItem('token');
                 // 1. Fetch Upcoming Appointments
@@ -40,8 +25,30 @@ const AdminDashboard = () => {
             }
         };
 
-        fetchDashboardData();
+        fetchAppointments();
     }, []);
+
+    // 2. Fetch Revenue Data (When range changes)
+    useEffect(() => {
+        const fetchRevenue = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
+                    params: { period: chartRange },
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                
+                // Transform: [{label: 'Mon', value: 100}, ...] -> {labels: ['Mon', ...], values: [100, ...]}
+                const labels = response.data.map(item => item.label);
+                const values = response.data.map(item => item.value);
+                
+                setRevenueData({ labels, values });
+            } catch (error) {
+                console.error("Error fetching revenue:", error);
+            }
+        };
+        fetchRevenue();
+    }, [chartRange]);
 
     // --- HELPERS ---
     const formatDateTime = (dateString) => {
@@ -67,8 +74,8 @@ const AdminDashboard = () => {
     };
 
     // Logic to calculate bar height
-    const currentChartData = chartDatasets[chartRange];
-    const maxChartValue = Math.max(...currentChartData.values) || 1;
+    const currentChartData = revenueData;
+    const maxChartValue = Math.max(...(revenueData.values || []), 0) || 1;
 
     return (
         <>
