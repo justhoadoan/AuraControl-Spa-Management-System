@@ -36,7 +36,7 @@ FROM technician t
          JOIN users u ON t.user_id = u.user_id
          JOIN technician_services ts ON t.technician_id = ts.technician_id
 WHERE ts.service_id = p_service_id
-
+      AND u.is_enabled = true
   -- No overlapping appointments
   AND NOT EXISTS (
     SELECT 1

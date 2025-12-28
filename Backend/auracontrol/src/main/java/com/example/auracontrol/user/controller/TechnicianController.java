@@ -70,7 +70,7 @@ public class TechnicianController {
     }
 
     private Technician getCurrentTechnician(UserDetails userDetails) {
-        return technicianRepository.findByUser_Email(userDetails.getUsername())
+        return technicianRepository.findByUser_EmailAndUser_EnabledTrue(userDetails.getUsername())
                 .orElseThrow(() ->
                         new ResourceNotFoundException(
                                 "Cannot find Technician for " + userDetails.getUsername()

@@ -37,4 +37,9 @@ public class AdminTechnicianController {
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody TechnicianRequest request) {
         return ResponseEntity.ok(adminTechnicianService.updateTechnician(id, request));
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTechnician(@PathVariable Integer id) {
+        adminTechnicianService.deleteTechnician(id);
+        return ResponseEntity.noContent().build();
+    }
 }
