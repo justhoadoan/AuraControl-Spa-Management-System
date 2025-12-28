@@ -194,7 +194,7 @@ const AdminDashboard = () => {
                 </div>
                 
                 {/* Chart Bars */}
-                <div className="flex items-end justify-between gap-3 h-64 px-4 pb-4 border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-background-dark">
+                <div className="flex items-end justify-start gap-3 h-64 px-4 pb-4 border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-background-dark overflow-x-auto">
                     {isRevenueLoading ? (
                         <div className="w-full h-full flex items-center justify-center">
                             <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading revenue data...</p>
