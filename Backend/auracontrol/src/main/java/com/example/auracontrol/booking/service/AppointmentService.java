@@ -17,6 +17,7 @@ import com.example.auracontrol.user.entity.Customer;
 import com.example.auracontrol.user.entity.Technician;
 import com.example.auracontrol.user.repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -373,6 +374,49 @@ public class AppointmentService {
                         .build())
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public void confirmAppointment(Integer appointmentId, String userEmail) {
+
+        Technician currentTech = technicianRepository.findByUser_EmailAndUser_EnabledTrue(userEmail)
+                .orElseThrow(() -> new AccessDeniedException("You are not a valid technician"));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (!currentTech.getTechnicianId().equals(appointment.getTechnician().getTechnicianId())) {
+            throw new AccessDeniedException("You are not allowed to operate on another technician's appointment");
+        }
+
+        if (!"PENDING".equals(appointment.getStatus())) {
+            throw new IllegalStateException("Only appointments in PENDING status can be confirmed");
+        }
+
+        appointment.setStatus("CONFIRMED");
+        appointmentRepository.save(appointment);
+    }
+
+    // (COMPLETE)
+    @Transactional
+    public void completeAppointment(Integer appointmentId, String userEmail) {
+
+        Technician currentTech = technicianRepository.findByUser_EmailAndUser_EnabledTrue(userEmail)
+                .orElseThrow(() -> new AccessDeniedException("You are not a valid technician"));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (!currentTech.getTechnicianId().equals(appointment.getTechnician().getTechnicianId())) {
+            throw new AccessDeniedException("You are not allowed to operate on this appointment");
+        }
+
+        if (!"CONFIRMED".equals(appointment.getStatus())) {
+            throw new IllegalStateException("The appointment has not been confirmed and cannot be marked as completed");
+        }
+
+        appointment.setStatus("COMPLETED");
+        appointmentRepository.save(appointment);
+    }
+
     /**
      * Helper method: count busy technicians during a time slot.
      */
