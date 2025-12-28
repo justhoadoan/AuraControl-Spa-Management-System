@@ -33,6 +33,7 @@ import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import ServiceManagement from './pages/admin/ServiceManagement.jsx';
 import CustomerManagement from './pages/admin/CustomerManagement.jsx';
 import TechnicianManagement from './pages/admin/TechnicianManagement.jsx';
+import ResourceManagement from './pages/admin/ResourceManagement.jsx';
 
 // Pages - Technician
 import StaffDashboard from './pages/technician/StaffDashboard.jsx';
@@ -142,6 +143,7 @@ function App() {
             <Route path="/admin/services" element={<ServiceManagement />} />
             <Route path="/admin/customers" element={<CustomerManagement />} />
             <Route path="/admin/technicians" element={<TechnicianManagement />} />
+            <Route path="/admin/resources" element={<ResourceManagement />} />
           </Route>
 
           {/* Role-Based Routes - TECHNICIAN */}
