@@ -24,7 +24,7 @@ const AccountDashboard = () => {
                 // Lưu ý: Kiểm tra lại Controller của bạn xem @RequestMapping là gì.
                 // Mình giả định là /api/appointments dựa trên các bài trước.
                 // Nếu Controller của bạn là @RequestMapping("/api/users"), hãy sửa lại đường dẫn bên dưới.
-                const response = await axios.get('http://localhost:8081/api/appointments/upcoming-appointments', {
+                const response = await axios.get('http://localhost:8081/api/booking/upcoming-appointments', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setAppointments(response.data);
