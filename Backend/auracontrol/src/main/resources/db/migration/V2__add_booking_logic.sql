@@ -108,19 +108,30 @@ BEGIN
 END IF;
 END IF;
 
-    -- Lock OLD technician if technician is changed
+    -- 2. Lock technician rows in a consistent order to prevent deadlocks
+    -- When updating, lock both OLD and NEW technicians in ascending ID order
     IF TG_OP = 'UPDATE' AND OLD.technician_id IS DISTINCT FROM NEW.technician_id THEN
-        PERFORM 1 FROM technician WHERE technician_id = OLD.technician_id FOR UPDATE;
-END IF;
-
-    -- 2. Lock NEW technician row (Concurrency Control)
-    PERFORM 1
-    FROM technician
-    WHERE technician_id = NEW.technician_id
-    FOR UPDATE;
-
-IF NOT FOUND THEN
-        RAISE EXCEPTION 'Technician not found.';
+        -- Lock both technicians in ascending order by ID
+        PERFORM 1
+        FROM technician
+        WHERE technician_id IN (OLD.technician_id, NEW.technician_id)
+        ORDER BY technician_id
+        FOR UPDATE;
+        
+        -- Verify both technicians exist
+        IF (SELECT COUNT(*) FROM technician WHERE technician_id IN (OLD.technician_id, NEW.technician_id)) < 2 THEN
+            RAISE EXCEPTION 'One or both technicians not found.';
+        END IF;
+    ELSE
+        -- For INSERT or UPDATE without technician change, just lock the NEW technician
+        PERFORM 1
+        FROM technician
+        WHERE technician_id = NEW.technician_id
+        FOR UPDATE;
+        
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Technician not found.';
+        END IF;
 END IF;
 
     -- 3. Validate technician skill
