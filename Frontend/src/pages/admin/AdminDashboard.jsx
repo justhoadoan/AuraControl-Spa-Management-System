@@ -34,7 +34,7 @@ const AdminDashboard = () => {
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
-                    params: { period: chartRange },
+                    params: { period: chartRange.toUpperCase() },
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 
