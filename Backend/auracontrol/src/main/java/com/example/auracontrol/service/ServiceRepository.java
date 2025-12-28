@@ -15,7 +15,7 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
     @Override
     @Query("SELECT s FROM Service s ORDER BY s.serviceId DESC")
     List<Service> findAll();
-
+    List<Service> findByIsActiveTrue();
     @Override
     @Query("SELECT s FROM Service s WHERE s.serviceId = :id")
     Optional<Service> findById(@Param("id") Integer id);
