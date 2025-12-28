@@ -11,6 +11,9 @@ SET synchronous_commit = OFF;
 SET work_mem = '256MB';
 
 -- 2. Clean up old data
+-- NOTE: The following TRUNCATE is intentionally kept commented out to prevent accidental
+--       data loss in shared/staging/production databases. If you need a full reseed in a
+--       local or disposable environment, you may run this statement manually:
 -- TRUNCATE TABLE appointment, appointment_resource, technician_services, service_resource_requirement, resources, services, technician, customer, users RESTART IDENTITY CASCADE;
 
 -- =====================================================================================
