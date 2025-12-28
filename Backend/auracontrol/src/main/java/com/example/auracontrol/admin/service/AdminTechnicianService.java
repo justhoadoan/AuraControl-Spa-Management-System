@@ -190,15 +190,23 @@ public class AdminTechnicianService {
         }
 
 
-        if (t.getSkills() != null) {
-            res.setServiceNames(t.getSkills().stream()
-                    .map(skill -> skill.getService().getName())
-                    .collect(Collectors.toList()));
+        List<String> serviceNames = new ArrayList<>();
+        List<Integer> serviceIds = new ArrayList<>();
 
-            res.setServiceIds(t.getSkills().stream()
-                    .map(skill -> skill.getService().getServiceId())
-                    .collect(Collectors.toList()));
+        if (t.getSkills() != null) {
+            for (TechnicianServiceSkill skill : t.getSkills()) {
+                com.example.auracontrol.service.Service service = skill.getService();
+
+                if (service != null && Boolean.TRUE.equals(service.getIsActive())) {
+                    serviceNames.add(service.getName());
+                    serviceIds.add(service.getServiceId());
+                }
+            }
         }
+
+        res.setServiceNames(serviceNames);
+        res.setServiceIds(serviceIds);
+
         return res;
     }
 }

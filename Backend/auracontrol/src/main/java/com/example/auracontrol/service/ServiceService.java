@@ -23,7 +23,7 @@ public class ServiceService {
 
 
     public List<com.example.auracontrol.service.Service> getAllServices() {
-        return serviceRepository.findAll();
+        return serviceRepository.findByIsActiveTrue();
     }
 
     public com.example.auracontrol.service.Service getServiceById(Integer id) {
