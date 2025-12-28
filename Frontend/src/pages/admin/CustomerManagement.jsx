@@ -41,10 +41,10 @@ const CustomerManagement = () => {
             });
 
             const data = response.data;
-            setCustomers(data.content);
-            setTotalPages(data.totalPages);
-            setTotalElements(data.totalElements);
-            setCurrentPage(data.number);
+            setCustomers(data.content || []);
+            setTotalPages(data.totalPages || 0);
+            setTotalElements(data.totalElements || 0);
+            setCurrentPage(data.number || 0);
         } catch (error) {
             console.error("Error fetching customers:", error);
             toast.error("Failed to load customers.");
@@ -103,15 +103,6 @@ const CustomerManagement = () => {
     return (
         <>
             {/* --- PAGE HEADER --- */}
-            <div className="flex flex-wrap justify-between items-center gap-4 mb-6">
-                <h1 className="text-4xl font-black tracking-tighter text-gray-900 dark:text-white">Customer Management</h1>
-                {/* Optional: Add Customer Button (Logic not provided in prompt, but kept UI) */}
-                <button className="bg-primary text-white flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors shadow-md">
-                    <span className="material-symbols-outlined">add</span>
-                    Add New Customer
-                </button>
-            </div>
-
             <div className="bg-white dark:bg-[#1e1e1e] rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-800">
                 
                 {/* --- SEARCH BAR --- */}
@@ -180,7 +171,7 @@ const CustomerManagement = () => {
                 {!isLoading && customers.length > 0 && (
                     <div className="flex items-center justify-between pt-6">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            Showing {currentPage * pageSize + 1} to {Math.min((currentPage + 1) * pageSize, totalElements)} of {totalElements} results
+                            Showing {(currentPage || 0) * pageSize + 1} to {Math.min(((currentPage || 0) + 1) * pageSize, totalElements || 0)} of {totalElements || 0} results
                         </p>
                         <div className="flex items-center justify-center gap-2">
                             <button 
