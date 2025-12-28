@@ -23,6 +23,7 @@ const AuthProvider = ({children}) => {
                 if(decoded.exp && decoded.exp < currentTime) {
                     // Token expired, logout
                     logout();
+                    setLoading(false);
                     return;
                 }
                 

@@ -9,6 +9,7 @@ import AuthLayout from './Components/layout/AuthLayout.jsx';
 import AdminSidebarLayout from './Components/layout/AdminSidebarLayout.jsx';
 import ProtectedRoute from './Components/guards/ProtectedRoute.jsx';
 import RoleBasedRoute from './Components/guards/RoleBasedRoute.jsx';
+import TechnicianLayout from './Components/layout/TechnicianLayout.jsx';
 
 // Auth Components
 import Login from './Components/auth/Login.jsx';
@@ -40,7 +41,11 @@ import StaffDashboard from './pages/technician/StaffDashboard.jsx';
 import './App.css';
 
 function App() {
-  const { isAuthenticated, userRole } = useContext(AuthContext);
+  const { isAuthenticated, userRole, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
 
   // Hàm xác định trang mặc định theo role
   const getDefaultRoute = () => {
@@ -67,7 +72,11 @@ function App() {
           {/* Public Routes */}
           <Route 
             path="/" 
-            element={userRole === 'ADMIN' ? <Navigate to="/admin" replace /> : <Home />} 
+            element={
+              userRole === 'ADMIN' ? <Navigate to="/admin/services" replace /> : 
+              userRole === 'TECHNICIAN' ? <Navigate to="/staff" replace /> :
+              <Home />
+            } 
           />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -137,13 +146,14 @@ function App() {
 
           {/* Role-Based Routes - TECHNICIAN */}
           <Route
-            path="/staff"
             element={
               <RoleBasedRoute allowedRoles={['TECHNICIAN']}>
-                <StaffDashboard />
+                <TechnicianLayout />
               </RoleBasedRoute>
             }
-          />
+            >
+            <Route path="/staff" element={<StaffDashboard />} />
+          </Route>
 
           {/* 404 Not Found */}
           <Route path="*" element={<Navigate to="/" replace />} />
