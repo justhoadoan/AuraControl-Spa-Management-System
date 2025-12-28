@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext'; // Sửa lại đường dẫn nếu cần
 
 const AccountLayout = ({ children }) => {
-    const { user, logout } = useContext(AuthContext) || {};
+    const { user, userRole, isAuthenticated, logout } = useContext(AuthContext) || {};
     const navigate = useNavigate();
     const location = useLocation(); // Dùng để kiểm tra đang ở trang nào
 
@@ -23,28 +23,84 @@ const AccountLayout = ({ children }) => {
         <div className="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 min-h-screen flex flex-col font-sans transition-colors duration-200">
             
             {/* --- HEADER CHUNG --- */}
-            <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm sticky top-0 z-40 shadow-sm">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                    <Link to="/" className="font-display text-2xl font-bold text-primary">AuraControl</Link>
+            <header className="sticky top-0 z-50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md shadow-sm">
+                <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+                    {/* Logo */}
+                    <Link className="text-2xl font-bold text-primary" to="/">AuraControl</Link>
                     
-                    <nav className="hidden md:flex items-center space-x-8">
-                        {['In-Home', 'Features', 'Pricing & Plans', 'Locations', 'Help & Supports'].map((item) => (
-                            <Link key={item} to="#" className="text-sm text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
-                                {item}
-                            </Link>
-                        ))}
-                    </nav>
-
-                    <div className="flex items-center space-x-3">
-                        <button className="flex items-center space-x-2 p-2 rounded-full">
-                            <img alt="Avatar" className="w-8 h-8 rounded-full border-2 border-primary object-cover" 
-                                 src={`https://ui-avatars.com/api/?name=${user?.fullName || 'User'}&background=DE4F7A&color=fff`} />
-                            <span className="hidden sm:inline text-sm font-medium text-slate-700 dark:text-slate-300">
-                                {user?.fullName || 'My Account'}
-                            </span>
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center space-x-8">
+                        <Link className="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" to="/">Home</Link>
+                        <button 
+                            onClick={() => isAuthenticated ? navigate('/services') : navigate('/login')}
+                            className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors"
+                        >
+                            Services
                         </button>
                     </div>
-                </div>
+
+                    {/* Auth Buttons */}
+                    <div className="flex items-center space-x-4">
+                        {isAuthenticated ? (
+                            <>
+                                {/* Hiển thị tên user */}
+                                <span className="text-subtle-light dark:text-subtle-dark text-sm hidden sm:inline font-medium">
+                                    Hello, {user?.email?.split('@')[0]}
+                                </span>
+
+                                {/* Nút Admin/Staff Dashboard */}
+                                {userRole === 'ADMIN' && (
+                                    <button 
+                                        onClick={() => navigate('/admin')} 
+                                        className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                    >
+                                        Admin
+                                    </button>
+                                )}
+                                {userRole === 'TECHNICIAN' && (
+                                    <button 
+                                        onClick={() => navigate('/staff')} 
+                                        className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                    >
+                                        Staff
+                                    </button>
+                                )}
+
+                                {/* Account Dashboard */}
+                                <button 
+                                    onClick={() => navigate('/dashboard')} 
+                                    className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                >
+                                    My Account
+                                </button>
+
+                                {/* Logout Button */}
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                {/* Chưa đăng nhập */}
+                                <Link 
+                                    to="/login"
+                                    className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium"
+                                >
+                                    Log in
+                                </Link>
+                                <Link 
+                                    to="/signup"
+                                    className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                                >
+                                    Register
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </nav>
             </header>
 
             {/* --- MAIN CONTENT WRAPPER --- */}
