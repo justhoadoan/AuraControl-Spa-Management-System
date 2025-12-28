@@ -1,4 +1,6 @@
 package com.example.auracontrol.service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,7 +42,9 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
     @Query("DELETE FROM Service s WHERE s.serviceId = :id")
     void deleteById(@Param("id") Integer id);
 
-    List<Service> findByIsActiveTrue();
+    Page<Service> findByIsActiveTrue(Pageable pageable);
+
+    Optional<Service> findByServiceIdAndIsActiveTrue(Integer id);
 
     List<com.example.auracontrol.service.Service> findByServiceIdInAndIsActiveTrue(List<Integer> ids);
 
