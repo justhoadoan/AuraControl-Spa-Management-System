@@ -1,2 +1,0 @@
-ALTER TABLE resources
-ADD COLUMN is_deleted BOOLEAN DEFAULT FALSE;

@@ -17,14 +17,12 @@ CREATE TABLE customer (
                           user_id INT UNIQUE NOT NULL,
                           CONSTRAINT fk_customer_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- 3. Table: Technician (Links to Users)
 CREATE TABLE technician (
                             technician_id SERIAL PRIMARY KEY,
                             user_id INT UNIQUE NOT NULL,
                             CONSTRAINT fk_technician_user FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
-
 -- 4. Table: Services
 CREATE TABLE services (
                           service_id SERIAL PRIMARY KEY,
@@ -39,7 +37,8 @@ CREATE TABLE services (
 CREATE TABLE resources (
                            resource_id SERIAL PRIMARY KEY,
                            name VARCHAR(255) NOT NULL,
-                           type VARCHAR(100) -- e.g., 'ROOM', 'DEVICE'
+                           type VARCHAR(100), -- e.g., 'ROOM', 'DEVICE'
+                           is_deleted BOOLEAN DEFAULT FALSE
 );
 
 -- 6. Table: Technician_Services (Junction table: Which tech can do which service)
@@ -87,6 +86,7 @@ CREATE TABLE appointment_resource (
                                       CONSTRAINT fk_ar_resource FOREIGN KEY (resource_id) REFERENCES resources(resource_id) ON DELETE CASCADE
 );
 
+
 -- 10. Table: Absence_Request (Technician leave requests)
 CREATE TABLE absence_request (
                                  request_id SERIAL PRIMARY KEY,
@@ -94,7 +94,60 @@ CREATE TABLE absence_request (
                                  start_date TIMESTAMP NOT NULL,
                                  end_date TIMESTAMP NOT NULL,
                                  reason TEXT,
-                                 status VARCHAR(50) DEFAULT 'APPROVED',
+                                 status VARCHAR(50) DEFAULT 'PENDING',
                                  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                  CONSTRAINT fk_absence_tech FOREIGN KEY (technician_id) REFERENCES technician(technician_id) ON DELETE CASCADE
 );
+-- 1. Users
+CREATE UNIQUE INDEX idx_users_email ON users(email);
+CREATE INDEX idx_users_verification_token ON users(verification_token);
+CREATE INDEX idx_users_reset_token ON users(reset_password_token);
+
+-- 2. Customer
+CREATE INDEX idx_customer_user_id ON customer(user_id);
+
+-- 3. Technician
+CREATE INDEX idx_technician_user_id ON technician(user_id);
+
+-- 4. Services
+CREATE INDEX idx_services_active ON services(is_active);
+
+-- 5. Resources
+CREATE INDEX idx_resources_type ON resources(type) WHERE is_deleted = FALSE;
+
+-- 6. Technician_Services
+CREATE INDEX idx_ts_service_technician ON technician_services(service_id, technician_id);
+
+-- 7. Service_Resource_Requirement
+CREATE INDEX idx_srr_service ON service_resource_requirement(service_id);
+
+-- 8. Appointment
+CREATE INDEX idx_appt_technician_time_active
+    ON appointment(technician_id, start_time, end_time)
+    WHERE status != 'CANCELLED';
+
+CREATE INDEX idx_appt_completed_end_time
+    ON appointment (end_time)
+    WHERE status = 'COMPLETED';
+
+CREATE INDEX idx_appt_customer_time ON appointment(customer_id, start_time DESC);
+
+CREATE INDEX idx_appt_service ON appointment(service_id);
+
+CREATE INDEX idx_appt_status ON appointment(status);
+
+CREATE INDEX idx_appt_today
+    ON appointment (start_time, status);
+
+CREATE INDEX idx_users_today_customer
+    ON users (created_at)
+    WHERE role = 'CUSTOMER';
+
+
+-- 9. Appointment_Resource
+CREATE INDEX idx_ar_resource ON appointment_resource(resource_id);
+
+-- 10. Absence_Request
+CREATE INDEX idx_absence_technician_time_approved
+    ON absence_request(technician_id, start_date, end_date)
+    WHERE status = 'APPROVED';
