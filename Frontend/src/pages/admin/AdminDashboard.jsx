@@ -1,36 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 const AdminDashboard = () => {
     // --- STATE ---
     const [appointments, setAppointments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [isRevenueLoading, setIsRevenueLoading] = useState(true);
     const [chartRange, setChartRange] = useState('week'); // 'week', 'month', 'year'
     const [revenueData, setRevenueData] = useState({ labels: [], values: [] });
+    const isInitialMount = useRef(true);
 
     // --- API CALLS ---
+    // Fetch initial data on mount (appointments and revenue with default chartRange)
     useEffect(() => {
-        const fetchAppointments = async () => {
+        const fetchDashboardData = async () => {
             try {
                 const token = localStorage.getItem('token');
-                // 1. Fetch Upcoming Appointments
-                const response = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setAppointments(response.data);
+                
+                // Fetch both appointments and initial revenue data
+                const [appointmentsResponse, revenueResponse] = await Promise.all([
+                    axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
+                        params: { period: chartRange.toUpperCase() },
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+                
+                setAppointments(appointmentsResponse.data);
+                
+                // Transform revenue data: [{label: 'Mon', value: 100}, ...] -> {labels: ['Mon', ...], values: [100, ...]}
+                const labels = revenueResponse.data.map(item => item.label);
+                const values = revenueResponse.data.map(item => item.value);
+                setRevenueData({ labels, values });
             } catch (error) {
                 console.error("Error fetching dashboard data:", error);
             } finally {
                 setIsLoading(false);
+                setIsRevenueLoading(false);
             }
         };
 
-        fetchAppointments();
+        fetchDashboardData();
+    // chartRange intentionally excluded - we only want to fetch once on mount with the default value
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // 2. Fetch Revenue Data (When range changes)
+    // 2. Fetch Revenue Data (When range changes after initial load)
     useEffect(() => {
+        // Skip the effect on initial mount since we already fetched in the first useEffect
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const fetchRevenue = async () => {
+            setIsRevenueLoading(true);
             try {
                 const token = localStorage.getItem('token');
                 const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
@@ -45,6 +71,8 @@ const AdminDashboard = () => {
                 setRevenueData({ labels, values });
             } catch (error) {
                 console.error("Error fetching revenue:", error);
+            } finally {
+                setIsRevenueLoading(false);
             }
         };
         fetchRevenue();
@@ -138,31 +166,41 @@ const AdminDashboard = () => {
                 
                 {/* Chart Bars */}
                 <div className="flex items-end justify-between gap-3 h-64 px-4 pb-4 border border-border-light dark:border-border-dark rounded-lg bg-background-light dark:bg-background-dark">
-                    {currentChartData.labels.map((label, index) => {
-                        const value = currentChartData.values[index];
-                        const heightPercent = (value / maxChartValue) * 100;
-                        
-                        return (
-                            <div key={index} className="flex flex-1 flex-col items-center justify-end gap-2 min-w-[2rem] h-full group">
-                                {/* Tooltip Value */}
-                                <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark opacity-0 group-hover:opacity-100 transition-opacity">
-                                    ${value.toLocaleString()}
+                    {isRevenueLoading ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <p className="text-text-secondary-light dark:text-text-secondary-dark">Loading revenue data...</p>
+                        </div>
+                    ) : currentChartData.labels.length === 0 ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                            <p className="text-text-secondary-light dark:text-text-secondary-dark">No revenue data available.</p>
+                        </div>
+                    ) : (
+                        currentChartData.labels.map((label, index) => {
+                            const value = currentChartData.values[index];
+                            const heightPercent = (value / maxChartValue) * 100;
+                            
+                            return (
+                                <div key={index} className="flex flex-1 flex-col items-center justify-end gap-2 min-w-[2rem] h-full group">
+                                    {/* Tooltip Value */}
+                                    <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark opacity-0 group-hover:opacity-100 transition-opacity">
+                                        ${value.toLocaleString()}
+                                    </div>
+                                    {/* Bar Track */}
+                                    <div className="w-6 h-full flex items-end justify-center overflow-hidden rounded-t-full bg-primary/10 dark:bg-primary/20 relative">
+                                        {/* Bar Fill */}
+                                        <div 
+                                            className="w-full bg-primary dark:bg-primary rounded-t-full transition-all duration-500 ease-out"
+                                            style={{ height: `${heightPercent}%` }}
+                                        ></div>
+                                    </div>
+                                    {/* Label */}
+                                    <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark">
+                                        {label}
+                                    </div>
                                 </div>
-                                {/* Bar Track */}
-                                <div className="w-6 h-full flex items-end justify-center overflow-hidden rounded-t-full bg-primary/10 dark:bg-primary/20 relative">
-                                    {/* Bar Fill */}
-                                    <div 
-                                        className="w-full bg-primary dark:bg-primary rounded-t-full transition-all duration-500 ease-out"
-                                        style={{ height: `${heightPercent}%` }}
-                                    ></div>
-                                </div>
-                                {/* Label */}
-                                <div className="text-[11px] text-text-secondary-light dark:text-text-secondary-dark">
-                                    {label}
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })
+                    )}
                 </div>
             </div>
 
