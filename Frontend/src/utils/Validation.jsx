@@ -10,7 +10,7 @@ export const validatePassword = (password) => {
 };
 
 // Validate login form
-export const validateForm = (email, password) => {
+export const validateForm = (email, password, isSignUp = false) => {
     const errors = {};
 
     if(!validateEmail(email)){
@@ -23,6 +23,8 @@ export const validateForm = (email, password) => {
     // Password validation
     if (!password) {
         errors.password = 'Password is required';
+    } else if (isSignUp && !validatePassword(password)) {
+        errors.password = 'Password must be at least 8 characters';
     }
 
     return errors;

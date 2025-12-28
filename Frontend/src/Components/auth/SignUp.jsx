@@ -20,7 +20,7 @@ const SignUp = () => {
     const handleSignUp = async () => {
         const validationErrors = {};
         if (!name.trim()) validationErrors.name = 'Name is required';
-        const formErrors = validateForm(email, password);
+        const formErrors = validateForm(email, password, true);
         Object.assign(validationErrors, formErrors);
         if (password !== confirmPassword) validationErrors.confirmPassword = 'Passwords do not match';
         

@@ -151,7 +151,7 @@ function App() {
                 <TechnicianLayout />
               </RoleBasedRoute>
             }
-            >
+          >
             <Route path="/staff" element={<StaffDashboard />} />
           </Route>
 
