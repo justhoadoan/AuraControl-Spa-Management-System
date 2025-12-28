@@ -20,20 +20,9 @@ public class ServiceController {
             @RequestParam(defaultValue = "5") int size
     ) {
 
-        Page<Service> servicePage = serviceService.getServicesForBooking(page, size);
 
 
-        Page<ServiceBookingResponse> dtoPage = servicePage.map(service ->
-                ServiceBookingResponse.builder()
-                        .serviceId(service.getServiceId())
-                        .name(service.getName())
-                        .description(service.getDescription())
-                        .price(service.getPrice())
-                        .durationMinutes(service.getDurationMinutes())
-                        .build()
-        );
-
-        return ResponseEntity.ok(dtoPage);
+        return ResponseEntity.ok(serviceService.getServicesForBooking(page, size));
     }
 
     @GetMapping("/{id}")

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class ServiceService {
     private final ServiceRepository serviceRepository;
 
+
     public List<com.example.auracontrol.service.Service> getAllServices() {
         return serviceRepository.findAll();
     }
@@ -74,16 +75,23 @@ public class ServiceService {
 
         serviceRepository.save(service);
     }
-    public Page<com.example.auracontrol.service.Service> getServicesForBooking(int page, int size) {
+    public Page<ServiceBookingResponse> getServicesForBooking(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return serviceRepository.findByIsActiveTrue(pageable);
+
+        Page<com.example.auracontrol.service.Service> entities = serviceRepository.findByIsActiveTrue(pageable);
+
+        return entities.map(this::mapToResponse);
     }
+
+
     public ServiceBookingResponse getServiceDetailForCustomer(Integer id) {
-
         com.example.auracontrol.service.Service service = serviceRepository.findByServiceIdAndIsActiveTrue(id)
-                .orElseThrow(() -> new ResourceNotFoundException("This service is unavailable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Dịch vụ không tồn tại"));
 
 
+        return mapToResponse(service);
+    }
+    private ServiceBookingResponse mapToResponse(com.example.auracontrol.service.Service service) {
         return ServiceBookingResponse.builder()
                 .serviceId(service.getServiceId())
                 .name(service.getName())
