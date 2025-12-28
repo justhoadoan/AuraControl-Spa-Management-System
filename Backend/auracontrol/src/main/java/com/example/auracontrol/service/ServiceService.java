@@ -1,12 +1,18 @@
 package com.example.auracontrol.service;
 
 import com.example.auracontrol.exception.ResourceNotFoundException;
+import com.example.auracontrol.service.dto.ServiceBookingResponse;
 import com.example.auracontrol.service.dto.ServiceRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -16,6 +22,7 @@ public class ServiceService {
     public List<com.example.auracontrol.service.Service> getAllServices() {
         return serviceRepository.findAll();
     }
+
     public com.example.auracontrol.service.Service getServiceById(Integer id) {
         return serviceRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cannot find service: " + id));
@@ -37,7 +44,7 @@ public class ServiceService {
     @Transactional
     public com.example.auracontrol.service.Service update(Integer id, ServiceRequest request) {
         if (!serviceRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Không tìm thấy dịch vụ để cập nhật.");
+            throw new ResourceNotFoundException("Can not find service");
         }
 
         int rowsAffected = serviceRepository.update(
@@ -58,14 +65,31 @@ public class ServiceService {
     }
     @Transactional
     public void deleteService(Integer serviceId) {
-        // 1. Tìm service
+
         com.example.auracontrol.service.Service service = serviceRepository.findById(serviceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Service doesnot exists: " + serviceId));
 
-
         service.setIsActive(false);
 
-        // 3. Lưu lại
+
         serviceRepository.save(service);
+    }
+    public Page<com.example.auracontrol.service.Service> getServicesForBooking(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return serviceRepository.findByIsActiveTrue(pageable);
+    }
+    public ServiceBookingResponse getServiceDetailForCustomer(Integer id) {
+
+        com.example.auracontrol.service.Service service = serviceRepository.findByServiceIdAndIsActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("This service is unavailable"));
+
+
+        return ServiceBookingResponse.builder()
+                .serviceId(service.getServiceId())
+                .name(service.getName())
+                .description(service.getDescription())
+                .price(service.getPrice())
+                .durationMinutes(service.getDurationMinutes())
+                .build();
     }
 }
