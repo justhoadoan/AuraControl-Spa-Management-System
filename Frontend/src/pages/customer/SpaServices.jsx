@@ -68,7 +68,23 @@ const SpaServices = () => {
                     params: { serviceId: selectedService.serviceId, date: bookingDate },
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setAvailableSlots(response.data.availableSlots);
+                
+                // Filter slots on Frontend:
+                // 1. Only multiples of 15 minutes (00, 15, 30, 45)
+                // 2. Exclude lunch break (12:00 - 14:00)
+                const filteredSlots = response.data.availableSlots.filter(slot => {
+                    const [hour, minute] = slot.split(':').map(Number);
+                    
+                    // Check 15-minute interval
+                    if (minute % 15 !== 0) return false;
+
+                    // Check lunch break (12:00 <= time < 14:00)
+                    if (hour >= 12 && hour < 14) return false;
+
+                    return true;
+                });
+
+                setAvailableSlots(filteredSlots);
             } catch (error) { console.error(error); } finally { setIsCheckingSlots(false); }
         };
         fetchSlots();
