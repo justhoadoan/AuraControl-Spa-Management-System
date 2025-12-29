@@ -16,7 +16,7 @@ const TechnicianManagement = () => {
     // --- ABSENCE REQUESTS STATE ---
     const [absenceRequests, setAbsenceRequests] = useState([]);
     const [isLoadingAbsences, setIsLoadingAbsences] = useState(false);
-    const [processingRequestIds, setProcessingRequestIds] = useState(new Set());
+    const [processingRequestIds, setProcessingRequestIds] = useState(() => new Set());
 
     // --- MODAL & FORM STATE ---
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -96,6 +96,10 @@ const TechnicianManagement = () => {
         // Mark this request as processing
         setProcessingRequestIds(prev => new Set(prev).add(id));
         
+        // Store original status for potential rollback
+        const originalRequest = absenceRequests.find(req => req.requestId === id);
+        const originalStatus = originalRequest?.status;
+        
         // Optimistically update the UI
         const newStatus = action === 'approve' ? 'APPROVED' : 'REJECTED';
         setAbsenceRequests(prev => 
@@ -119,14 +123,16 @@ const TechnicianManagement = () => {
             const msg = error.response?.data?.message || "Operation failed.";
             toast.error(msg);
             
-            // Revert the optimistic update on error
-            setAbsenceRequests(prev => 
-                prev.map(req => 
-                    req.requestId === id 
-                        ? { ...req, status: 'PENDING' }
-                        : req
-                )
-            );
+            // Revert to original status on error
+            if (originalStatus) {
+                setAbsenceRequests(prev => 
+                    prev.map(req => 
+                        req.requestId === id 
+                            ? { ...req, status: originalStatus }
+                            : req
+                    )
+                );
+            }
         } finally {
             // Remove from processing set
             setProcessingRequestIds(prev => {
