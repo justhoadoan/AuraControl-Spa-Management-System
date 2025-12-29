@@ -37,7 +37,7 @@ const StaffDashboard = () => {
             const end = new Date(year, month + 1, 0, 23, 59, 59).toISOString().slice(0, 19);
 
             // Gọi API
-            const response = await axios.get('http://localhost:8081/api/staff/schedule', {
+            const response = await axios.get('http://localhost:8081/api/technician/schedule', {
                 params: { start, end },
                 headers: { Authorization: `Bearer ${token}` }
             });
