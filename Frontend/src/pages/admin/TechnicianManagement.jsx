@@ -175,6 +175,7 @@ const TechnicianManagement = () => {
             toast.success("Technician deleted successfully!");
             fetchTechnicians();
         } catch (error) {
+            console.error("Failed to delete technician:", error);
             toast.error("Failed to delete technician.");
         }
     };
