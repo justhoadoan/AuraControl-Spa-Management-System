@@ -278,14 +278,51 @@ const TechnicianManagement = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
-                                {technicians.map((tech) => (
-                                    <tr key={tech.technicianId} className="hover:bg-primary/5">
-                                        <td className="px-4 py-4 text-sm font-bold dark:text-gray-100">{tech.fullName}</td>
-                                        <td className="px-4 py-4 text-sm dark:text-gray-400">{tech.email}</td>
-                                        <td className="px-4 py-4"><div className="flex gap-2">{tech.serviceNames?.map((s,i)=><span key={i} className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded">{s}</span>)}</div></td>
-                                        <td className="px-4 py-4 text-right"><div className="flex justify-end gap-2"><button onClick={()=>openModal(tech)} className="text-primary"><span className="material-symbols-outlined">edit</span></button><button onClick={()=>handleDelete(tech.technicianId)} className="text-red-500"><span className="material-symbols-outlined">delete</span></button></div></td>
+                                {isLoading ? (
+                                    <tr>
+                                        <td
+                                            colSpan={4}
+                                            className="px-4 py-4 text-sm text-center text-gray-500 dark:text-gray-400"
+                                        >
+                                            Loading...
+                                        </td>
                                     </tr>
-                                ))}
+                                ) : (
+                                    technicians.map((tech) => (
+                                        <tr key={tech.technicianId} className="hover:bg-primary/5">
+                                            <td className="px-4 py-4 text-sm font-bold dark:text-gray-100">{tech.fullName}</td>
+                                            <td className="px-4 py-4 text-sm dark:text-gray-400">{tech.email}</td>
+                                            <td className="px-4 py-4">
+                                                <div className="flex gap-2">
+                                                    {tech.serviceNames?.map((s, i) => (
+                                                        <span
+                                                            key={i}
+                                                            className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded"
+                                                        >
+                                                            {s}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4 text-right">
+                                                <div className="flex justify-end gap-2">
+                                                    <button
+                                                        onClick={() => openModal(tech)}
+                                                        className="text-primary"
+                                                    >
+                                                        <span className="material-symbols-outlined">edit</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleDelete(tech.technicianId)}
+                                                        className="text-red-500"
+                                                    >
+                                                        <span className="material-symbols-outlined">delete</span>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
                             </tbody>
                         </table>
                     </div>
