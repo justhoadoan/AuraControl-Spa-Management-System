@@ -1,6 +1,8 @@
 package com.example.auracontrol.booking.repository;
 
 import com.example.auracontrol.booking.entity.Resource;
+import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -45,5 +47,20 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
     boolean existsByName(String name);
     boolean existsByNameAndResourceIdNot(String name, Integer id);
 
+    @Query("SELECT DISTINCT r.type FROM Resource r ORDER BY r.type")
+    List<String> findDistinctTypes();
+
+    boolean existsByType(String type);
+
+    @Query("SELECT r FROM Resource r " +
+            "WHERE r.deleted = false " +
+            "AND (:keyword IS NULL OR :keyword = '' OR LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:type IS NULL OR :type = '' OR r.type = :type) " +
+            "ORDER BY r.resourceId DESC")
+    Page<Resource> searchResources(
+            @Param("keyword") String keyword,
+            @Param("type") String type,
+            org.springframework.data.domain.Pageable pageable
+    );
 }
 

@@ -5,6 +5,7 @@ import com.example.auracontrol.admin.dto.ResourceDto;
 import com.example.auracontrol.booking.entity.Resource;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,11 +17,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AdminResourceController {
     private final AdminResourceService adminResourceService;
-    // GET /api/admin/resources
-    @GetMapping
-    public ResponseEntity<List<Resource>> getAllResources() {
-        return ResponseEntity.ok(adminResourceService.getAllResources());
-    }
 
     // GET /api/admin/resources/{id}
     @GetMapping("/{id}")
@@ -49,5 +45,21 @@ public class AdminResourceController {
     public ResponseEntity<?> deleteResource(@PathVariable Integer id) {
         adminResourceService.deleteResource(id);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping
+    public ResponseEntity<Page<Resource>> getResources(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String type,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Resource> result = adminResourceService.searchResources(keyword, type, page, size);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<String>> getAllResourceTypes() {
+
+        return ResponseEntity.ok(adminResourceService.getAllResourceTypes());
     }
 }
