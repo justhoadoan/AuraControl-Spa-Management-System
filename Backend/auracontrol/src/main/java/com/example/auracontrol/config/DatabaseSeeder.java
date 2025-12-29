@@ -32,6 +32,12 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Value("${app.technician.password:123456789}")
     private String techPassword;
 
+
+    @Value("${app.technician.email:customer@example.com}")
+    private String customerEmail;
+
+    @Value("${app.technician.password:123456789}")
+    private String customerPassword;
     @Override
     public void run(String... args) throws Exception {
 
@@ -67,5 +73,16 @@ public class DatabaseSeeder implements CommandLineRunner {
             technicianRepository.save(technician);
             System.out.println(">>> Seeded Technician User: " + techEmail);
         }
+        if (userRepository.findByEmail(customerEmail).isEmpty()) {
+            User customer = new User();
+            customer.setName("Customer Exampleee");
+            customer.setEmail(customerEmail);
+            customer.setPassword(passwordEncoder.encode(customerPassword));
+            customer.setRole(Role.CUSTOMER);
+            customer.setEnabled(true);
+            userRepository.save(customer);
+            System.out.println(">>> Seeded Admin User: " + adminEmail);
+        }
+
     }
 }
