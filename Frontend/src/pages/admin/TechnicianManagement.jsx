@@ -16,7 +16,7 @@ const TechnicianManagement = () => {
     // --- ABSENCE REQUESTS STATE ---
     const [absenceRequests, setAbsenceRequests] = useState([]);
     const [isLoadingAbsences, setIsLoadingAbsences] = useState(false);
-    const [processingRequestIds, setProcessingRequestIds] = useState(() => new Set());
+    const [processingRequestIds, setProcessingRequestIds] = useState([]);
 
     // --- MODAL & FORM STATE ---
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -94,7 +94,7 @@ const TechnicianManagement = () => {
 
     const handleReviewRequest = async (id, action) => {
         // Mark this request as processing
-        setProcessingRequestIds(prev => new Set(prev).add(id));
+        setProcessingRequestIds(prev => [...prev, id]);
         
         // Store original status for potential rollback
         const originalRequest = absenceRequests.find(req => req.requestId === id);
@@ -134,12 +134,8 @@ const TechnicianManagement = () => {
                 );
             }
         } finally {
-            // Remove from processing set
-            setProcessingRequestIds(prev => {
-                const next = new Set(prev);
-                next.delete(id);
-                return next;
-            });
+            // Remove from processing array
+            setProcessingRequestIds(prev => prev.filter(reqId => reqId !== id));
         }
     };
 
@@ -368,17 +364,17 @@ const TechnicianManagement = () => {
                                                 <div className="flex justify-end gap-2">
                                                     <button 
                                                         onClick={() => handleReviewRequest(req.requestId, 'approve')}
-                                                        disabled={processingRequestIds.has(req.requestId)}
+                                                        disabled={processingRequestIds.includes(req.requestId)}
                                                         className="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
-                                                        {processingRequestIds.has(req.requestId) ? 'Processing...' : 'Approve'}
+                                                        {processingRequestIds.includes(req.requestId) ? 'Processing...' : 'Approve'}
                                                     </button>
                                                     <button 
                                                         onClick={() => handleReviewRequest(req.requestId, 'reject')}
-                                                        disabled={processingRequestIds.has(req.requestId)}
+                                                        disabled={processingRequestIds.includes(req.requestId)}
                                                         className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
-                                                        {processingRequestIds.has(req.requestId) ? 'Processing...' : 'Reject'}
+                                                        {processingRequestIds.includes(req.requestId) ? 'Processing...' : 'Reject'}
                                                     </button>
                                                 </div>
                                             )}
