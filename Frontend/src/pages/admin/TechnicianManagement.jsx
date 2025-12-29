@@ -16,6 +16,7 @@ const TechnicianManagement = () => {
     // --- ABSENCE REQUESTS STATE ---
     const [absenceRequests, setAbsenceRequests] = useState([]);
     const [isLoadingAbsences, setIsLoadingAbsences] = useState(false);
+    const [processingRequestIds, setProcessingRequestIds] = useState([]);
 
     // --- MODAL & FORM STATE ---
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -92,6 +93,23 @@ const TechnicianManagement = () => {
     // ===========================
 
     const handleReviewRequest = async (id, action) => {
+        // Mark this request as processing
+        setProcessingRequestIds(prev => [...prev, id]);
+        
+        // Store original status for potential rollback
+        const originalRequest = absenceRequests.find(req => req.requestId === id);
+        const originalStatus = originalRequest?.status;
+        
+        // Optimistically update the UI
+        const newStatus = action === 'approve' ? 'APPROVED' : 'REJECTED';
+        setAbsenceRequests(prev => 
+            prev.map(req => 
+                req.requestId === id 
+                    ? { ...req, status: newStatus }
+                    : req
+            )
+        );
+        
         try {
             const token = localStorage.getItem('token');
             // action: 'approve' or 'reject'
@@ -100,11 +118,24 @@ const TechnicianManagement = () => {
             });
             
             toast.success(`Request ${action}d successfully.`);
-            fetchAbsenceRequests(); // Reload list
         } catch (error) {
             console.error(`Error ${action}ing request:`, error);
             const msg = error.response?.data?.message || "Operation failed.";
             toast.error(msg);
+            
+            // Revert to original status on error
+            if (originalStatus) {
+                setAbsenceRequests(prev => 
+                    prev.map(req => 
+                        req.requestId === id 
+                            ? { ...req, status: originalStatus }
+                            : req
+                    )
+                );
+            }
+        } finally {
+            // Remove from processing array
+            setProcessingRequestIds(prev => prev.filter(reqId => reqId !== id));
         }
     };
 
@@ -333,15 +364,17 @@ const TechnicianManagement = () => {
                                                 <div className="flex justify-end gap-2">
                                                     <button 
                                                         onClick={() => handleReviewRequest(req.requestId, 'approve')}
-                                                        className="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded text-xs font-bold transition-colors"
+                                                        disabled={processingRequestIds.includes(req.requestId)}
+                                                        className="bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1 rounded text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
-                                                        Approve
+                                                        {processingRequestIds.includes(req.requestId) ? 'Processing...' : 'Approve'}
                                                     </button>
                                                     <button 
                                                         onClick={() => handleReviewRequest(req.requestId, 'reject')}
-                                                        className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded text-xs font-bold transition-colors"
+                                                        disabled={processingRequestIds.includes(req.requestId)}
+                                                        className="bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1 rounded text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                     >
-                                                        Reject
+                                                        {processingRequestIds.includes(req.requestId) ? 'Processing...' : 'Reject'}
                                                     </button>
                                                 </div>
                                             )}
