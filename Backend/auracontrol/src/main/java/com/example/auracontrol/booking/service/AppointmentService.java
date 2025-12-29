@@ -1,5 +1,6 @@
 package com.example.auracontrol.booking.service;
 
+import com.example.auracontrol.booking.dto.AdminAppointmentDto;
 import com.example.auracontrol.booking.dto.BookingRequest;
 import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
@@ -14,6 +15,9 @@ import com.example.auracontrol.user.entity.Customer;
 import com.example.auracontrol.user.entity.Technician;
 import com.example.auracontrol.user.repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -552,6 +556,33 @@ public class AppointmentService {
 
             return isAbsent;
         }).count();
+    }
+
+    public Page<AdminAppointmentDto> getAppointmentsForAdmin(String keyword, String status, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Appointment> appointmentPage = appointmentRepository.findAppointmentsForAdmin(keyword, status, pageable);
+
+
+        return appointmentPage.map(appt -> AdminAppointmentDto.builder()
+                .appointmentId(appt.getAppointmentId())
+
+                .customerName(appt.getCustomer() != null ? appt.getCustomer().getUser().getName() : "Unknown")
+                .customerEmail(appt.getCustomer() != null ? appt.getCustomer().getUser().getEmail() : "")
+
+                .serviceName(appt.getService().getName())
+                .duration(appt.getService().getDurationMinutes())
+
+
+                .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Đang sắp xếp")
+
+                .startTime(appt.getStartTime())
+                .endTime(appt.getEndTime())
+                .status(appt.getStatus())
+                .price(appt.getFinalPrice())
+                .note(appt.getNoteText())
+                .build());
     }
 
     /**
