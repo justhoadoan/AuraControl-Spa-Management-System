@@ -358,8 +358,14 @@ const TechnicianManagement = () => {
 
             {/* --- MODAL ADD/EDIT TECHNICIAN (Only visible when open) --- */}
             {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-                    <div className="relative w-full max-w-2xl bg-white dark:bg-[#1e1e1e] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+                    onClick={closeModal}
+                >
+                    <div
+                        className="relative w-full max-w-2xl bg-white dark:bg-[#1e1e1e] rounded-xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+                        onClick={(e) => e.stopPropagation()}
+                    >
                         <div className="flex items-center justify-between p-6 pb-4 border-b border-gray-100 dark:border-gray-700">
                             <h3 className="text-lg font-bold text-gray-900 dark:text-white">
                                 {isEditing ? 'Edit Technician' : 'Add New Technician'}
