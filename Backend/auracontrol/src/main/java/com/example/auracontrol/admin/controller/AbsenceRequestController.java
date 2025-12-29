@@ -3,6 +3,7 @@ package com.example.auracontrol.admin.controller;
 import com.example.auracontrol.admin.dto.AbsenceRequestResponse;
 import com.example.auracontrol.booking.service.AbsenceRequestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,13 @@ public class AbsenceRequestController {
      * Filter URL: GET /api/admin/absence-requests?status=PENDING
      */
     @GetMapping
-    public ResponseEntity<List<AbsenceRequestResponse>> getRequests(
-            @RequestParam(required = false) String status
+    public ResponseEntity<Page<AbsenceRequestResponse>> getRequests(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok(absenceRequestService.getRequestsForAdmin(status));
+        return ResponseEntity.ok(absenceRequestService.getRequestsForAdmin(status, page, size));
     }
-
     /**
      * 2. Approve an absence request
      * URL: PUT /api/admin/absence-requests/{id}/approve
