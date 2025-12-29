@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public interface ServiceResourceRequirementRepository extends JpaRepository<ServiceResourceRequirement,Integer> {
     @Query("SELECT s FROM ServiceResourceRequirement s WHERE s.service.serviceId = :id")
-    Optional<ServiceResourceRequirement> findByServiceId(@Param("id") Integer id);
+   List<ServiceResourceRequirement> findByServiceId(@Param("id") Integer id);
 
     List<ServiceResourceRequirement> findAllByService_ServiceId(Integer serviceId);
 }
