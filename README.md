@@ -101,7 +101,7 @@ Once the containers are running, access the system via:
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| 🎨 **Frontend** | [http://localhost:3000](http://localhost:80) | Client Application |
+| 🎨 **Frontend** | [http://localhost:80](http://localhost:80) | Client Application |
 | 🔌 **Backend API** | [http://localhost:8081](http://localhost:8081) | REST API Server |
 | 📑 **API Docs** | [http://localhost:8081/swagger-ui. html](http://localhost:8081/swagger-ui.html) | Swagger Documentation |
 
