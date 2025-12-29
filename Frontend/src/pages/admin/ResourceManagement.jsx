@@ -166,7 +166,7 @@ const ResourceManagement = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this resource?")) {
+        
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`http://localhost:8081/api/admin/resources/${id}`, {
@@ -177,7 +177,7 @@ const ResourceManagement = () => {
             } catch (error) {
                 toast.error("Failed to delete.");
             }
-        }
+        
     };
 
     // --- 7. RENDER ---
