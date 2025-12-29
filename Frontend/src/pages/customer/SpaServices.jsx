@@ -3,19 +3,24 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext'; // Đảm bảo đường dẫn đúng
 import { useToast } from '../../Components/common/Toast'; // Đảm bảo đường dẫn đúng
+// Import thêm AuthContext nếu chưa có
 
 /**
  * SpaServices Page - Đã tích hợp Logic Booking
  */
 const SpaServices = () => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, user, userRole, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
     const toast = useToast();
 
     // --- LOGIC STATE ---
     const [services, setServices] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [searchTerm, setSearchTerm] = useState('');
 
     // Modal State
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -118,24 +123,77 @@ const SpaServices = () => {
         } finally { setIsSubmitting(false); }
     };
 
-    // Filter tìm kiếm
-    const filteredServices = services.filter(service => 
-        service.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
     return (
-        <div className="min-h-screen bg-background-light dark:bg-background-dark">
-            {/* Header (Giữ nguyên code cũ của bạn) */}
-            <header className="bg-surface-light dark:bg-surface-dark shadow-sm">
-                <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div className="font-display bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark antialiased min-h-screen">
+            {/* --- HEADER (giống Home) --- */}
+            <header className="sticky top-0 z-50 bg-surface-light/80 dark:bg-surface-dark/80 backdrop-blur-md shadow-sm">
+                <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
+                    {/* Logo */}
                     <Link className="text-2xl font-bold text-primary" to="/">AuraControl</Link>
-                    <nav className="flex items-center space-x-6">
-                        <Link className="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" to="/">Home</Link>
-                        <Link className="text-primary font-medium" to="/services">Services</Link>
-                        <Link className="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" to="/dashboard">Account</Link>
-                        <Link className="text-subtle-light dark:text-subtle-dark hover:text-primary transition-colors" to="/profile">Profile</Link>
-                    </nav>
-                </div>
+                    {/* Desktop Menu */}
+                    <div className="hidden md:flex items-center space-x-8">
+                        <Link className="text-text-light dark:text-text-dark hover:text-primary dark:hover:text-primary transition-colors" to="/">Home</Link>
+                        <button 
+                            onClick={() => isAuthenticated ? navigate('/services') : navigate('/login')}
+                            className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors"
+                        >
+                            Services
+                        </button>
+                    </div>
+                    {/* Auth Buttons */}
+                    <div className="flex items-center space-x-4">
+                        {isAuthenticated ? (
+                            <>
+                                <span className="text-subtle-light dark:text-subtle-dark text-sm hidden sm:inline font-medium">
+                                    Hello, {user?.email?.split('@')[0]}
+                                </span>
+                                {userRole === 'ADMIN' && (
+                                    <button 
+                                        onClick={() => navigate('/admin')} 
+                                        className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                    >
+                                        Admin
+                                    </button>
+                                )}
+                                {userRole === 'TECHNICIAN' && (
+                                    <button 
+                                        onClick={() => navigate('/staff')} 
+                                        className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                    >
+                                        Staff
+                                    </button>
+                                )}
+                                <button 
+                                    onClick={() => navigate('/dashboard')} 
+                                    className="text-subtle-light hover:text-primary transition-colors text-sm font-medium"
+                                >
+                                    My Account
+                                </button>
+                                <button 
+                                    onClick={handleLogout} 
+                                    className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                                >
+                                    Logout
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <Link 
+                                    to="/login"
+                                    className="text-subtle-light dark:text-subtle-dark hover:text-primary dark:hover:text-primary transition-colors text-sm font-medium"
+                                >
+                                    Log in
+                                </Link>
+                                <Link 
+                                    to="/signup"
+                                    className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                                >
+                                    Register
+                                </Link>
+                            </>
+                        )}
+                    </div>
+                </nav>
             </header>
 
             {/* Main Content */}
@@ -149,46 +207,15 @@ const SpaServices = () => {
                     </p>
                 </div>
 
-                {/* Search & Filter Bar (Giữ nguyên UI) */}
-                <div className="bg-surface-light dark:bg-surface-dark p-6 rounded-lg shadow-sm mb-10 flex flex-col md:flex-row items-center gap-4">
-                    <div className="relative w-full md:flex-grow">
-                        <input 
-                            className="w-full pl-10 pr-4 py-2.5 rounded-md border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary" 
-                            placeholder="Search for a service..." 
-                            type="text"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                        />
-                    </div>
-                    <div className="w-full md:w-auto flex flex-col sm:flex-row gap-4">
-                        <select className="w-full sm:w-48 rounded-md border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary py-2.5 px-3">
-                            <option>All Categories</option>
-                            <option>Massage</option>
-                            <option>Facial</option>
-                        </select>
-                        <select className="w-full sm:w-48 rounded-md border border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary py-2.5 px-3">
-                            <option>Sort by Price</option>
-                            <option>Low to High</option>
-                            <option>High to Low</option>
-                        </select>
-                    </div>
-                </div>
-
                 {/* Services Grid - Dynamic Data nhưng giữ nguyên Style cũ */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {isLoading ? (
                         <p className="col-span-full text-center py-10">Loading...</p>
-                    ) : filteredServices.length === 0 ? (
+                    ) : services.length === 0 ? (
                         <p className="col-span-full text-center py-10">No services found.</p>
                     ) : (
-                        filteredServices.map(service => (
+                        services.map(service => (
                             <div key={service.serviceId} className="bg-surface-light dark:bg-surface-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
-                                {/* Ảnh Placeholder (Vì API chưa có ảnh) */}
-                                <img 
-                                    alt={service.name} 
-                                    className="w-full h-56 object-cover" 
-                                    src="https://images.unsplash.com/photo-1519823551278-64ac927accc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-                                />
                                 <div className="p-6 flex flex-col flex-grow">
                                     <h3 className="text-xl font-semibold text-text-light dark:text-text-dark">{service.name}</h3>
                                     <p className="text-subtle-light dark:text-subtle-dark mt-2 text-sm flex-grow">
