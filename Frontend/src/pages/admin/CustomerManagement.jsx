@@ -25,33 +25,44 @@ const CustomerManagement = () => {
 
     // --- API CALLS ---
 
-    // 1. Fetch Customers List
-    const fetchCustomers = async (page = 0, search = '') => {
-        setIsLoading(true);
-        try {
-            const token = localStorage.getItem('token');
-            // Construct URL with query params
-            let url = `http://localhost:8081/api/admin/customers?page=${page}&size=${pageSize}`;
-            if (search) {
-                url += `&keyword=${encodeURIComponent(search)}`;
-            }
-
-            const response = await axios.get(url, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            const data = response.data;
-            setCustomers(data.content || []);
-            setTotalPages(data.totalPages || 0);
-            setTotalElements(data.totalElements || 0);
-            setCurrentPage(data.number || 0);
-        } catch (error) {
-            console.error("Error fetching customers:", error);
-            toast.error("Failed to load customers.");
-        } finally {
-            setIsLoading(false);
+   // 1. Fetch Customers List
+const fetchCustomers = async (page = 0, search = '') => {
+    setIsLoading(true);
+    try {
+        const token = localStorage.getItem('token');
+        let url = `http://localhost:8081/api/admin/customers?page=${page}&size=${pageSize}`;
+        if (search) {
+            url += `&keyword=${encodeURIComponent(search)}`;
         }
-    };
+
+        const response = await axios.get(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const data = response.data;
+        // --- SỬA ĐOẠN NÀY ---
+         setCustomers(data.content || []);
+
+          
+            if (data.page) {
+                setTotalPages(data.page.totalPages || 0);
+                setTotalElements(data.page.totalElements || 0); // Đã sửa: data.page.totalElements
+                setCurrentPage(data.page.number || 0);
+            } else {
+                // Fallback nếu API thay đổi cấu trúc sau này
+                setTotalPages(data.totalPages || 0);
+                setTotalElements(data.totalElements || 0);
+                setCurrentPage(data.number || 0);
+            }
+            // --------------------
+        
+
+    } catch (error) {
+        console.error("Error fetching customers:", error);
+        toast.error("Failed to load customers.");
+    } finally {
+        setIsLoading(false);
+    }
+};
 
     // 2. Fetch Customer Detail (Booking History)
     const fetchCustomerDetail = async (userId) => {

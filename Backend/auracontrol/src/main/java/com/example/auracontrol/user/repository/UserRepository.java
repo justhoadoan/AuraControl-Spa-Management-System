@@ -1,5 +1,6 @@
 package com.example.auracontrol.user.repository;
 
+import com.example.auracontrol.admin.dto.CustomerListResponse;
 import com.example.auracontrol.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,5 +53,16 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT COUNT(u) FROM User u WHERE u.role = 'CUSTOMER' AND u.createdAt BETWEEN :start AND :end")
     long countNewCustomers(@Param("start") LocalDateTime start, @Param("end") LocalDateTime end);
+    @Query("SELECT new com.example.auracontrol.admin.dto.CustomerListResponse(" +
+            "u.userId, u.name, u.email, c.customerId, COUNT(a)) " +
+            "FROM User u " +
+            "JOIN Customer c ON u.userId = c.user.userId " +
+            "LEFT JOIN Appointment a ON c.customerId = a.customer.customerId " +
+            "WHERE u.role = 'CUSTOMER' " +
+            // Lưu ý đoạn CAST(:keyword AS string)
+            "AND (:keyword IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "OR LOWER(u.email) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%'))) " +
+            "GROUP BY u.userId, u.name, u.email, c.customerId")
+    Page<CustomerListResponse> findAllCustomersWithAppointmentCount(@Param("keyword") String keyword, Pageable pageable);
 
 }

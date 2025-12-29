@@ -1,12 +1,10 @@
 package com.example.auracontrol.booking.service;
 
+import com.example.auracontrol.booking.dto.AdminAppointmentDto;
 import com.example.auracontrol.booking.dto.BookingRequest;
 import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
-import com.example.auracontrol.booking.entity.AbsenceRequest;
-import com.example.auracontrol.booking.entity.Appointment;
-import com.example.auracontrol.booking.entity.AppointmentResource;
-import com.example.auracontrol.booking.entity.Resource;
+import com.example.auracontrol.booking.entity.*;
 import com.example.auracontrol.booking.repository.*;
 import com.example.auracontrol.exception.DuplicateResourceException;
 import com.example.auracontrol.exception.InvalidRequestException;
@@ -17,6 +15,10 @@ import com.example.auracontrol.user.entity.Customer;
 import com.example.auracontrol.user.entity.Technician;
 import com.example.auracontrol.user.repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,6 +69,7 @@ public class AppointmentService {
                 .getContext()
                 .getAuthentication()
                 .getName();
+
 
         Customer customer = customerRepository.findByUserEmail(currentUserEmail)
                 .orElseThrow(() -> new ResourceNotFoundException(currentUserEmail));
@@ -173,7 +174,7 @@ public class AppointmentService {
 
     /**
      * Get available time slots for a service on a specific date.
-     * Time slots are checked every 5 minutes between 09:00 and 21:00.
+     * Time slots are checked every 15 minutes between 09:00 and 21:00.
      */
     public List<String> getAvailableSlots(Integer serviceId, LocalDate date) {
         List<String> availableSlots = new ArrayList<>();
@@ -183,7 +184,9 @@ public class AppointmentService {
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Service not found")
                 );
-
+        if (service.getIsActive() == null || !service.getIsActive()) {
+            throw new ResourceNotFoundException("Service is inactive");
+        }
         int durationMinutes = service.getDurationMinutes();
 
         // If no technician can perform this service, return empty list
@@ -193,6 +196,8 @@ public class AppointmentService {
         if (skilledTechs.isEmpty()) {
             return availableSlots;
         }
+        LocalDateTime lunchStart = date.atTime(12, 0);
+        LocalDateTime lunchEnd   = date.atTime(14, 0);
 
         // Fetch all appointments of the day (performance optimization)
         LocalDateTime startOfDay = date.atTime(0, 0, 0);
@@ -217,26 +222,23 @@ public class AppointmentService {
                 );
 
         // Resource-related preparation
-        boolean requiresResource = false;
-        long totalResources = 0;
-        List<Appointment> resourceUsingAppointments = new ArrayList<>();
+        List<ServiceResourceRequirement> requirements = serviceResourceRequirementRepository.findAllByService_ServiceId(serviceId);
 
-        var requirementOpt =
-                serviceResourceRequirementRepository.findByServiceId(serviceId);
+        Map<String, Long> resourceTotalMap = new HashMap<>();
 
-        if (requirementOpt.isPresent()) {
-            requiresResource = true;
-            String resourceType = requirementOpt.get().getResourceType();
+        Map<String, List<Appointment>> resourceUsageMap = new HashMap<>();
+        if (!requirements.isEmpty()) {
+            for (ServiceResourceRequirement req : requirements) {
+                String type = req.getResourceType();
 
-            totalResources = resourceRepository.countByType(resourceType);
+                if (!resourceTotalMap.containsKey(type)) {
+                    resourceTotalMap.put(type, resourceRepository.countByType(type));
+                }
 
-            resourceUsingAppointments =
-                    appointmentResourceRepository
-                            .findAppointmentsByResourceTypeAndDate(
-                                    resourceType,
-                                    startOfDay,
-                                    endOfDay
-                            );
+                if (!resourceUsageMap.containsKey(type)) {
+                    resourceUsageMap.put(type, appointmentResourceRepository.findAppointmentsByResourceTypeAndDate(type, startOfDay, endOfDay));
+                }
+            }
         }
 
         // Iterate through time slots (09:00 -> 21:00)
@@ -244,16 +246,20 @@ public class AppointmentService {
         LocalDateTime closingTime = date.atTime(21, 0);
 
         while (!currentSlot.plusMinutes(durationMinutes).isAfter(closingTime)) {
+            LocalDateTime slotEnd = currentSlot.plusMinutes(durationMinutes);
 
-            // Skip past time slots
-            if (currentSlot.isBefore(LocalDateTime.now())) {
-                currentSlot = currentSlot.plusMinutes(5);
+            if (currentSlot.isBefore(lunchEnd) && slotEnd.isAfter(lunchStart)) {
+                currentSlot = currentSlot.plusMinutes(15);
                 continue;
             }
 
-            LocalDateTime slotEnd = currentSlot.plusMinutes(durationMinutes);
 
-            // 1. Technician availability check
+            if (currentSlot.isBefore(LocalDateTime.now())) {
+                currentSlot = currentSlot.plusMinutes(15);
+                continue;
+            }
+
+
             long busyTechCount =
                     countBusyTechnicians(
                             skilledTechs,
@@ -267,21 +273,28 @@ public class AppointmentService {
                     busyTechCount < skilledTechs.size();
 
             // 2. Resource availability check
-            boolean hasResource = true;
+            boolean hasAllResources = true;
 
-            if (requiresResource) {
-                long busyResourceCount =
-                        countBusyResources(
-                                resourceUsingAppointments,
-                                currentSlot,
-                                slotEnd
-                        );
+            if (!requirements.isEmpty()) {
+                for (ServiceResourceRequirement req : requirements) {
+                    String type = req.getResourceType();
+                    int requiredQty = req.getQuantity();
+                    long totalQty = resourceTotalMap.getOrDefault(type, 0L);
 
-                hasResource = busyResourceCount < totalResources;
+
+                    List<Appointment> appsUsingResource = resourceUsageMap.getOrDefault(type, new ArrayList<>());
+                    long busyQty = countBusyResources(appsUsingResource, currentSlot, slotEnd);
+
+
+                    if ((totalQty - busyQty) < requiredQty) {
+                        hasAllResources = false;
+                        break;
+                    }
+                }
             }
 
             // 3. Slot is available only if both technician and resource are available
-            if (hasTechnician && hasResource) {
+            if (hasTechnician && hasAllResources) {
                 availableSlots.add(
                         currentSlot.format(
                                 DateTimeFormatter.ofPattern("HH:mm")
@@ -289,7 +302,7 @@ public class AppointmentService {
                 );
             }
 
-            currentSlot = currentSlot.plusMinutes(5);
+            currentSlot = currentSlot.plusMinutes(15);
         }
 
         return availableSlots;
@@ -373,6 +386,147 @@ public class AppointmentService {
                         .build())
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public void confirmAppointment(Integer appointmentId, String userEmail) {
+
+        Technician currentTech = technicianRepository.findByUser_EmailAndUser_EnabledTrue(userEmail)
+                .orElseThrow(() -> new AccessDeniedException("You are not a valid technician"));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (!currentTech.getTechnicianId().equals(appointment.getTechnician().getTechnicianId())) {
+            throw new AccessDeniedException("You are not allowed to operate on another technician's appointment");
+        }
+
+        if (!"PENDING".equals(appointment.getStatus())) {
+            throw new IllegalStateException("Only appointments in PENDING status can be confirmed");
+        }
+
+        appointment.setStatus("CONFIRMED");
+        appointmentRepository.save(appointment);
+    }
+
+    /**
+     * Reschedule an appointment.
+     *
+     * Business logic is delegated to Database Triggers:
+     * 1. trg_calculate_end_time (BEFORE UPDATE):
+     *    Automatically recalculates the appointment end time.
+     *
+     * 2. trg_validate_appointment (BEFORE UPDATE):
+     *    - Checks technician schedule conflicts
+     *    - Checks technician approved absences
+     *    - Checks resource availability
+     *
+     * 3. trg_update_resource_on_reschedule (AFTER UPDATE):
+     *    - Releases previously assigned resources
+     *    - Automatically assigns new available resources
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public Appointment rescheduleAppointment(
+            Integer appointmentId,
+            LocalDateTime newStartTime,
+            String currentUserEmail
+    ) {
+
+        // 1. Retrieve appointment
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        // 2. Ownership validation (Security check)
+        if (!appointment.getCustomer().getUser().getEmail().equals(currentUserEmail)) {
+            throw new InvalidRequestException("Unauthorized: You are not the owner of this appointment.");
+        }
+
+        // 3. Status validation (Only allow reschedule when PENDING or CONFIRMED)
+        if (List.of("CANCELLED", "COMPLETED").contains(appointment.getStatus())) {
+            throw new InvalidRequestException("Cannot reschedule a cancelled or completed appointment.");
+        }
+
+        // 4. Time validation (Business rules)
+        LocalDateTime now = LocalDateTime.now();
+
+        // Cannot reschedule to a past time
+        if (newStartTime.isBefore(now)) {
+            throw new InvalidRequestException("Cannot reschedule to the past.");
+        }
+
+        // Must reschedule at least 30 minutes before the original start time
+        if (now.plusMinutes(30).isAfter(appointment.getStartTime())) {
+            throw new InvalidRequestException(
+                    "Cannot reschedule less than 30 minutes before the original start time."
+            );
+        }
+
+        // If start time is unchanged, return the current appointment
+        if (newStartTime.isEqual(appointment.getStartTime())) {
+            return appointment;
+        }
+
+        // 5. Apply new start time
+        appointment.setStartTime(newStartTime);
+
+        try {
+            // 6. Persist and flush to trigger DB validations immediately
+            Appointment updatedAppointment = appointmentRepository.saveAndFlush(appointment);
+            return updatedAppointment;
+
+        } catch (Exception e) {
+            // 7. Handle PostgreSQL trigger exceptions
+            // Possible trigger messages:
+            // - 'Technician is not available...'
+            // - 'Technician is on approved leave...'
+            // - 'Not enough resources...'
+
+            Throwable rootCause = e;
+            while (rootCause.getCause() != null && rootCause.getCause() != rootCause) {
+                rootCause = rootCause.getCause();
+            }
+
+            String message = rootCause.getMessage();
+
+            if (message != null) {
+                if (message.contains("Technician is not available")) {
+                    throw new DuplicateResourceException("Technician is busy at the selected time.");
+                }
+                if (message.contains("Technician is on approved leave")) {
+                    throw new DuplicateResourceException("Technician is on leave at the selected time.");
+                }
+                if (message.contains("Not enough resources")) {
+                    throw new DuplicateResourceException("No available room or equipment at the new time.");
+                }
+            }
+
+            // Unknown or unexpected error
+            throw new RuntimeException("Reschedule failed: " + message, e);
+        }
+    }
+
+    // (COMPLETE)
+    @Transactional
+    public void completeAppointment(Integer appointmentId, String userEmail) {
+
+        Technician currentTech = technicianRepository.findByUser_EmailAndUser_EnabledTrue(userEmail)
+                .orElseThrow(() -> new AccessDeniedException("You are not a valid technician"));
+
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found"));
+
+        if (!currentTech.getTechnicianId().equals(appointment.getTechnician().getTechnicianId())) {
+            throw new AccessDeniedException("You are not allowed to operate on this appointment");
+        }
+
+        if (!"CONFIRMED".equals(appointment.getStatus())) {
+            throw new IllegalStateException("The appointment has not been confirmed and cannot be marked as completed");
+        }
+
+        appointment.setStatus("COMPLETED");
+        appointmentRepository.save(appointment);
+    }
+
+
+
     /**
      * Helper method: count busy technicians during a time slot.
      */
@@ -402,6 +556,33 @@ public class AppointmentService {
 
             return isAbsent;
         }).count();
+    }
+
+    public Page<AdminAppointmentDto> getAppointmentsForAdmin(String keyword, String status, int page, int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<Appointment> appointmentPage = appointmentRepository.findAppointmentsForAdmin(keyword, status, pageable);
+
+
+        return appointmentPage.map(appt -> AdminAppointmentDto.builder()
+                .appointmentId(appt.getAppointmentId())
+
+                .customerName(appt.getCustomer() != null ? appt.getCustomer().getUser().getName() : "Unknown")
+                .customerEmail(appt.getCustomer() != null ? appt.getCustomer().getUser().getEmail() : "")
+
+                .serviceName(appt.getService().getName())
+                .duration(appt.getService().getDurationMinutes())
+
+
+                .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Đang sắp xếp")
+
+                .startTime(appt.getStartTime())
+                .endTime(appt.getEndTime())
+                .status(appt.getStatus())
+                .price(appt.getFinalPrice())
+                .note(appt.getNoteText())
+                .build());
     }
 
     /**

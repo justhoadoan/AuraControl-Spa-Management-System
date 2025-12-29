@@ -1,7 +1,10 @@
 package com.example.auracontrol.booking.repository;
 
 import com.example.auracontrol.admin.dto.RevenueStatDto;
+import com.example.auracontrol.admin.dto.TodayStatsView;
+import com.example.auracontrol.admin.dto.UpcomingAppointmentView;
 import com.example.auracontrol.booking.entity.Appointment;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -68,4 +71,24 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     List<Appointment> findByTechnicianIdAndDateRange(Integer techId, LocalDateTime from, LocalDateTime to);
 
 
+    @Query(value = "SELECT * FROM v_upcoming_appointments ORDER BY start_time ASC LIMIT 10",
+            nativeQuery = true)
+    List<UpcomingAppointmentView> getUpcomingAppointmentsView();
+
+
+    @Query(value = "SELECT * FROM v_today_stats", nativeQuery = true)
+    TodayStatsView getTodayStatsView();
+
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE (:status IS NULL OR a.status = :status) " +
+            "AND (:keyword IS NULL OR :keyword = '' OR " +
+            "LOWER(a.customer.user.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(a.technician.user.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+            "LOWER(a.service.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "ORDER BY a.startTime DESC")
+    Page<Appointment> findAppointmentsForAdmin(
+            @Param("keyword") String keyword,
+            @Param("status") String status,
+            Pageable pageable
+    );
 }

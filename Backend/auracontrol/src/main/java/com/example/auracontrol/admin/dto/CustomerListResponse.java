@@ -9,4 +9,12 @@ public class CustomerListResponse {
     private String name;
     private String email;
     private long totalAppointments;
+    // Constructor này dùng cho JPQL
+    public CustomerListResponse(Integer userId, String name, String email, Integer customerId, Long totalAppointments) {
+        this.userId = userId;
+        this.name = name;
+        this.email = email;
+        this.customerId = customerId;
+        this.totalAppointments = totalAppointments;
+    }
 }

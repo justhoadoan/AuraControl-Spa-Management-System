@@ -41,7 +41,7 @@ public class Appointment {
     private LocalDateTime endTime;
 
     @Column(name = "status")
-    private String status; // PENDING, CONFIRMED, CANCELLED
+    private String status; // PENDING, CONFIRMED, CANCELLED, COMPLETED
 
     @Column(name = "note_text")
     private String noteText;
