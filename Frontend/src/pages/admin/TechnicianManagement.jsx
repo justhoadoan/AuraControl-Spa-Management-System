@@ -74,7 +74,7 @@ const TechnicianManagement = () => {
             // Chuẩn bị params
             const params = {
                 page: page,
-                size: 5, // Để 5 dòng để test phân trang cho dễ thấy
+                size: 20, // Kích thước trang mặc định cho production
             };
             // Nếu status khác 'ALL' thì mới gửi param status
             if (status && status !== 'ALL') {
