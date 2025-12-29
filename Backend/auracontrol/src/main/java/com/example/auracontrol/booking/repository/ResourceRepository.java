@@ -60,7 +60,7 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
     Page<Resource> searchResources(
             @Param("keyword") String keyword,
             @Param("type") String type,
-            Pageable pageable
+            org.springframework.data.domain.Pageable pageable
     );
 }
 

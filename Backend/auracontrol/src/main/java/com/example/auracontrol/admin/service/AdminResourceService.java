@@ -7,6 +7,9 @@ import com.example.auracontrol.exception.DuplicateResourceException;
 import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,7 +56,7 @@ public class AdminResourceService {
     public Resource updateResource(Integer id, ResourceDto request) {
         Resource resource = getResourceById(id);
 
-        // Check trùng tên Resource (khi đổi tên)
+
         if (resourceRepository.existsByNameAndResourceIdNot(request.getName(), id)) {
             throw new DuplicateResourceException("Resource name '" + request.getName() + "' already exists.");
         }
@@ -76,5 +79,9 @@ public class AdminResourceService {
             throw new ResourceNotFoundException("Resource not found with id: " + id);
         }
         resourceRepository.deleteById(id);
+    }
+    public Page<Resource> searchResources(String keyword, String type, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return resourceRepository.searchResources(keyword, type, pageable);
     }
 }
