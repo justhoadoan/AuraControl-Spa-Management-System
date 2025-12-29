@@ -12,6 +12,7 @@ const StaffDashboard = () => {
     const [currentDate, setCurrentDate] = useState(new Date());
     const [viewMode, setViewMode] = useState('month'); // Mặc định view tháng
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
     
     // Modal State
     const [isTimeOffModalOpen, setIsTimeOffModalOpen] = useState(false);
@@ -50,6 +51,25 @@ const StaffDashboard = () => {
             setIsLoading(false);
         }
     };
+
+    const handleAppointmentAction = async (idStr, action) => {
+    // idStr có dạng "appt-123", cần cắt lấy số 123
+    const appointmentId = idStr.split('-')[1]; 
+    
+    try {
+        const token = localStorage.getItem('token');
+        await axios.patch(`http://localhost:8081/api/technician/appointments/${appointmentId}/${action}`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        toast.success(`Appointment ${action}ed successfully!`);
+        setSelectedAppointment(null); // Đóng modal
+        fetchSchedule(); // Load lại lịch để cập nhật trạng thái mới
+    } catch (error) {
+        console.error(`Error ${action}ing appointment:`, error);
+        toast.error(error.response?.data?.message || "Action failed.");
+    }
+};
 
     useEffect(() => {
         fetchSchedule();
@@ -227,6 +247,11 @@ const StaffDashboard = () => {
                                         {daysEvents.map((event) => (
                                             <div 
                                                 key={event.id}
+                                                onClick={() => {
+                                                    if (event.type === 'APPOINTMENT') {
+                                                        setSelectedAppointment(event); // Mở modal chi tiết
+                                                    }
+                                                }}
                                                 title={`${event.title} - ${event.status}`}
                                                 className={`p-1.5 rounded border text-[10px] sm:text-xs cursor-pointer hover:opacity-80 transition-opacity ${getEventStyle(event)}`}
                                             >
@@ -306,6 +331,83 @@ const StaffDashboard = () => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+            {/* --- APPOINTMENT DETAILS MODAL --- */}
+            {selectedAppointment && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="w-full max-w-md bg-white dark:bg-[#1e1e1e] rounded-xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+                        {/* Header */}
+                        <div className="px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-800">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Appointment Details</h3>
+                            <button onClick={() => setSelectedAppointment(null)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+
+                        {/* Content */}
+                        <div className="p-6 space-y-4">
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase">Service</label>
+                                <p className="text-base font-semibold text-gray-900 dark:text-white">{selectedAppointment.description}</p>
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold text-gray-500 uppercase">Customer</label>
+                                <p className="text-base text-gray-900 dark:text-white">{selectedAppointment.title.replace('Customer: ', '')}</p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">Time</label>
+                                    <p className="text-sm text-gray-900 dark:text-white">
+                                        {new Date(selectedAppointment.start).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - 
+                                        {new Date(selectedAppointment.end).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                    </p>
+                                </div>
+                                <div>
+                                    <label className="text-xs font-bold text-gray-500 uppercase">Status</label>
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                        selectedAppointment.status === 'CONFIRMED' ? 'bg-blue-100 text-blue-800' :
+                                        selectedAppointment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                                        selectedAppointment.status === 'CANCELLED' ? 'bg-red-100 text-red-800' :
+                                        'bg-yellow-100 text-yellow-800'
+                                    }`}>
+                                        {selectedAppointment.status}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800">
+                            {/* Nút CONFIRM (Chỉ hiện khi PENDING) */}
+                            {selectedAppointment.status === 'PENDING' && (
+                                <button 
+                                    onClick={() => handleAppointmentAction(selectedAppointment.id, 'confirm')}
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
+                                >
+                                    Confirm
+                                </button>
+                            )}
+
+                            {/* Nút COMPLETE (Chỉ hiện khi CONFIRMED) */}
+                            {selectedAppointment.status === 'CONFIRMED' && (
+                                <button 
+                                    onClick={() => handleAppointmentAction(selectedAppointment.id, 'complete')}
+                                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
+                                >
+                                    Mark Complete
+                                </button>
+                            )}
+                            
+                            {/* Nút Close mặc định */}
+                            <button 
+                                onClick={() => setSelectedAppointment(null)}
+                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
+                            >
+                                Close
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
