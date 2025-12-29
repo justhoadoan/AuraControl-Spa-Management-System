@@ -1,6 +1,8 @@
 package com.example.auracontrol.booking.repository;
 
 import com.example.auracontrol.booking.entity.AbsenceRequest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -41,6 +43,8 @@ public interface AbsenceRequestRepository extends JpaRepository<AbsenceRequest, 
     @Query("SELECT ar FROM AbsenceRequest ar WHERE ar.technician.technicianId = :techId " +
             "AND ar.endDate >= :from AND ar.startDate <= :to")
     List<AbsenceRequest> findByTechnicianIdAndDateRange(Integer techId, LocalDateTime from, LocalDateTime to);
+
+    Page<AbsenceRequest> findByStatus(String status, Pageable pageable);
 
 
 }

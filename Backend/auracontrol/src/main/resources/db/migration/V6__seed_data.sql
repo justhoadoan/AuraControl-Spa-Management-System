@@ -230,23 +230,106 @@ CALL seed_appointments(50000); COMMIT;
 CALL seed_appointments(50000); COMMIT;
 
 ALTER TABLE appointment ENABLE TRIGGER ALL;
+-- =====================================================================================
+-- PART 4: ABSENCE REQUESTS SEED
+-- =====================================================================================
+DO $$
+DECLARE
+v_tech_ids INT[];
+    v_tech_id INT;
+    v_start_date TIMESTAMP;
+    v_end_date TIMESTAMP;
+    v_days_off INT;
 
+    v_anchor_date TIMESTAMP := TIMESTAMP '2027-12-31 23:59:59';
+
+
+    j INT;
+    v_has_appt_conflict BOOLEAN;
+    v_inserted_success BOOLEAN;
+BEGIN
+
+SELECT array_agg(technician_id) INTO v_tech_ids FROM technician;
+
+IF v_tech_ids IS NOT NULL THEN
+
+        FOREACH v_tech_id IN ARRAY v_tech_ids LOOP
+
+            v_inserted_success := FALSE;
+
+
+FOR j IN 1..20 LOOP
+
+                IF v_inserted_success THEN EXIT; END IF;
+
+
+                v_start_date := v_anchor_date - (random() * 365 * INTERVAL '1 day');
+                v_days_off := 1 + floor(random() * 3)::INT; -- Nghỉ 1-4 ngày
+                v_end_date := v_start_date + (v_days_off || ' days')::interval;
+
+
+SELECT EXISTS (
+    SELECT 1
+    FROM appointment a
+    WHERE a.technician_id = v_tech_id
+      AND a.status != 'CANCELLED'
+                      AND (a.start_time < v_end_date AND a.end_time > v_start_date)
+) INTO v_has_appt_conflict;
+
+IF NOT v_has_appt_conflict THEN
+
+BEGIN
+INSERT INTO absence_request (
+    technician_id,
+    start_date,
+    end_date,
+    reason,
+    status,
+    created_at
+)
+VALUES (
+           v_tech_id,
+           v_start_date,
+           v_end_date,
+           (ARRAY['Sick Leave', 'Vacation', 'Personal Matter'])[floor(random()*3)+1],
+           (ARRAY['APPROVED', 'PENDING'])[floor(random()*2)+1],
+           v_start_date - (random() * 5 * INTERVAL '1 day')
+       );
+
+
+v_inserted_success := TRUE;
+
+EXCEPTION WHEN OTHERS THEN
+
+                        NULL;
+END;
+END IF;
+
+END LOOP;
+END LOOP;
+END IF;
+END $$;
 -- =====================================================================================
 -- FINALIZE
 -- =====================================================================================
--- =====================================================================================
--- FINALIZE
--- =====================================================================================
-
+-- Reset sequence  Appointment
 SELECT setval(
                'appointment_appointment_id_seq',
                COALESCE((SELECT MAX(appointment_id) FROM appointment), 1)
        );
 
+-- Reset sequence  Users
 SELECT setval(
                'users_user_id_seq',
                COALESCE((SELECT MAX(user_id) FROM users), 1)
        );
 
+-- Reset sequence  Absence Request (
+SELECT setval(
+               'absence_request_request_id_seq',
+               COALESCE((SELECT MAX(request_id) FROM absence_request), 1)
+       );
+
 ANALYZE appointment;
 ANALYZE users;
+ANALYZE absence_request;

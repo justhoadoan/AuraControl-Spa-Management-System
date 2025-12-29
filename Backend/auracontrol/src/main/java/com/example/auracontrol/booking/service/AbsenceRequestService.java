@@ -10,6 +10,9 @@ import com.example.auracontrol.exception.ResourceNotFoundException;
 import com.example.auracontrol.user.entity.Technician;
 import com.example.auracontrol.user.repository.TechnicianRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,16 +51,21 @@ public class AbsenceRequestService {
 
         return absenceRequestRepository.save(absence);
     }
-    public List<AbsenceRequestResponse> getRequestsForAdmin(String status) {
-        List<AbsenceRequest> requests;
+    public Page<AbsenceRequestResponse> getRequestsForAdmin(String status, int page, int size) {
 
-        if (status != null && !status.isEmpty()) {
-            requests = absenceRequestRepository.findByStatusOrderByCreatedAtDesc(status);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<AbsenceRequest> requestPage;
+
+        if (status != null && !status.isEmpty() && !status.equals("ALL")) {
+
+            requestPage = absenceRequestRepository.findByStatus(status, pageable);
         } else {
-            requests = absenceRequestRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
+            requestPage = absenceRequestRepository.findAll(pageable);
         }
 
-        return requests.stream().map(this::mapToDto).collect(Collectors.toList());
+        // 3. Map từ Entity sang DTO nhưng vẫn giữ nguyên cấu trúc Page
+        return requestPage.map(this::mapToDto);
     }
     @Transactional
     public void reviewRequest(Integer requestId, String status) {
