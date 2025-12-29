@@ -29,7 +29,7 @@ const AppointmentHistory = () => {
     const fetchAppointments = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:8081/api/booking/history', {
+            const response = await axios.get('/api/booking/history', {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 }

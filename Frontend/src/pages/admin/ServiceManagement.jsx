@@ -27,10 +27,11 @@ const ServiceManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/services', {
+            const response = await axios.get('/api/admin/services', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setServices(response.data);
+            console.log("API response:", response.data);
         } catch (error) {
             console.error("Error fetching services:", error);
             toast.error("Failed to fetch services list.");
@@ -89,11 +90,11 @@ const ServiceManagement = () => {
         try {
             if (isEditing) {
                 // UPDATE
-                await axios.put(`http://localhost:8081/api/admin/services/${currentId}`, formData, { headers });
+                await axios.put(`/api/admin/services/${currentId}`, formData, { headers });
                 toast.success("Service updated successfully!");
             } else {
                 // CREATE
-                await axios.post('http://localhost:8081/api/admin/services', formData, { headers });
+                await axios.post('/api/admin/services', formData, { headers });
                 toast.success("Service created successfully!");
             }
             fetchServices(); // Reload list
@@ -108,7 +109,7 @@ const ServiceManagement = () => {
     const handleDelete = async (id) => {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8081/api/admin/services/${id}`, {
+                await axios.delete(`/api/admin/services/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 toast.success("Service deleted successfully.");

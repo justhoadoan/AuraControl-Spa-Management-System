@@ -25,7 +25,7 @@ const VerifyAccount = () => {
         isCalled.current = true; 
 
         // Gọi API xác thực
-        axios.get(`http://localhost:8081/api/auth/verify-account?token=${token}`)
+        axios.get(`/api/auth/verify-account?token=${token}`)
             .then((response) => {
                 setStatus('success');
                 const successMsg = typeof response.data === 'string' ? response.data : "Account activated successfully!";

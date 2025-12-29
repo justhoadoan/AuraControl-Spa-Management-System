@@ -41,7 +41,7 @@ const AdminDashboard = () => {
 
                 // 1. Fetch Upcoming Appointments (Existing logic)
                 try {
-                    const appointmentsRes = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', { headers });
+                    const appointmentsRes = await axios.get('/api/admin/dashboard/upcoming-appointments', { headers });
                     setAppointments(appointmentsRes.data);
                 } catch (appointmentsError) {
                     console.error("Error fetching upcoming appointments:", appointmentsError);
@@ -49,7 +49,7 @@ const AdminDashboard = () => {
 
                 // 2. Fetch Dashboard Stats (NEW LOGIC)
                 try {
-                    const statsRes = await axios.get('http://localhost:8081/api/admin/dashboard/stats', { headers });
+                    const statsRes = await axios.get('/api/admin/dashboard/stats', { headers });
                     setStats(statsRes.data);
                 } catch (statsError) {
                     console.error("Error fetching dashboard stats:", statsError);
@@ -80,7 +80,7 @@ const AdminDashboard = () => {
             setIsRevenueLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
+                const response = await axios.get('/api/admin/dashboard/revenue-chart', {
                     params: { period: chartRange.toUpperCase() },
                     headers: { Authorization: `Bearer ${token}` }
                 });

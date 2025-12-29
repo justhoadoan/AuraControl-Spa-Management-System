@@ -30,7 +30,7 @@ const fetchCustomers = async (page = 0, search = '') => {
     setIsLoading(true);
     try {
         const token = localStorage.getItem('token');
-        let url = `http://localhost:8081/api/admin/customers?page=${page}&size=${pageSize}`;
+        let url = `/api/admin/customers?page=${page}&size=${pageSize}`;
         if (search) {
             url += `&keyword=${encodeURIComponent(search)}`;
         }
@@ -70,7 +70,7 @@ const fetchCustomers = async (page = 0, search = '') => {
         setIsDetailModalOpen(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8081/api/admin/customers/${userId}`, {
+            const response = await axios.get(`/api/admin/customers/${userId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setSelectedCustomer(response.data);

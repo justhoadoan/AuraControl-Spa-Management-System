@@ -35,7 +35,7 @@ const ResourceManagement = () => {
     const fetchDistinctTypes = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/resources/types', {
+            const response = await axios.get('/api/admin/resources/types', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setDistinctTypes(response.data || []);
@@ -57,7 +57,7 @@ const ResourceManagement = () => {
                 type: typeFilter
             };
 
-            const response = await axios.get('http://localhost:8081/api/admin/resources', {
+            const response = await axios.get('/api/admin/resources', {
                 headers: { Authorization: `Bearer ${token}` },
                 params: params
             });
@@ -149,10 +149,10 @@ const ResourceManagement = () => {
 
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:8081/api/admin/resources/${currentId}`, formData, { headers });
+                await axios.put(`/api/admin/resources/${currentId}`, formData, { headers });
                 toast.success("Resource updated successfully!");
             } else {
-                await axios.post('http://localhost:8081/api/admin/resources', formData, { headers });
+                await axios.post('/api/admin/resources', formData, { headers });
                 toast.success("Resource created successfully!");
             }
             fetchResources();
@@ -169,7 +169,7 @@ const ResourceManagement = () => {
         
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8081/api/admin/resources/${id}`, {
+                await axios.delete(`/api/admin/resources/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 toast.success("Deleted successfully.");

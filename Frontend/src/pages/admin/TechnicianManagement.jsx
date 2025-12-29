@@ -40,7 +40,7 @@ const TechnicianManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/technicians?size=100', {
+            const response = await axios.get('/api/admin/technicians?size=100', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setTechnicians(response.data.content);
@@ -56,7 +56,7 @@ const TechnicianManagement = () => {
     const fetchServices = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/services', {
+            const response = await axios.get('/api/admin/services', {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setServices(response.data);
@@ -81,7 +81,7 @@ const TechnicianManagement = () => {
                 params.status = status;
             }
 
-            const response = await axios.get('http://localhost:8081/api/admin/absence-requests', {
+            const response = await axios.get('/api/admin/absence-requests', {
                 headers: { Authorization: `Bearer ${token}` },
                 params: params 
             });
@@ -150,7 +150,7 @@ const TechnicianManagement = () => {
         
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8081/api/admin/absence-requests/${id}/${action}`, {}, {
+            await axios.put(`/api/admin/absence-requests/${id}/${action}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             toast.success(`Request ${action}d successfully.`);
@@ -203,7 +203,7 @@ const TechnicianManagement = () => {
         if(!window.confirm("Are you sure?")) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:8081/api/admin/technicians/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.delete(`/api/admin/technicians/${id}`, { headers: { Authorization: `Bearer ${token}` } });
             toast.success("Technician deleted successfully!");
             fetchTechnicians();
         } catch (error) { toast.error("Failed to delete technician."); }
@@ -212,7 +212,7 @@ const TechnicianManagement = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            const url = `http://localhost:8081/api/admin/technicians${isEditing ? `/${currentId}` : ''}`;
+            const url = `/api/admin/technicians${isEditing ? `/${currentId}` : ''}`;
             const method = isEditing ? axios.put : axios.post;
             await method(url, formData, { headers: { Authorization: `Bearer ${token}` } });
             toast.success(isEditing ? "Updated!" : "Created!");

@@ -22,7 +22,7 @@ const Profile = () => {
             }
             try {
                 // Sửa port nếu cần (8080 hoặc 8081)
-                const response = await axios.get('http://localhost:8081/api/users/me', {
+                const response = await axios.get('/api/users/me', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = response.data;
@@ -50,7 +50,7 @@ const Profile = () => {
         setMessage({ type: '', content: '' });
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.put('http://localhost:8081/api/users/me',
+            const response = await axios.put('/api/users/me',
                 { fullName: profile.fullName },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

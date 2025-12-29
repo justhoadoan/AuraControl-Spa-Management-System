@@ -22,7 +22,7 @@ const AccountDashboard = () => {
 
             try {
                 // Gọi API lấy danh sách cuộc hẹn sắp tới
-                const response = await axios.get('http://localhost:8081/api/booking/upcoming-appointments', {
+                const response = await axios.get('/api/booking/upcoming-appointments', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setAppointments(response.data);
