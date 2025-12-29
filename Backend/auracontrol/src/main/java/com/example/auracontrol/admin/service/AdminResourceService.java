@@ -84,4 +84,5 @@ public class AdminResourceService {
         Pageable pageable = PageRequest.of(page, size);
         return resourceRepository.searchResources(keyword, type, pageable);
     }
+
 }

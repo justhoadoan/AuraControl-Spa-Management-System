@@ -56,7 +56,7 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
             "WHERE r.deleted = false " +
             "AND (:keyword IS NULL OR :keyword = '' OR LOWER(r.name) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
             "AND (:type IS NULL OR :type = '' OR r.type = :type) " +
-            "ORDER BY r.resourceId DESC") // Sắp xếp mới nhất lên đầu
+            "ORDER BY r.resourceId DESC")
     Page<Resource> searchResources(
             @Param("keyword") String keyword,
             @Param("type") String type,

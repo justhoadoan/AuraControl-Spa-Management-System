@@ -56,4 +56,10 @@ public class AdminResourceController {
         Page<Resource> result = adminResourceService.searchResources(keyword, type, page, size);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/types")
+    public ResponseEntity<List<String>> getAllResourceTypes() {
+
+        return ResponseEntity.ok(adminResourceService.getAllResourceTypes());
+    }
 }
