@@ -55,11 +55,8 @@ RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- Xóa 2 trigger cũ đi
-DROP TRIGGER IF EXISTS trg_validate_absence_request ON absence_request;
-DROP TRIGGER IF EXISTS trg_check_absence_conflict ON absence_request;
 
--- Tạo 1 trigger duy nhất
+
 CREATE TRIGGER trg_validate_absence_request_master
     BEFORE INSERT OR UPDATE ON absence_request
                          FOR EACH ROW

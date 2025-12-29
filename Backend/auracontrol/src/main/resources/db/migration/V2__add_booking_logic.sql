@@ -68,14 +68,15 @@ RETURNS TRIGGER AS $$
 DECLARE
 v_duration INT; -- Service duration in minutes
 BEGIN
-    -- Get service duration
-SELECT duration_minutes
-INTO v_duration
+    IF (TG_OP = 'INSERT') OR
+       (TG_OP = 'UPDATE' AND (OLD.start_time IS DISTINCT FROM NEW.start_time OR OLD.service_id IS DISTINCT FROM NEW.service_id)) THEN
+
+SELECT duration_minutes INTO v_duration
 FROM services
 WHERE service_id = NEW.service_id;
 
--- Set end_time automatically
 NEW.end_time := NEW.start_time + (v_duration * INTERVAL '1 minute');
+END IF;
 
 RETURN NEW;
 END;
