@@ -382,49 +382,66 @@ const ServiceManagement = () => {
                                         </div>
                                     ) : (
                                         <div className="space-y-3">
-                                            {formData.resources.map((res, index) => (
-                                                <div key={index} className="flex gap-3 items-end bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
-                                                    <div className="flex-1">
-                                                        <label className="text-[11px] text-gray-500 mb-1 block uppercase font-bold">Resource Type</label>
-                                                        <select
-                                                            value={res.resourceType}
-                                                            onChange={(e) => handleResourceChange(index, 'resourceType', e.target.value)}
-                                                            className="w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 py-1.5"
+                                            {formData.resources.map((res, index) => {
+                                                // Determine if there is at least one resource type not yet used in other rows
+                                                const hasAvailableTypes = resourceTypes.some(
+                                                    (t) =>
+                                                        !formData.resources.some(
+                                                            (r, i) => i !== index && r.resourceType === t.value
+                                                        )
+                                                );
+
+                                                return (
+                                                    <div key={index} className="flex gap-3 items-end bg-gray-50 dark:bg-gray-800 p-3 rounded-lg border border-gray-200 dark:border-gray-700">
+                                                        <div className="flex-1">
+                                                            <label className="text-[11px] text-gray-500 mb-1 block uppercase font-bold">Resource Type</label>
+                                                            <select
+                                                                value={res.resourceType}
+                                                                onChange={(e) => handleResourceChange(index, 'resourceType', e.target.value)}
+                                                                className="w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 py-1.5"
+                                                                disabled={!hasAvailableTypes && resourceTypes.length > 0}
+                                                            >
+                                                                {resourceTypes.length > 0 ? (
+                                                                    hasAvailableTypes ? (
+                                                                        resourceTypes.map(t => (
+                                                                            <option 
+                                                                                key={t.value} 
+                                                                                value={t.value} 
+                                                                                // Disable nếu loại này đã được chọn ở dòng khác
+                                                                                disabled={formData.resources.some((r, i) => i !== index && r.resourceType === t.value)}
+                                                                            >
+                                                                                {t.label}
+                                                                            </option>
+                                                                        ))
+                                                                    ) : (
+                                                                        <option value="" disabled>
+                                                                            No available resource types
+                                                                        </option>
+                                                                    )
+                                                                ) : (
+                                                                    <option value="" disabled>Loading types...</option>
+                                                                )}
+                                                            </select>
+                                                        </div>
+                                                        <div className="w-24">
+                                                            <label className="text-[11px] text-gray-500 mb-1 block uppercase font-bold">Quantity</label>
+                                                            <input
+                                                                type="number" min="1"
+                                                                value={res.quantity}
+                                                                onChange={(e) => handleResourceChange(index, 'quantity', parseInt(e.target.value))}
+                                                                className="w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 py-1.5"
+                                                            />
+                                                        </div>
+                                                        <button 
+                                                            type="button" 
+                                                            onClick={() => removeResourceRow(index)}
+                                                            className="text-red-500 hover:bg-red-50 p-2 rounded-md mb-[1px] transition-colors"
                                                         >
-                                                            {resourceTypes.length > 0 ? (
-                                                                resourceTypes.map(t => (
-                                                                    <option 
-                                                                        key={t.value} 
-                                                                        value={t.value} 
-                                                                        // Disable nếu loại này đã được chọn ở dòng khác
-                                                                        disabled={formData.resources.some((r, i) => i !== index && r.resourceType === t.value)}
-                                                                    >
-                                                                        {t.label}
-                                                                    </option>
-                                                                ))
-                                                            ) : (
-                                                                <option value="" disabled>Loading types...</option>
-                                                            )}
-                                                        </select>
+                                                            <span className="material-symbols-outlined text-lg">delete</span>
+                                                        </button>
                                                     </div>
-                                                    <div className="w-24">
-                                                        <label className="text-[11px] text-gray-500 mb-1 block uppercase font-bold">Quantity</label>
-                                                        <input
-                                                            type="number" min="1"
-                                                            value={res.quantity}
-                                                            onChange={(e) => handleResourceChange(index, 'quantity', parseInt(e.target.value))}
-                                                            className="w-full text-sm rounded-md border-gray-300 dark:border-gray-600 dark:bg-gray-700 py-1.5"
-                                                        />
-                                                    </div>
-                                                    <button 
-                                                        type="button" 
-                                                        onClick={() => removeResourceRow(index)}
-                                                        className="text-red-500 hover:bg-red-50 p-2 rounded-md mb-[1px] transition-colors"
-                                                    >
-                                                        <span className="material-symbols-outlined text-lg">delete</span>
-                                                    </button>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </div>
