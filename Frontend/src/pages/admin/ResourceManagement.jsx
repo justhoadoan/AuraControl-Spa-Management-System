@@ -102,7 +102,7 @@ const ResourceManagement = () => {
 
     // 3. Delete Resource
     const handleDelete = async (id) => {
-        if (window.confirm("Are you sure you want to delete this resource?")) {
+        
             try {
                 const token = localStorage.getItem('token');
                 await axios.delete(`http://localhost:8081/api/admin/resources/${id}`, {
@@ -114,7 +114,7 @@ const ResourceManagement = () => {
                 console.error("Error deleting resource:", error);
                 toast.error("Failed to delete resource.");
             }
-        }
+        
     };
 
     // Helper for Status Badge (Assuming backend doesn't send 'status' field in DTO yet, using placeholder logic)
