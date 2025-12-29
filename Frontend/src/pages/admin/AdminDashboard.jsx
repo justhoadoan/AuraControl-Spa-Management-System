@@ -138,7 +138,7 @@ const AdminDashboard = () => {
                 {/* Card 1: Today's Revenue */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Today's Revenue</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                    <p className="text-text-primary-light dark:text-white tracking-light text-2xl font-bold leading-tight">
                         ${stats.todayRevenue ? stats.todayRevenue.toLocaleString() : '0'}
                     </p>
                 </div>
@@ -146,7 +146,7 @@ const AdminDashboard = () => {
                 {/* Card 2: New Appointments (Today's Appointments) */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Today's Appointments</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                    <p className="text-text-primary-light dark:text-white tracking-light text-2xl font-bold leading-tight">
                         {stats.todayAppointments}
                     </p>
                 </div>
@@ -154,7 +154,7 @@ const AdminDashboard = () => {
                 {/* Card 3: New Customers */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">New Customers</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                    <p className="text-text-primary-light dark:text-white tracking-light text-2xl font-bold leading-tight">
                         {stats.newCustomers}
                     </p>
                 </div>
@@ -162,7 +162,7 @@ const AdminDashboard = () => {
                 {/* Card 4: Pending Requests (Static or Need another API) */}
                 <div className="flex flex-col gap-2 rounded-xl p-6 border bg-surface-light dark:bg-surface-dark border-border-light dark:border-border-dark shadow-sm">
                     <p className="text-text-primary-light dark:text-white text-base font-medium leading-normal">Pending Requests</p>
-                    <p className="text-text-primary-light dark:text-white tracking-light text-3xl font-bold leading-tight">
+                    <p className="text-text-primary-light dark:text-white tracking-light text-2xl font-bold leading-tight">
                         - 
                     </p>
                 </div>
