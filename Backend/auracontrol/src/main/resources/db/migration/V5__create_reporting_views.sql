@@ -16,15 +16,13 @@ FROM appointment a
 WHERE a.status IN ('PENDING', 'CONFIRMED') -- Only include active (not completed) appointments
   AND a.start_time >= CURRENT_TIMESTAMP;
 
-
--- 2. View: Today Stats (Fixed empty result issue)
 CREATE OR REPLACE VIEW v_today_stats AS
 SELECT
--- Subquery 1: Today's revenue (only completed appointments)
+-- Subquery 1: Today's revenue (only completed appointments) - FIXED: use end_time
     (SELECT COALESCE(SUM(final_price), 0)
      FROM appointment
-     WHERE start_time >= CURRENT_DATE
-       AND start_time < CURRENT_DATE + INTERVAL '1 day'
+     WHERE end_time >= CURRENT_DATE
+       AND end_time < CURRENT_DATE + INTERVAL '1 day'
     AND status = 'COMPLETED') AS today_revenue,
 
 -- Subquery 2: Number of today's appointments (excluding cancelled ones)
