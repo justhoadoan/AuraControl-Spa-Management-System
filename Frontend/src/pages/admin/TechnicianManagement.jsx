@@ -383,7 +383,15 @@ const TechnicianManagement = () => {
                                     </div>
                                     <div className="md:col-span-2">
                                         <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
-                                        <input type="email" name="email" required value={formData.email} onChange={handleInputChange} disabled={isEditing} className={`w-full rounded-lg border-gray-300 dark:bg-gray-900 ${isEditing ? 'opacity-50' : ''}`} />
+                                        <input
+                                            type="email"
+                                            name="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={handleInputChange}
+                                            disabled={isEditing}
+                                            className={`w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 dark:text-gray-100 dark:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${isEditing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                        />
                                     </div>
                                     <div className="md:col-span-2">
                                         <label htmlFor="password" className="block text-sm font-medium mb-1 dark:text-gray-300">{isEditing ? 'New Password' : 'Password'}</label>
