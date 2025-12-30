@@ -162,7 +162,7 @@ public class AppointmentService {
 
 
 
-        appointment.setStatus("PENDING");
+        appointment.setStatus("CONFIRMED");
 
         return appointmentRepository.save(appointment);
     }
