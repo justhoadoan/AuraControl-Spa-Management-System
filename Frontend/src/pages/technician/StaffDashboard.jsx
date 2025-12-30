@@ -398,34 +398,43 @@ const StaffDashboard = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 bg-gray-50 dark:bg-gray-800">
-                            {/* Nút CONFIRM (Chỉ hiện khi PENDING) */}
-                            {selectedAppointment.status === 'PENDING' && (
-                                <button 
-                                    onClick={() => handleAppointmentAction(selectedAppointment.id, 'confirm')}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
-                                >
-                                    Confirm
-                                </button>
+                        <div className="p-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center gap-3 bg-gray-50 dark:bg-gray-800">
+                            {/* Thông báo chế độ chỉ xem cho CANCELLED / COMPLETED */}
+                            {(selectedAppointment.status === 'CANCELLED' || selectedAppointment.status === 'COMPLETED') && (
+                                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                                    This appointment is {selectedAppointment.status === 'COMPLETED' ? 'completed' : 'cancelled'} and cannot be modified.
+                                </span>
                             )}
 
-                            {/* Nút COMPLETE (Chỉ hiện khi CONFIRMED) */}
-                            {selectedAppointment.status === 'CONFIRMED' && (
+                            <div className="flex justify-end gap-3 flex-1">
+                                {/* Nút CONFIRM (Chỉ hiện khi PENDING) */}
+                                {selectedAppointment.status === 'PENDING' && (
+                                    <button 
+                                        onClick={() => handleAppointmentAction(selectedAppointment.id, 'confirm')}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-bold hover:bg-blue-700 transition-colors"
+                                    >
+                                        Confirm
+                                    </button>
+                                )}
+
+                                {/* Nút COMPLETE (Chỉ hiện khi CONFIRMED) */}
+                                {selectedAppointment.status === 'CONFIRMED' && (
+                                    <button 
+                                        onClick={() => handleAppointmentAction(selectedAppointment.id, 'complete')}
+                                        className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
+                                    >
+                                        Mark Complete
+                                    </button>
+                                )}
+                                
+                                {/* Nút Close mặc định */}
                                 <button 
-                                    onClick={() => handleAppointmentAction(selectedAppointment.id, 'complete')}
-                                    className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold hover:bg-green-700 transition-colors"
+                                    onClick={() => setSelectedAppointment(null)}
+                                    className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
                                 >
-                                    Mark Complete
+                                    Close
                                 </button>
-                            )}
-                            
-                            {/* Nút Close mặc định */}
-                            <button 
-                                onClick={() => setSelectedAppointment(null)}
-                                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-white"
-                            >
-                                Close
-                            </button>
+                            </div>
                         </div>
                     </div>
                 </div>
