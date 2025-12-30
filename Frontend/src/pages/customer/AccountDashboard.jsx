@@ -105,7 +105,7 @@ const AccountDashboard = () => {
                     </div>
                 ) : (
                     appointments.map((appt) => (
-                        <div key={appt.appointmentId} className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm transition hover:shadow-md">
+                        <div key={appt.id} className="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm transition hover:shadow-md">
                             <div className="md:flex justify-between">
                                 <div className="mb-4 md:mb-0">
                                     <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">
@@ -151,7 +151,7 @@ const AccountDashboard = () => {
                                             </button>
 
                                             <button 
-                                                onClick={() => handleCancel(appt.appointmentId)} // Gọi hàm cancel mới
+                                                onClick={() => handleCancel(appt.id)} // Gọi hàm cancel mới
                                                 className="text-sm text-red-500 hover:text-red-700 dark:hover:text-red-400 font-medium transition-colors"
                                             >
                                                 Cancel
