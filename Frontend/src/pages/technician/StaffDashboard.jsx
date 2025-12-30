@@ -53,23 +53,42 @@ const StaffDashboard = () => {
     };
 
     const handleAppointmentAction = async (idStr, action) => {
-    // idStr có dạng "appt-123", cần cắt lấy số 123
-    const appointmentId = idStr.split('-')[1]; 
+        // idStr có dạng "appt-123", cần cắt lấy số 123 một cách an toàn
+        if (typeof idStr !== 'string' || !idStr.includes('-')) {
+            console.error('Invalid appointment id format:', idStr);
+            toast.error('Invalid appointment identifier. Please try again.');
+            return;
+        }
+
+        const parts = idStr.split('-');
+        const appointmentIdPart = parts[1];
+
+        if (!appointmentIdPart || Number.isNaN(Number(appointmentIdPart))) {
+            console.error('Unable to parse appointment id from:', idStr);
+            toast.error('Invalid appointment identifier. Please try again.');
+            return;
+        }
+
+        const appointmentId = appointmentIdPart;
     
-    try {
-        const token = localStorage.getItem('token');
-        await axios.patch(`http://localhost:8081/api/technician/appointments/${appointmentId}/${action}`, {}, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
-        toast.success(`Appointment ${action}ed successfully!`);
-        setSelectedAppointment(null); // Đóng modal
-        fetchSchedule(); // Load lại lịch để cập nhật trạng thái mới
-    } catch (error) {
-        console.error(`Error ${action}ing appointment:`, error);
-        toast.error(error.response?.data?.message || "Action failed.");
-    }
-};
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(
+                `http://localhost:8081/api/technician/appointments/${appointmentId}/${action}`,
+                {},
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+            
+            toast.success(`Appointment ${action}ed successfully!`);
+            setSelectedAppointment(null); // Đóng modal
+            fetchSchedule(); // Load lại lịch để cập nhật trạng thái mới
+        } catch (error) {
+            console.error(`Error ${action}ing appointment:`, error);
+            toast.error(error.response?.data?.message || "Action failed.");
+        }
+    };
 
     useEffect(() => {
         fetchSchedule();
