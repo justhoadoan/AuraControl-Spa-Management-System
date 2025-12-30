@@ -4,12 +4,12 @@ import com.example.auracontrol.booking.entity.Resource;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -24,7 +24,7 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
     List<Integer> findBusyResourceIds(@Param("startTime") LocalDateTime startTime,
                                    @Param("endTime") LocalDateTime endTime);
 
-    // Tìm 1 Resource rảnh theo Type
+
     @Query("SELECT r FROM Resource r " +
             "WHERE r.type = :type " +
             "AND r.resourceId NOT IN :busyIds")
@@ -39,7 +39,7 @@ public interface ResourceRepository extends JpaRepository<Resource,Integer> {
         }
 
 
-        List<Resource> result = findAvailableResources(type, (Collection<Integer>) busyIds, (Pageable) PageRequest.of(0, 1));
+        List<Resource> result = findAvailableResources(type, (Collection<Integer>) busyIds, (org.springframework.data.domain.Pageable) PageRequest.of(0, 1));
         return result.isEmpty() ? Optional.empty() : Optional.of(result.get(0));
     }
     Optional<Resource> findFirstByType(String type);

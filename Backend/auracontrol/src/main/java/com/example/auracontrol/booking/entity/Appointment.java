@@ -9,6 +9,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -39,7 +41,8 @@ public class Appointment {
 
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
-
+    @OneToMany(mappedBy = "appointment", fetch = FetchType.LAZY)
+    private List<AppointmentResource> appointmentResources;
     @Column(name = "status")
     private String status; // PENDING, CONFIRMED, CANCELLED, COMPLETED
 
