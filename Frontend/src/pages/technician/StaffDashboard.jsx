@@ -115,7 +115,7 @@ const StaffDashboard = () => {
                 reason: timeOffData.reason
             };
 
-            await axios.post('http://localhost:8081/api/staff/absence-requests', payload, {
+            await axios.post('http://localhost:8081/api/technician/absence-requests', payload, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
