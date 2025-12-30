@@ -175,7 +175,7 @@ const AccountDashboard = () => {
                                     <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-2">{appt.serviceName}</h3>
                                     <div className="space-y-2 text-slate-600 dark:text-slate-400 text-sm">
                                         <p className="flex items-center"><span className="material-icons-outlined mr-2">event</span> {formatDate(appt.startTime)}</p>
-                                        <p className="flex items-center"><span className="material-icons-outlined mr-2">schedule</span> {appt.durationMinutes} minutes</p>
+                                        <p className="flex items-center"><span className="material-icons-outlined mr-2">schedule</span> {appt.duration} minutes</p>
                                         <p className="flex items-center"><span className="material-icons-outlined mr-2">person</span> With {appt.technicianName}</p>
                                         <p className="mt-2"><span className={`px-2 py-0.5 rounded text-xs font-bold ${appt.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : appt.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-700'}`}>{appt.status}</span></p>
                                     </div>
