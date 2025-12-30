@@ -162,7 +162,7 @@ public class AppointmentService {
 
 
 
-        appointment.setStatus("PENDING");
+        appointment.setStatus("CONFIRMED");
 
         return appointmentRepository.save(appointment);
     }
@@ -318,6 +318,7 @@ public class AppointmentService {
                 .map(appt -> BookingResponseDto.builder()
                         .id(appt.getAppointmentId())
                         .serviceName(appt.getService().getName())
+                        .serviceId(appt.getService().getServiceId())
                         .startTime(appt.getStartTime())
                         .duration(appt.getService().getDurationMinutes())
                         .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Arranging")

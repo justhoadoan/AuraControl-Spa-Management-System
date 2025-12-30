@@ -12,6 +12,7 @@ public class BookingResponseDto {
     private String serviceName;
     private LocalDateTime startTime;
     private Integer duration;
+    private Integer serviceId;
     private String technicianName;
     private String status;
 }

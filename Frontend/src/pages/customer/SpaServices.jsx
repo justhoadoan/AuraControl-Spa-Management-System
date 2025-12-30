@@ -299,7 +299,7 @@ const SpaServices = () => {
                                     <select className="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-black/20" value={selectedTech} onChange={(e) => setSelectedTech(e.target.value)}>
                                         <option value="">Auto-assign (Best Expert)</option>
                                         {availableTechs.map(tech => (
-                                            <option key={tech.technicianId} value={tech.technicianId}>{tech.fullName}</option>
+                                            <option key={tech.technicianId} value={tech.technicianId}>{tech.technicianName}</option>
                                         ))}
                                     </select>
                                 </div>
