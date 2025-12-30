@@ -70,15 +70,14 @@ public class AppointmentService {
                 .getAuthentication()
                 .getName();
 
-
         Customer customer = customerRepository.findByUserEmail(currentUserEmail)
-                .orElseThrow(() -> new ResourceNotFoundException(currentUserEmail));
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found with email: " + currentUserEmail));
 
         // 2. Get service information
         var service = serviceRepository.findById(request.getServiceId())
                 .orElseThrow(() -> new ResourceNotFoundException("Service not found"));
 
-        // 3. Technician handling (manual selection or auto-assignment)
+        // 3. Technician handling
         Technician technician;
 
         // Fetch available technicians at the requested time
@@ -95,7 +94,6 @@ public class AppointmentService {
                             dto.getTechnicianId().equals(request.getTechnicianId())
                     );
 
-            // Selected technician must be available
             if (!isAvailable) {
                 throw new ResourceNotFoundException(
                         "Selected technician is busy or not qualified."
@@ -123,53 +121,50 @@ public class AppointmentService {
                     );
         }
 
-        // 4. Resource handling (room/equipment)
+
         LocalDateTime startTime = request.getStartTime();
         LocalDateTime endTime = startTime.plusMinutes(service.getDurationMinutes());
 
-        Resource selectedResource = null;
+        List<ServiceResourceRequirement> requirements = serviceResourceRequirementRepository.findByServiceId(service.getServiceId());
 
-        // Check if this service requires a resource
-        var requirementOpt =
-                serviceResourceRequirementRepository.findByServiceId(service.getServiceId());
+        if (!requirements.isEmpty()) {
 
-        if (requirementOpt.isPresent()) {
-            String requiredType = requirementOpt.get().getResourceType();
+            List<Integer> busyIds = resourceRepository.findBusyResourceIds(startTime, endTime);
 
-            // Find busy resources during the requested time
-            List<Integer> busyIds =
-                    resourceRepository.findBusyResourceIds(startTime, endTime);
-
-            // Prevent empty IN-clause issues
             if (busyIds.isEmpty()) {
-                busyIds.add((int) -1L);
+                busyIds.add(-1);
             }
 
-            // Select the first available resource
-            selectedResource =
-                    resourceRepository
-                            .findFirstAvailableByType(requiredType, busyIds)
-                            .orElseThrow(() ->
-                                    new ResourceNotFoundException(
-                                            "No available room/equipment at this time."
-                                    )
-                            );
+            for (ServiceResourceRequirement req : requirements) {
+                String requiredType = req.getResourceType();
+
+
+                Resource foundResource = resourceRepository
+                        .findFirstAvailableByType(requiredType, busyIds)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Hiện tại không đủ tài nguyên loại: " + requiredType
+                                )
+                        );
+
+
+                busyIds.add(foundResource.getResourceId());
+            }
         }
 
-        // 5. Persist appointment entity
         Appointment appointment = new Appointment();
         appointment.setCustomer(customer);
         appointment.setTechnician(technician);
         appointment.setService(service);
         appointment.setStartTime(startTime);
         appointment.setEndTime(endTime);
+
+
+
+
         appointment.setStatus("PENDING");
 
-        appointment = appointmentRepository.save(appointment);
-
-
-
-        return appointment;
+        return appointmentRepository.save(appointment);
     }
 
     /**
