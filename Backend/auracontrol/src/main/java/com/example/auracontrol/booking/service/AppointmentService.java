@@ -318,6 +318,7 @@ public class AppointmentService {
                 .map(appt -> BookingResponseDto.builder()
                         .id(appt.getAppointmentId())
                         .serviceName(appt.getService().getName())
+                        .serviceId(appt.getService().getServiceId())
                         .startTime(appt.getStartTime())
                         .duration(appt.getService().getDurationMinutes())
                         .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Arranging")

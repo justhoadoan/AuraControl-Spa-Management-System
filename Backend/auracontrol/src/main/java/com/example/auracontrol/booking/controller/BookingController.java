@@ -1,6 +1,7 @@
 package com.example.auracontrol.booking.controller;
 
 
+import com.example.auracontrol.booking.dto.AppointmentUpdateRequest;
 import com.example.auracontrol.booking.dto.BookingRequest;
 import com.example.auracontrol.booking.dto.BookingResponseDto;
 import com.example.auracontrol.booking.dto.TechnicianOptionDto;
@@ -89,6 +90,38 @@ public class BookingController {
 
         return ResponseEntity.ok(history);
     }
+    /**
+     * Reschedule an appointment.
+     * Endpoint: PUT /api/booking/{id}/reschedule
+     */
+    @PutMapping("/{id}/reschedule")
+    public ResponseEntity<BookingResponseDto> rescheduleAppointment(
+            @PathVariable Integer id,
+            @RequestBody @Valid AppointmentUpdateRequest request
+    ) {
 
+        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
+
+
+        Appointment updatedAppointment = appointmentService.rescheduleAppointment(
+                id,
+                request.getNewStartTime(),
+                currentUserEmail
+        );
+
+
+        BookingResponseDto response = BookingResponseDto.builder()
+                .id(updatedAppointment.getAppointmentId())
+                .serviceName(updatedAppointment.getService().getName())
+                .startTime(updatedAppointment.getStartTime())
+                .duration(updatedAppointment.getService().getDurationMinutes())
+                .technicianName(updatedAppointment.getTechnician() != null
+                        ? updatedAppointment.getTechnician().getUser().getName()
+                        : "Arranging")
+                .status(updatedAppointment.getStatus())
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
 
 }
