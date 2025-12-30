@@ -55,7 +55,7 @@ function App() {
     
     switch (userRole) {
       case 'ADMIN':
-        return '/admin/services';
+        return '/admin';
       case 'TECHNICIAN':
         return '/staff';
       case 'CUSTOMER':
@@ -74,7 +74,7 @@ function App() {
           <Route 
             path="/" 
             element={
-              userRole === 'ADMIN' ? <Navigate to="/admin/services" replace /> : 
+              userRole === 'ADMIN' ? <Navigate to="/admin" replace /> : 
               userRole === 'TECHNICIAN' ? <Navigate to="/staff" replace /> :
               <Home />
             } 
