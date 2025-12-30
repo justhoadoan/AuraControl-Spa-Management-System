@@ -2,11 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AccountLayout from '../../Components/layout/AccountLayout';
+import { useToast } from '../../Components/common/Toast';
 
 const AccountDashboard = () => {
     const navigate = useNavigate();
+    const toast = useToast();
 
-    // State lưu danh sách cuộc hẹn
     const [appointments, setAppointments] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -19,17 +20,34 @@ const AccountDashboard = () => {
                 return;
             }
 
+    // --- 2. FETCH SLOTS ---
+    useEffect(() => {
+        if (!selectedAppt || !rescheduleDate) return;
+
+        const fetchSlots = async () => {
+            setIsCheckingSlots(true);
             try {
-                // Gọi API lấy danh sách cuộc hẹn sắp tới
-                const response = await axios.get('http://localhost:8081/api/booking/upcoming-appointments', {
+                const token = localStorage.getItem('token');
+                // Lưu ý: Đảm bảo selectedAppt có serviceId. Nếu API list chưa trả về, cần backend bổ sung.
+                const serviceId = selectedAppt.serviceId || selectedAppt.service?.serviceId; 
+                
+                if (!serviceId) {
+                    // Fallback nếu không tìm thấy ID (hiếm gặp nếu backend chuẩn)
+                    console.warn("No serviceId found for slot checking");
+                    setAvailableSlots([]);
+                    return;
+                }
+
+                const response = await axios.get(`http://localhost:8081/api/booking/available-slots`, {
+                    params: { serviceId: serviceId, date: rescheduleDate },
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setAppointments(response.data);
-            } catch (err) {
-                console.error("Error fetching appointments:", err);
-                setError("Không thể tải danh sách cuộc hẹn.");
+                setAvailableSlots(response.data.availableSlots);
+            } catch (error) {
+                console.error(error);
+                toast.error("Failed to check availability.");
             } finally {
-                setIsLoading(false);
+                setIsCheckingSlots(false);
             }
         }, [navigate]);
 
@@ -37,19 +55,48 @@ const AccountDashboard = () => {
         fetchAppointments();
     }, [fetchAppointments]);
 
-    // --- 2. HÀM FORMAT NGÀY GIỜ ---
-    // Input: 2024-08-20T14:00:00 -> Output: Tuesday, August 20, 2024 at 2:00 PM
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleDateString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
+        // Client-side check: Không cho chọn lại giờ cũ (Backend cũng check, nhưng chặn ở đây cho nhanh)
+        const originalDateTime = new Date(selectedAppt.startTime);
+        const newDateTimeStr = `${rescheduleDate}T${selectedSlot}:00`;
+        const newDateTime = new Date(newDateTimeStr);
+
+        if (originalDateTime.getTime() === newDateTime.getTime()) {
+            return toast.info("You selected the same time. No changes made.");
+        }
+
+        setIsSubmitting(true);
+        try {
+            const token = localStorage.getItem('token');
+            // Gọi API
+            await axios.put(
+                `http://localhost:8081/api/booking/${selectedAppt.appointmentId || selectedAppt.id}/reschedule`,
+                { newStartTime: newDateTimeStr },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            toast.success("Rescheduled successfully!");
+            setIsRescheduleModalOpen(false);
+            fetchAppointments(); // Reload data
+        } catch (error) {
+            console.error("Reschedule failed:", error);
+            // Hiển thị lỗi từ Backend (Business Rule: 30 mins, past time, busy tech...)
+            const msg = error.response?.data?.message || "Unable to reschedule. Please try another slot.";
+            toast.error(msg);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const openRescheduleModal = (appt) => {
+        setSelectedAppt(appt);
+        // Mặc định fill ngày hiện tại của cuộc hẹn vào input để user tiện sửa giờ
+        // Cắt lấy YYYY-MM-DD
+        const currentApptDate = appt.startTime.split('T')[0];
+        setRescheduleDate(currentApptDate);
+        
+        setSelectedSlot('');
+        setAvailableSlots([]);
+        setIsRescheduleModalOpen(true);
     };
 
     // --- 3. XỬ LÝ CANCEL (Giả lập) ---
@@ -79,16 +126,20 @@ const AccountDashboard = () => {
         }
     };
 
+    // Helper formatter
+    const formatDate = (dateString) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+            hour: 'numeric', minute: 'numeric', hour12: true
+        });
+    };
+
     return (
         <AccountLayout>
             <div className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white">Upcoming Appointments</h1>
-                <button 
-                    onClick={() => navigate('/services')}
-                    className="bg-primary text-white px-5 py-2.5 rounded-md font-semibold text-sm hover:bg-opacity-90 transition-colors shadow-sm flex items-center"
-                >
-                    <span className="material-icons-outlined mr-2 text-base">add</span>
-                    Book New
+                <button onClick={() => navigate('/services')} className="bg-primary text-white px-5 py-2.5 rounded-md font-semibold text-sm hover:opacity-90 transition-colors flex items-center">
+                    <span className="material-icons-outlined mr-2 text-base">add</span> Book New
                 </button>
             </div>
 
