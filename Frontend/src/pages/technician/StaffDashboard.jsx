@@ -266,13 +266,14 @@ const StaffDashboard = () => {
                                         {daysEvents.map((event) => (
                                             <div 
                                                 key={event.id}
-                                                onClick={() => {
-                                                    if (event.type === 'APPOINTMENT') {
-                                                        setSelectedAppointment(event); // Mở modal chi tiết
-                                                    }
-                                                }}
+                                                onClick={event.type === 'APPOINTMENT'
+                                                    ? () => setSelectedAppointment(event) // Mở modal chi tiết
+                                                    : undefined
+                                                }
                                                 title={`${event.title} - ${event.status}`}
-                                                className={`p-1.5 rounded border text-[10px] sm:text-xs cursor-pointer hover:opacity-80 transition-opacity ${getEventStyle(event)}`}
+                                                className={`p-1.5 rounded border text-[10px] sm:text-xs transition-opacity ${
+                                                    event.type === 'APPOINTMENT' ? 'cursor-pointer hover:opacity-80' : ''
+                                                } ${getEventStyle(event)}`}
                                             >
                                                 {event.type === 'APPOINTMENT' ? (
                                                     <>
