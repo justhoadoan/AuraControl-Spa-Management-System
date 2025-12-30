@@ -48,30 +48,39 @@ const AdminAppointments = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [page, searchKeyword, statusFilter]);
 
-    const fetchAppointments = async () => {
+const fetchAppointments = async () => {
         setLoading(true);
         try {
-            // Lấy token từ localStorage (nếu có auth)
             const token = localStorage.getItem('token'); 
             
             const params = {
                 page: page,
                 size: pageSize,
                 keyword: searchKeyword,
-                status: statusFilter || null // Gửi null nếu rỗng để backend bỏ qua
+                status: statusFilter || null 
             };
 
             const response = await axios.get('http://localhost:8081/api/admin/appointments', {
                 params: params,
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+                headers: { 'Authorization': `Bearer ${token}` }
             });
 
             const data = response.data;
-            setAppointments(data.content);
-            setTotalPages(data.totalPages);
-            setTotalElements(data.totalElements);
+
+            // 1. Lấy danh sách Appointment
+            setAppointments(data.content || []);
+
+            // 2. Lấy thông tin Phân trang (SỬA Ở ĐÂY)
+            if (data.page) {
+                // Nếu JSON có dạng: { content: [...], page: { totalElements: ... } }
+                setTotalPages(data.page.totalPages);
+                setTotalElements(data.page.totalElements);
+            } else {
+                // Fallback cho trường hợp cũ: { content: [...], totalElements: ... }
+                setTotalPages(data.totalPages || 0);
+                setTotalElements(data.totalElements || 0);
+            }
+
         } catch (error) {
             console.error("Error fetching appointments:", error);
         } finally {
@@ -225,6 +234,8 @@ const AdminAppointments = () => {
                             </table>
                         </div>
                     </div>
+
+                    {/* Pagination Controls */}
 
                     {/* Pagination */}
                     {!loading && totalElements > 0 && (
