@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AccountLayout from '../../Components/layout/AccountLayout';
@@ -12,7 +12,7 @@ const AccountDashboard = () => {
     const [error, setError] = useState(null);
 
     // --- 1. FETCH API LẤY DANH SÁCH ---
-    const fetchAppointments = async () => {
+    const fetchAppointments = useCallback(async () => {
             const token = localStorage.getItem('token');
             if (!token) {
                 navigate('/login');
@@ -31,7 +31,7 @@ const AccountDashboard = () => {
             } finally {
                 setIsLoading(false);
             }
-        };
+        }, [navigate]);
 
     useEffect(() => {
         fetchAppointments();
