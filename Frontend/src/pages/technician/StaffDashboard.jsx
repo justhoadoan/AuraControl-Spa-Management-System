@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { AuthContext } from '../../context/AuthContext';
 import { useToast } from '../../Components/common/Toast';
 
@@ -38,9 +38,8 @@ const StaffDashboard = () => {
             const end = new Date(year, month + 1, 0, 23, 59, 59).toISOString().slice(0, 19);
 
             // Gọi API
-            const response = await axios.get('http://localhost:8081/api/technician/schedule', {
-                params: { start, end },
-                headers: { Authorization: `Bearer ${token}` }
+            const response = await api.get('/technician/schedule', {
+                params: { start, end }
             });
 
             setScheduleEvents(response.data);
@@ -73,12 +72,9 @@ const StaffDashboard = () => {
     
         try {
             const token = localStorage.getItem('token');
-            await axios.patch(
-                `http://localhost:8081/api/technician/appointments/${appointmentId}/${action}`,
-                {},
-                {
-                    headers: { Authorization: `Bearer ${token}` }
-                }
+            await api.patch(
+                `/technician/appointments/${appointmentId}/${action}`,
+                {}
             );
             
             toast.success(`Appointment ${action}ed successfully!`);
@@ -115,9 +111,7 @@ const StaffDashboard = () => {
                 reason: timeOffData.reason
             };
 
-            await axios.post('http://localhost:8081/api/technician/absence-requests', payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/technician/absence-requests', payload);
 
             toast.success("Request submitted successfully.");
             setIsTimeOffModalOpen(false);

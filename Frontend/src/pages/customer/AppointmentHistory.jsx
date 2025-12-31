@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import AccountLayout from '../../Components/layout/AccountLayout';
 
 /**
@@ -29,11 +29,7 @@ const AppointmentHistory = () => {
     const fetchAppointments = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://localhost:8081/api/booking/history', {
-                headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                }
-            });
+            const response = await api.get('/booking/history');
             setAppointments(response.data);
             setError(null);
         } catch (err) {

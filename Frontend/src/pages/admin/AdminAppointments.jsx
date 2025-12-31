@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 
 const AdminAppointments = () => {
     // --- State Management ---
@@ -60,9 +60,8 @@ const fetchAppointments = async () => {
                 status: statusFilter || null 
             };
 
-            const response = await axios.get('http://localhost:8081/api/admin/appointments', {
-                params: params,
-                headers: { 'Authorization': `Bearer ${token}` }
+            const response = await api.get('/admin/appointments', {
+                params: params
             });
 
             const data = response.data;

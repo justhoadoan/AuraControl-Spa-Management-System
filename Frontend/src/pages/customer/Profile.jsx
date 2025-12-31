@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import AccountLayout from '../../Components/layout/AccountLayout';
 
 const Profile = () => {
@@ -22,9 +22,7 @@ const Profile = () => {
             }
             try {
                 // Sửa port nếu cần (8080 hoặc 8081)
-                const response = await axios.get('http://localhost:8081/api/users/me', {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                const response = await api.get('/users/me');
                 const data = response.data;
                 setProfile({ fullName: data.fullName, email: data.email });
                 setOriginalProfile({ fullName: data.fullName });
@@ -50,9 +48,8 @@ const Profile = () => {
         setMessage({ type: '', content: '' });
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.put('http://localhost:8081/api/users/me',
-                { fullName: profile.fullName },
-                { headers: { Authorization: `Bearer ${token}` } }
+            const response = await api.put('/users/me',
+                { fullName: profile.fullName }
             );
             setMessage({ type: 'success', content: response.data.message || 'Updated successfully!' });
             setOriginalProfile({ fullName: profile.fullName }); 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useToast } from '../../Components/common/Toast';
 
 const CustomerManagement = () => {
@@ -30,14 +30,15 @@ const fetchCustomers = async (page = 0, search = '') => {
     setIsLoading(true);
     try {
         const token = localStorage.getItem('token');
-        let url = `http://localhost:8081/api/admin/customers?page=${page}&size=${pageSize}`;
+        const params = {
+            page: page,
+            size: pageSize
+        };
         if (search) {
-            url += `&keyword=${encodeURIComponent(search)}`;
+            params.keyword = search;
         }
 
-        const response = await axios.get(url, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        const response = await api.get('/admin/customers', { params });
         const data = response.data;
         // --- SỬA ĐOẠN NÀY ---
          setCustomers(data.content || []);
@@ -70,9 +71,7 @@ const fetchCustomers = async (page = 0, search = '') => {
         setIsDetailModalOpen(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get(`http://localhost:8081/api/admin/customers/${userId}`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get(`/admin/customers/${userId}`);
             setSelectedCustomer(response.data);
         } catch (error) {
             console.error("Error fetching customer details:", error);
