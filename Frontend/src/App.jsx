@@ -34,6 +34,7 @@ import ServiceManagement from './pages/admin/ServiceManagement.jsx';
 import CustomerManagement from './pages/admin/CustomerManagement.jsx';
 import TechnicianManagement from './pages/admin/TechnicianManagement.jsx';
 import ResourceManagement from './pages/admin/ResourceManagement.jsx';
+import AdminAppointments from './pages/admin/AdminAppointments.jsx';
 
 // Pages - Technician
 import StaffDashboard from './pages/technician/StaffDashboard.jsx';
@@ -141,6 +142,7 @@ function App() {
           >
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/services" element={<ServiceManagement />} />
+            <Route path="/admin/appointments" element={<AdminAppointments />} />
             <Route path="/admin/customers" element={<CustomerManagement />} />
             <Route path="/admin/technicians" element={<TechnicianManagement />} />
             <Route path="/admin/resources" element={<ResourceManagement />} />

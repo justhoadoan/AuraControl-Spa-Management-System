@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { validateForm } from '../../utils/Validation.jsx';
 import { useToast } from '../common/Toast';
+import { getBaseURL } from '../../config/api';
 // Bỏ import FlowersImg và CSS
 
 const SignUp = () => {
@@ -31,7 +32,7 @@ const SignUp = () => {
 
         setIsLoading(true);
         try {
-            const response = await fetch('http://localhost:8081/api/auth/register', {
+            const response = await fetch(`${getBaseURL()}/auth/register`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({name, email, password})

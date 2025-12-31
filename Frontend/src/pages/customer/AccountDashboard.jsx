@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../../config/api';
 import AccountLayout from '../../Components/layout/AccountLayout';
 import { useToast } from '../../Components/common/Toast';
 
@@ -38,9 +38,7 @@ const AccountDashboard = () => {
             return;
         }
         try {
-            const response = await axios.get('http://localhost:8081/api/booking/upcoming-appointments', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/booking/upcoming-appointments');
             setAppointments(response.data);
         } catch (err) {
             console.error(err);
@@ -70,9 +68,8 @@ const AccountDashboard = () => {
                     return;
                 }
 
-                const response = await axios.get(`http://localhost:8081/api/booking/available-slots`, {
-                    params: { serviceId: serviceId, date: rescheduleDate },
-                    headers: { Authorization: `Bearer ${token}` }
+                const response = await api.get(`/booking/available-slots`, {
+                    params: { serviceId: serviceId, date: rescheduleDate }
                 });
                 setAvailableSlots(response.data.availableSlots);
             } catch (error) {
@@ -102,10 +99,9 @@ const AccountDashboard = () => {
         setIsSubmitting(true);
         try {
             const token = localStorage.getItem('token');
-            await axios.put(
-                `http://localhost:8081/api/booking/${selectedAppt.appointmentId || selectedAppt.id}/reschedule`,
-                { newStartTime: newDateTimeStr },
-                { headers: { Authorization: `Bearer ${token}` } }
+            await api.put(
+                `/booking/${selectedAppt.appointmentId || selectedAppt.id}/reschedule`,
+                { newStartTime: newDateTimeStr }
             );
 
             toast.success("Rescheduled successfully!");
@@ -133,9 +129,7 @@ const AccountDashboard = () => {
         if (!window.confirm("Are you sure you want to cancel?")) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8081/api/booking/cancel/${id}`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.put(`/booking/cancel/${id}`, {});
             toast.success("Cancelled successfully.");
             fetchAppointments();
         } catch (error) {

@@ -137,7 +137,7 @@ Contributions are what make the open source community such an amazing place to l
 
 ### ⭐ Star this repo if you find it helpful!
 
-Made with ❤️ by **Group 11** 
+Made with ❤️ 
 
 [![GitHub](https://img.shields.io/badge/GitHub-justhoadoan-181717?style=for-the-badge&logo=github)](https://github.com/justhoadoan)
 

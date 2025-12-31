@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useToast } from '../../Components/common/Toast';
 
 const TechnicianManagement = () => {
@@ -40,9 +40,7 @@ const TechnicianManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/technicians?size=100', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/technicians?size=100');
             setTechnicians(response.data.content);
         } catch (error) {
             console.error("Error fetching technicians:", error);
@@ -56,9 +54,7 @@ const TechnicianManagement = () => {
     const fetchServices = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/services', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/services');
             setServices(response.data);
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -81,8 +77,7 @@ const TechnicianManagement = () => {
                 params.status = status;
             }
 
-            const response = await axios.get('http://localhost:8081/api/admin/absence-requests', {
-                headers: { Authorization: `Bearer ${token}` },
+            const response = await api.get('/admin/absence-requests', {
                 params: params 
             });
 
@@ -150,9 +145,7 @@ const TechnicianManagement = () => {
         
         try {
             const token = localStorage.getItem('token');
-            await axios.put(`http://localhost:8081/api/admin/absence-requests/${id}/${action}`, {}, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.put(`/admin/absence-requests/${id}/${action}`, {});
             toast.success(`Request ${action}d successfully.`);
             
             // Reload lại dữ liệu để cập nhật danh sách chuẩn từ server
@@ -203,7 +196,7 @@ const TechnicianManagement = () => {
         if(!window.confirm("Are you sure?")) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:8081/api/admin/technicians/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+            await api.delete(`/admin/technicians/${id}`);
             toast.success("Technician deleted successfully!");
             fetchTechnicians();
         } catch (error) { toast.error("Failed to delete technician."); }
@@ -212,9 +205,11 @@ const TechnicianManagement = () => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         try {
-            const url = `http://localhost:8081/api/admin/technicians${isEditing ? `/${currentId}` : ''}`;
-            const method = isEditing ? axios.put : axios.post;
-            await method(url, formData, { headers: { Authorization: `Bearer ${token}` } });
+            if (isEditing) {
+                await api.put(`/admin/technicians/${currentId}`, formData);
+            } else {
+                await api.post('/admin/technicians', formData);
+            }
             toast.success(isEditing ? "Updated!" : "Created!");
             fetchTechnicians();
             closeModal();

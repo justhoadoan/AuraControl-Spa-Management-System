@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 
 const AdminDashboard = () => {
    // --- STATE ---
@@ -46,7 +46,7 @@ const AdminDashboard = () => {
             try {
                 const token = localStorage.getItem('token');
                 const headers = { Authorization: `Bearer ${token}` };
-                const statsRes = await axios.get('http://localhost:8081/api/admin/dashboard/stats', { headers });
+                const statsRes = await api.get('/admin/dashboard/stats');
                 setStats(statsRes.data);
             } catch (error) {
                 console.error("Error fetching stats:", error);
@@ -64,8 +64,7 @@ const AdminDashboard = () => {
                 const headers = { Authorization: `Bearer ${token}` };
                 
                 // Gọi API với tham số phân trang
-                const response = await axios.get('http://localhost:8081/api/admin/dashboard/upcoming-appointments', { 
-                    headers,
+                const response = await api.get('/admin/dashboard/upcoming-appointments', { 
                     params: { 
                         page: currentPage, 
                         size: pageSize 
@@ -120,9 +119,8 @@ const AdminDashboard = () => {
             setIsRevenueLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get('http://localhost:8081/api/admin/dashboard/revenue-chart', {
-                    params: { period: chartRange.toUpperCase() },
-                    headers: { Authorization: `Bearer ${token}` }
+                const response = await api.get('/admin/dashboard/revenue-chart', {
+                    params: { period: chartRange.toUpperCase() }
                 });
                 const labels = response.data.map(item => item.label);
                 const values = response.data.map(item => item.value);
