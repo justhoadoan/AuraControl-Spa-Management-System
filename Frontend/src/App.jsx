@@ -38,6 +38,7 @@ import AdminAppointments from './pages/admin/AdminAppointments.jsx';
 
 // Pages - Technician
 import StaffDashboard from './pages/technician/StaffDashboard.jsx';
+import MyAbsenceRequests from './pages/technician/MyAbsenceRequests.jsx';
 
 // Styles
 import './App.css';
@@ -157,6 +158,7 @@ function App() {
             }
           >
             <Route path="/staff" element={<StaffDashboard />} />
+            <Route path="/staff/absence-requests" element={<MyAbsenceRequests />} />
           </Route>
 
           {/* 404 Not Found */}

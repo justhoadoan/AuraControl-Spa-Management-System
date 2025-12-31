@@ -45,6 +45,11 @@ const TechnicianLayout = () => {
                             <span className="material-symbols-outlined">dashboard</span>
                             <p className="text-sm">Dashboard</p>
                         </NavLink>
+                        {/* 2. My Absence Requests */}
+                        <NavLink to="/staff/absence-requests" className={getNavLinkClass}>
+                            <span className="material-symbols-outlined">event_busy</span>
+                            <p className="text-sm">My Absence Requests</p>
+                        </NavLink>
                     </nav>
 
                     {/* Footer Actions (Logout) */}
