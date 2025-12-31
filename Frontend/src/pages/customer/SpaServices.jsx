@@ -342,7 +342,7 @@ const SpaServices = () => {
                 </div>
 
                 {/* Pagination */}
-                {totalPages >= 1 && (
+                {totalPages > 1 && (
                     <div className="flex items-center justify-center mt-12 gap-2">
                         {/* Previous Button */}
                         <button
