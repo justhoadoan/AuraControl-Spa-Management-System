@@ -44,6 +44,12 @@ public interface ServiceRepository extends JpaRepository<Service, Integer> {
 
     Page<Service> findByIsActiveTrue(Pageable pageable);
 
+    // Search by name or description
+    @Query("SELECT s FROM Service s WHERE s.isActive = true AND " +
+           "(LOWER(s.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+           "LOWER(s.description) LIKE LOWER(CONCAT('%', :keyword, '%')))")
+    Page<Service> searchActiveServices(@Param("keyword") String keyword, Pageable pageable);
+
     Optional<Service> findByServiceIdAndIsActiveTrue(Integer id);
 
     List<com.example.auracontrol.service.Service> findByServiceIdInAndIsActiveTrue(List<Integer> ids);

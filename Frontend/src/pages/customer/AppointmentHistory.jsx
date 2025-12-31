@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import AccountLayout from '../../Components/layout/AccountLayout';
 
@@ -18,6 +19,7 @@ import AccountLayout from '../../Components/layout/AccountLayout';
  */
 
 const AppointmentHistory = () => {
+    const navigate = useNavigate();
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -40,10 +42,9 @@ const AppointmentHistory = () => {
         }
     };
 
-    const handleBookAgain = (appointmentId) => {
-        console.log('Book Again clicked for appointment ID:', appointmentId);
-        // TODO: Navigate to booking page or open modal
-        // Example: navigate(`/booking?fromAppointment=${appointmentId}`);
+    const handleBookAgain = (serviceId) => {
+        // Navigate to services page with the service ID to auto-open booking modal
+        navigate(`/services?bookService=${serviceId}`);
     };
 
     const getStatusBadgeClass = (status) => {
@@ -143,7 +144,7 @@ const AppointmentHistory = () => {
                                 </div>
                                 <div className="flex items-start">
                                     <button
-                                        onClick={() => handleBookAgain(appointment.id)}
+                                        onClick={() => handleBookAgain(appointment.serviceId)}
                                         className="btn-book-again text-sm text-primary hover:text-primary/80 font-medium transition-colors"
                                         data-appointment-id={appointment.id}
                                     >

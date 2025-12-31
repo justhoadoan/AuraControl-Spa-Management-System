@@ -49,6 +49,27 @@ public class TechnicianController {
     }
 
     /**
+     * API: Get my absence requests (for technician to view their own requests)
+     * URL: GET /api/technician/absence-requests
+     */
+    @GetMapping("/absence-requests")
+    public ResponseEntity<List<AbsenceRequestResponse>> getMyAbsenceRequests(
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Technician technician = getCurrentTechnician(userDetails);
+        
+        List<AbsenceRequest> requests = absenceRequestService.getTechnicianHistory(
+                technician.getTechnicianId()
+        );
+        
+        List<AbsenceRequestResponse> response = requests.stream()
+                .map(this::mapToResponse)
+                .collect(java.util.stream.Collectors.toList());
+        
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * API: Get working schedule and absence calendar
      */
     @GetMapping("/schedule")

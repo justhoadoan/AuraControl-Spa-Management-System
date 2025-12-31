@@ -1,6 +1,7 @@
-import { useContext } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom'; 
 import { AuthContext } from '../context/AuthContext';
+import api from '../config/api';
 
 /**
  * Home Page - Trang chủ Spa (Giao diện mới + Logic cũ)
@@ -9,9 +10,38 @@ const Home = () => {
     const { isAuthenticated, user, userRole, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
+    // Featured Services State
+    const [featuredServices, setFeaturedServices] = useState([]);
+    const [isLoadingServices, setIsLoadingServices] = useState(true);
+
+    // Fetch featured services on mount
+    useEffect(() => {
+        const fetchFeaturedServices = async () => {
+            try {
+                const response = await api.get('/services/active', {
+                    params: { page: 0, size: 6 }
+                });
+                setFeaturedServices(response.data.content || []);
+            } catch (error) {
+                console.error("Error fetching services:", error);
+            } finally {
+                setIsLoadingServices(false);
+            }
+        };
+        fetchFeaturedServices();
+    }, []);
+
     const handleLogout = () => {
         logout();
         navigate('/login');
+    };
+
+    const handleBookService = (serviceId) => {
+        if (isAuthenticated) {
+            navigate(`/services?bookService=${serviceId}`);
+        } else {
+            navigate('/login');
+        }
     };
 
     return (
@@ -142,41 +172,62 @@ const Home = () => {
                 {/* --- SERVICES SECTION --- */}
                 <section id="services" className="py-16 sm:py-24 bg-surface-light dark:bg-surface-dark">
                     <div className="container mx-auto px-6">
-                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12 text-text-light dark:text-text-dark">Featured Services</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            {/* Service 1 */}
-                            <div className="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
-                                <img alt="Swedish Massage" className="w-full h-56 object-cover" src="https://images.unsplash.com/photo-1519823551278-64ac927accc9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" />
-                                <div className="p-6">
-                                    <h3 className="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Swedish Massage</h3>
-                                    <p className="text-subtle-light dark:text-subtle-dark mb-4 text-sm">A gentle, full-body massage perfect for relaxation and stress relief.</p>
-                                    <Link to="/login" className="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                                        Book This
-                                    </Link>
-                                </div>
+                        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-4 text-text-light dark:text-text-dark">Our Services</h2>
+                        <p className="text-center text-subtle-light dark:text-subtle-dark mb-12 max-w-2xl mx-auto">
+                            Discover our range of professional spa and wellness treatments
+                        </p>
+                        
+                        {isLoadingServices ? (
+                            <div className="text-center py-12">
+                                <p className="text-subtle-light dark:text-subtle-dark">Loading services...</p>
                             </div>
-                            {/* Service 2 */}
-                            <div className="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
-                                <img alt="Hydrating Facial" className="w-full h-56 object-cover" src="https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" />
-                                <div className="p-6">
-                                    <h3 className="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Hydrating Facial</h3>
-                                    <p className="text-subtle-light dark:text-subtle-dark mb-4 text-sm">Deeply cleanse, exfoliate, and nourish your skin for a radiant glow.</p>
-                                    <Link to="/login" className="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                                        Book This
-                                    </Link>
-                                </div>
+                        ) : featuredServices.length === 0 ? (
+                            <div className="text-center py-12">
+                                <p className="text-subtle-light dark:text-subtle-dark">No services available at the moment.</p>
                             </div>
-                            {/* Service 3 */}
-                            <div className="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300">
-                                <img alt="Luxury Manicure" className="w-full h-56 object-cover" src="https://images.unsplash.com/photo-1632345031435-8727f6897d53?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80" />
-                                <div className="p-6">
-                                    <h3 className="text-xl font-semibold mb-2 text-text-light dark:text-text-dark">Luxury Manicure</h3>
-                                    <p className="text-subtle-light dark:text-subtle-dark mb-4 text-sm">Indulge in a premium nail treatment, including shaping, cuticle care, and polish.</p>
-                                    <Link to="/login" className="inline-block bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
-                                        Book This
-                                    </Link>
-                                </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {featuredServices.map(service => (
+                                    <div 
+                                        key={service.serviceId} 
+                                        className="bg-background-light dark:bg-background-dark rounded-lg overflow-hidden shadow-lg transform hover:-translate-y-2 transition-transform duration-300"
+                                    >
+                                        <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+                                            <span className="material-symbols-outlined text-6xl text-primary/50">spa</span>
+                                        </div>
+                                        <div className="p-6">
+                                            <div className="flex justify-between items-start mb-2">
+                                                <h3 className="text-xl font-semibold text-text-light dark:text-text-dark">{service.name}</h3>
+                                                <span className="text-lg font-bold text-primary">${service.price}</span>
+                                            </div>
+                                            <p className="text-subtle-light dark:text-subtle-dark mb-2 text-sm line-clamp-2">
+                                                {service.description || "Experience our professional treatment."}
+                                            </p>
+                                            <p className="text-xs text-subtle-light dark:text-subtle-dark mb-4 flex items-center gap-1">
+                                                <span className="material-symbols-outlined text-sm">schedule</span>
+                                                {service.durationMinutes} minutes
+                                            </p>
+                                            <button 
+                                                onClick={() => handleBookService(service.serviceId)}
+                                                className="w-full bg-primary text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
+                                            >
+                                                Book Now
+                                            </button>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
+                        )}
+                        
+                        {/* View All Services Button */}
+                        <div className="text-center mt-10">
+                            <button 
+                                onClick={() => navigate('/services')}
+                                className="inline-flex items-center gap-2 px-6 py-3 border-2 border-primary text-primary rounded-lg font-medium hover:bg-primary hover:text-white transition-colors"
+                            >
+                                View All Services
+                                <span className="material-symbols-outlined">arrow_forward</span>
+                            </button>
                         </div>
                     </div>
                 </section>

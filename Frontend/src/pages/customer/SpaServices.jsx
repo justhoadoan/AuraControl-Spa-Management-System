@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../config/api';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext'; // Đảm bảo đường dẫn đúng
@@ -13,6 +13,7 @@ import { getBaseURL } from '../../config/api';
 const SpaServices = () => {
     const { isAuthenticated, user, userRole, logout } = useContext(AuthContext);
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
 
     const handleLogout = () => {
         logout();
@@ -23,6 +24,16 @@ const SpaServices = () => {
     // --- LOGIC STATE ---
     const [services, setServices] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Pagination State
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalPages, setTotalPages] = useState(0);
+    const [totalElements, setTotalElements] = useState(0);
+    const PAGE_SIZE = 10;
+
+    // Search State
+    const [searchKeyword, setSearchKeyword] = useState('');
+    const [searchInput, setSearchInput] = useState('');
 
     // Modal State
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -36,24 +47,75 @@ const SpaServices = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // --- 1. GET SERVICES ---
-    useEffect(() => {
-        const fetchServices = async () => {
-            try {
-                // Gọi API lấy danh sách dịch vụ (Public endpoint)
-                // Backend trả về Page<ServiceBookingResponse>, danh sách nằm trong .content
-                const response = await api.get('/services/active', {
-                    params: { page: 0, size: 100 } // Lấy nhiều để hiển thị hết
-                });
-                setServices(response.data.content);
-            } catch (error) {
-                console.error("Error fetching services:", error);
-                // Nếu lỗi thì để mảng rỗng hoặc xử lý tùy ý
-            } finally {
-                setIsLoading(false);
+    const fetchServices = async (page = 0, keyword = searchKeyword) => {
+        setIsLoading(true);
+        try {
+            const params = { page: page, size: PAGE_SIZE };
+            if (keyword && keyword.trim()) {
+                params.keyword = keyword.trim();
             }
-        };
-        fetchServices();
+            const response = await api.get('/services/active', { params });
+            setServices(response.data.content);
+            // Handle nested page object structure from Spring
+            const pageInfo = response.data.page || response.data;
+            setTotalPages(pageInfo.totalPages);
+            setTotalElements(pageInfo.totalElements);
+            setCurrentPage(pageInfo.number ?? page);
+        } catch (error) {
+            console.error("Error fetching services:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Handle search submit
+    const handleSearch = (e) => {
+        e.preventDefault();
+        setSearchKeyword(searchInput);
+        fetchServices(0, searchInput);
+    };
+
+    // Clear search
+    const clearSearch = () => {
+        setSearchInput('');
+        setSearchKeyword('');
+        fetchServices(0, '');
+    };
+
+    useEffect(() => {
+        fetchServices(0);
     }, []);
+
+    // --- 1.1 AUTO-OPEN BOOKING MODAL FROM URL PARAM ---
+    useEffect(() => {
+        const bookServiceId = searchParams.get('bookService');
+        if (bookServiceId && !isLoading && isAuthenticated) {
+            let serviceToBook = services.find(s => s.serviceId === parseInt(bookServiceId));
+            
+            if (serviceToBook) {
+                handleBookClick(serviceToBook);
+                searchParams.delete('bookService');
+                setSearchParams(searchParams, { replace: true });
+            } else {
+                const fetchServiceById = async () => {
+                    try {
+                        const response = await api.get(`/services/${bookServiceId}`);
+                        if (response.data) {
+                            handleBookClick(response.data);
+                            searchParams.delete('bookService');
+                            setSearchParams(searchParams, { replace: true });
+                        }
+                    } catch (error) {
+                        console.error("Error fetching service by ID:", error);
+                        toast.error("Service not found.");
+                        searchParams.delete('bookService');
+                        setSearchParams(searchParams, { replace: true });
+                    }
+                };
+                fetchServiceById();
+            }
+        }
+    }, [services, searchParams, isAuthenticated, isLoading]);
 
     // --- 2. XỬ LÝ KHI BẤM "BOOK NOW" ---
     const handleBookClick = (service) => {
@@ -205,12 +267,53 @@ const SpaServices = () => {
                     </p>
                 </div>
 
+                {/* Search Bar */}
+                <div className="max-w-2xl mx-auto mb-10">
+                    <form onSubmit={handleSearch} className="flex gap-3">
+                        <div className="relative flex-1">
+                            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                search
+                            </span>
+                            <input
+                                type="text"
+                                placeholder="Search services by name or description..."
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 bg-surface-light dark:bg-surface-dark text-text-light dark:text-text-dark focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                            {searchInput && (
+                                <button
+                                    type="button"
+                                    onClick={clearSearch}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                                >
+                                    <span className="material-symbols-outlined text-xl">close</span>
+                                </button>
+                            )}
+                        </div>
+                        <button
+                            type="submit"
+                            className="px-6 py-3 bg-primary text-white rounded-full font-medium hover:opacity-90 transition-opacity"
+                        >
+                            Search
+                        </button>
+                    </form>
+                    {searchKeyword && (
+                        <p className="mt-3 text-sm text-subtle-light dark:text-subtle-dark text-center">
+                            Showing results for "<span className="font-medium text-primary">{searchKeyword}</span>"
+                            <button onClick={clearSearch} className="ml-2 text-primary hover:underline">Clear</button>
+                        </p>
+                    )}
+                </div>
+
                 {/* Services Grid - Dynamic Data nhưng giữ nguyên Style cũ */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {isLoading ? (
                         <p className="col-span-full text-center py-10">Loading...</p>
                     ) : services.length === 0 ? (
-                        <p className="col-span-full text-center py-10">No services found.</p>
+                        <p className="col-span-full text-center py-10">
+                            {searchKeyword ? `No services found for "${searchKeyword}"` : 'No services found.'}
+                        </p>
                     ) : (
                         services.map(service => (
                             <div key={service.serviceId} className="bg-surface-light dark:bg-surface-dark rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
@@ -238,12 +341,54 @@ const SpaServices = () => {
                     )}
                 </div>
 
-                {/* Pagination Placeholder (Giữ nguyên) */}
-                <div className="flex items-center justify-center mt-12">
-                    <p className="text-subtle-light dark:text-subtle-dark">
-                        More services coming soon...
-                    </p>
-                </div>
+                {/* Pagination */}
+                {totalPages > 1 && (
+                    <div className="flex items-center justify-center mt-12 gap-2">
+                        {/* Previous Button */}
+                        <button
+                            onClick={() => fetchServices(currentPage - 1)}
+                            disabled={currentPage === 0}
+                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-base">chevron_left</span>
+                        </button>
+
+                        {/* Page Numbers */}
+                        <div className="flex items-center gap-1">
+                            {[...Array(totalPages)].map((_, index) => (
+                                <button
+                                    key={index}
+                                    onClick={() => fetchServices(index)}
+                                    className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                                        currentPage === index
+                                            ? 'bg-primary text-white'
+                                            : 'border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                    }`}
+                                >
+                                    {index + 1}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Next Button */}
+                        <button
+                            onClick={() => fetchServices(currentPage + 1)}
+                            disabled={currentPage === totalPages - 1}
+                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        >
+                            <span className="material-symbols-outlined text-base">chevron_right</span>
+                        </button>
+                    </div>
+                )}
+
+                {/* Total count info */}
+                {totalElements > 0 && (
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-subtle-light dark:text-subtle-dark">
+                            Showing {currentPage * PAGE_SIZE + 1} - {Math.min((currentPage + 1) * PAGE_SIZE, totalElements)} of {totalElements} services
+                        </p>
+                    </div>
+                )}
             </main>
 
             {/* Footer (Giữ nguyên) */}

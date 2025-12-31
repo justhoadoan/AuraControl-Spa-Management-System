@@ -33,6 +33,18 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
             String status
     );
 
+    // For upcoming appointments: only PENDING and CONFIRMED
+    List<Appointment> findByCustomer_User_EmailAndStatusInOrderByStartTimeAsc(
+            String email,
+            List<String> statuses
+    );
+
+    // For history: only COMPLETED appointments
+    List<Appointment> findByCustomer_User_EmailAndStatusOrderByStartTimeDesc(
+            String email,
+            String status
+    );
+
     long countByCustomer_CustomerId(Integer customerId);
 
     List<Appointment> findByCustomer_CustomerIdOrderByStartTimeDesc(Integer customerId);

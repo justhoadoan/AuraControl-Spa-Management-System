@@ -16,13 +16,11 @@ public class ServiceController {
 
     @GetMapping("/active")
     public ResponseEntity<Page<ServiceBookingResponse>> getActiveServices(
+            @RequestParam(required = false) String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(defaultValue = "10") int size
     ) {
-
-
-
-        return ResponseEntity.ok(serviceService.getServicesForBooking(page, size));
+        return ResponseEntity.ok(serviceService.getServicesForBooking(keyword, page, size));
     }
 
     @GetMapping("/{id}")
