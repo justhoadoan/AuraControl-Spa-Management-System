@@ -67,8 +67,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
 
     @Query("SELECT a FROM Appointment a WHERE a.technician.technicianId = :techId " +
             "AND a.status != 'CANCELLED' " +
-            "AND a.startTime > :from AND a.endTime < :to")
-    List<Appointment> findByTechnicianIdAndDateRange(Integer techId, LocalDateTime from, LocalDateTime to);
+            "AND a.startTime < :to AND a.endTime > :from")
+    List<Appointment> findByTechnicianIdAndDateRange(
+            @Param("techId") Integer techId,
+            @Param("from") LocalDateTime from,
+            @Param("to") LocalDateTime to
+    );
 
 
     @Query(value = "SELECT * FROM v_upcoming_appointments ORDER BY start_time ASC LIMIT 10",
