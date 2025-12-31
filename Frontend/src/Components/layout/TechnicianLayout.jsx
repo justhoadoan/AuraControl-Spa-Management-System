@@ -45,12 +45,6 @@ const TechnicianLayout = () => {
                             <span className="material-symbols-outlined">dashboard</span>
                             <p className="text-sm">Dashboard</p>
                         </NavLink>
-
-                        {/* 2. My Profile */}
-                        <NavLink to="/staff/profile" className={getNavLinkClass}>
-                            <span className="material-symbols-outlined">person</span>
-                            <p className="text-sm">My Profile</p>
-                        </NavLink>
                     </nav>
 
                     {/* Footer Actions (Logout) */}
