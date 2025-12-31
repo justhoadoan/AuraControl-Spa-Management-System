@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../config/api';
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState('');
@@ -15,7 +15,7 @@ const ForgotPassword = () => {
         setMessage('');
 
         try {
-            await axios.post('http://localhost:8081/api/auth/forgot-password', { email });
+            await api.post('/auth/forgot-password', { email });
             setIsError(false);
             setMessage("If the email exists, a password reset instruction has been sent.");
         } catch (error) {

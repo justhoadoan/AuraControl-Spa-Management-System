@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import api from '../../config/api';
 import axios from 'axios';
 import { AuthContext } from '../../context/AuthContext'; // Đảm bảo đường dẫn đúng
 import { useToast } from '../../Components/common/Toast'; // Đảm bảo đường dẫn đúng
+import { getBaseURL } from '../../config/api';
 // Import thêm AuthContext nếu chưa có
 
 /**
@@ -39,7 +41,7 @@ const SpaServices = () => {
             try {
                 // Gọi API lấy danh sách dịch vụ (Public endpoint)
                 // Backend trả về Page<ServiceBookingResponse>, danh sách nằm trong .content
-                const response = await axios.get('http://localhost:8081/api/services/active', {
+                const response = await api.get('/services/active', {
                     params: { page: 0, size: 100 } // Lấy nhiều để hiển thị hết
                 });
                 setServices(response.data.content);
@@ -77,9 +79,8 @@ const SpaServices = () => {
             setIsCheckingSlots(true);
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8081/api/booking/available-slots`, {
-                    params: { serviceId: selectedService.serviceId, date: bookingDate },
-                    headers: { Authorization: `Bearer ${token}` }
+                const response = await api.get(`/booking/available-slots`, {
+                    params: { serviceId: selectedService.serviceId, date: bookingDate }
                 });
                 setAvailableSlots(response.data.availableSlots);
             } catch (error) { console.error(error); } finally { setIsCheckingSlots(false); }
@@ -92,9 +93,8 @@ const SpaServices = () => {
         const fetchTechs = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const response = await axios.get(`http://localhost:8081/api/booking/available-technicians`, {
-                    params: { serviceId: selectedService.serviceId, startTime: `${bookingDate}T${selectedSlot}:00` },
-                    headers: { Authorization: `Bearer ${token}` }
+                const response = await api.get(`/booking/available-technicians`, {
+                    params: { serviceId: selectedService.serviceId, startTime: `${bookingDate}T${selectedSlot}:00` }
                 });
                 setAvailableTechs(response.data);
             } catch (error) { console.error(error); }
@@ -112,9 +112,7 @@ const SpaServices = () => {
                 technicianId: selectedTech ? parseInt(selectedTech) : null,
                 startTime: `${bookingDate}T${selectedSlot}:00`
             };
-            await axios.post('http://localhost:8081/api/booking', payload, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            await api.post('/booking', payload);
             toast.success("Booking successful!");
             setIsBookingModalOpen(false);
             navigate('/dashboard');

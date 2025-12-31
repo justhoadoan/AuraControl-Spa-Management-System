@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useToast } from '../../Components/common/Toast';
 
 const ServiceManagement = () => {
@@ -30,9 +30,7 @@ const ServiceManagement = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/services', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/services');
             setServices(response.data);
         } catch (error) {
             console.error("Error fetching services:", error);
@@ -46,9 +44,7 @@ const ServiceManagement = () => {
     const fetchResourceTypes = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/resources/types', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/resources/types');
             
             // Chuyển đổi dữ liệu từ ["massage_room"] -> [{value: "massage_room", label: "Massage Room"}]
             const formattedTypes = response.data.map(type => ({
@@ -154,11 +150,11 @@ const ServiceManagement = () => {
 
             if (isEditing) {
                 // UPDATE
-                await axios.put(`http://localhost:8081/api/admin/services/${currentId}`, payload, { headers });
+                await api.put(`/admin/services/${currentId}`, payload);
                 toast.success("Service updated successfully!");
             } else {
                 // CREATE
-                await axios.post('http://localhost:8081/api/admin/services', payload, { headers });
+                await api.post('/admin/services', payload);
                 toast.success("Service created successfully!");
             }
             fetchServices(); // Reload list
@@ -173,9 +169,7 @@ const ServiceManagement = () => {
     const handleDelete = async (id) => {
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8081/api/admin/services/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                await api.delete(`/admin/services/${id}`);
                 toast.success("Service deleted successfully.");
                 fetchServices();
             } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { useToast } from '../../Components/common/Toast';
 
 const ResourceManagement = () => {
@@ -35,9 +35,7 @@ const ResourceManagement = () => {
     const fetchDistinctTypes = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8081/api/admin/resources/types', {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            const response = await api.get('/admin/resources/types');
             setDistinctTypes(response.data || []);
         } catch (error) {
             console.error("Error fetching types:", error);
@@ -57,10 +55,7 @@ const ResourceManagement = () => {
                 type: typeFilter
             };
 
-            const response = await axios.get('http://localhost:8081/api/admin/resources', {
-                headers: { Authorization: `Bearer ${token}` },
-                params: params
-            });
+            const response = await api.get('/admin/resources', { params });
 
             const data = response.data;
 
@@ -149,10 +144,10 @@ const ResourceManagement = () => {
 
         try {
             if (isEditing) {
-                await axios.put(`http://localhost:8081/api/admin/resources/${currentId}`, formData, { headers });
+                await api.put(`/admin/resources/${currentId}`, formData);
                 toast.success("Resource updated successfully!");
             } else {
-                await axios.post('http://localhost:8081/api/admin/resources', formData, { headers });
+                await api.post('/admin/resources', formData);
                 toast.success("Resource created successfully!");
             }
             fetchResources();
@@ -169,9 +164,7 @@ const ResourceManagement = () => {
         
             try {
                 const token = localStorage.getItem('token');
-                await axios.delete(`http://localhost:8081/api/admin/resources/${id}`, {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
+                await api.delete(`/admin/resources/${id}`);
                 toast.success("Deleted successfully.");
                 fetchResources();
             } catch (error) {

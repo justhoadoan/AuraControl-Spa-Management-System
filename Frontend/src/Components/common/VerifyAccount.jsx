@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 
 const VerifyAccount = () => {
     const [searchParams] = useSearchParams();
@@ -25,7 +25,7 @@ const VerifyAccount = () => {
         isCalled.current = true; 
 
         // Gọi API xác thực
-        axios.get(`http://localhost:8081/api/auth/verify-account?token=${token}`)
+        api.get(`/auth/verify-account?token=${token}`)
             .then((response) => {
                 setStatus('success');
                 const successMsg = typeof response.data === 'string' ? response.data : "Account activated successfully!";

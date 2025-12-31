@@ -45,7 +45,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByResetPasswordToken(@Param("token") String token);
 
     @Query("SELECT u FROM User u WHERE u.role = 'CUSTOMER' " +
-            "AND u.enabled = true " + // <--- THÊM DÒNG NÀY
+            "AND u.enabled = true " +
             "AND (:keyword IS NULL OR :keyword = '' OR " +
             "LOWER(u.name) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%')))")
