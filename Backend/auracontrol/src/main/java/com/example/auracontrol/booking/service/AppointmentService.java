@@ -304,15 +304,15 @@ public class AppointmentService {
     }
     /**
      * Get upcoming appointment for customer.
+     * Only shows PENDING and CONFIRMED appointments.
      */
     public List<BookingResponseDto> getUpcomingAppointments(String userEmail) {
-        LocalDateTime now = LocalDateTime.now();
+        List<String> activeStatuses = List.of("PENDING", "CONFIRMED");
 
         List<Appointment> appointments = appointmentRepository
-                .findByCustomer_User_EmailAndStartTimeAfterAndStatusNotOrderByStartTimeAsc(
+                .findByCustomer_User_EmailAndStatusInOrderByStartTimeAsc(
                         userEmail,
-                        now,
-                        "CANCELLED"
+                        activeStatuses
                 );
         return appointments.stream()
                 .map(appt -> BookingResponseDto.builder()
@@ -361,24 +361,24 @@ public class AppointmentService {
     }
     /**
      * Get past appointments (History).
+     * Only shows COMPLETED appointments.
      */
     public List<BookingResponseDto> getAppointmentHistory(String userEmail) {
-        LocalDateTime now = LocalDateTime.now();
-
         List<Appointment> appointments = appointmentRepository
-                .findByCustomer_User_EmailAndStartTimeBeforeOrderByStartTimeDesc(
+                .findByCustomer_User_EmailAndStatusOrderByStartTimeDesc(
                         userEmail,
-                        now
+                        "COMPLETED"
                 );
 
         return appointments.stream()
                 .map(appt -> BookingResponseDto.builder()
                         .id(appt.getAppointmentId())
                         .serviceName(appt.getService().getName())
+                        .serviceId(appt.getService().getServiceId())
                         .startTime(appt.getStartTime())
                         .duration(appt.getService().getDurationMinutes())
                         .technicianName(appt.getTechnician() != null ? appt.getTechnician().getUser().getName() : "Unknown")
-                        .status(appt.getStatus()) //Cancelled, COMPLETED
+                        .status(appt.getStatus())
                         .build())
                 .collect(Collectors.toList());
     }

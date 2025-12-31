@@ -103,10 +103,15 @@ public class ServiceService {
 
         serviceRepository.save(service);
     }
-    public Page<ServiceBookingResponse> getServicesForBooking(int page, int size) {
+    public Page<ServiceBookingResponse> getServicesForBooking(String keyword, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        Page<com.example.auracontrol.service.Service> entities = serviceRepository.findByIsActiveTrue(pageable);
+        Page<com.example.auracontrol.service.Service> entities;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            entities = serviceRepository.searchActiveServices(keyword.trim(), pageable);
+        } else {
+            entities = serviceRepository.findByIsActiveTrue(pageable);
+        }
 
         return entities.map(this::mapToResponse);
     }

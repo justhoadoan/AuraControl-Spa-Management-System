@@ -3,7 +3,9 @@ package com.example.auracontrol.booking.service;
 import com.example.auracontrol.admin.dto.AbsenceRequestResponse;
 import com.example.auracontrol.booking.dto.AbsenceRequestDto;
 import com.example.auracontrol.booking.entity.AbsenceRequest;
+import com.example.auracontrol.booking.entity.Appointment;
 import com.example.auracontrol.booking.repository.AbsenceRequestRepository;
+import com.example.auracontrol.booking.repository.AppointmentRepository;
 import com.example.auracontrol.exception.DuplicateResourceException;
 import com.example.auracontrol.exception.InvalidRequestException;
 import com.example.auracontrol.exception.ResourceNotFoundException;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class AbsenceRequestService {
     private final AbsenceRequestRepository absenceRequestRepository;
     private final TechnicianRepository technicianRepository;
+    private final AppointmentRepository appointmentRepository;
 
     @Transactional
     public AbsenceRequest submitRequest(Integer technicianId, AbsenceRequestDto requestDto) {
@@ -40,6 +43,19 @@ public class AbsenceRequestService {
         Technician technician = technicianRepository.findById(technicianId)
                 .orElseThrow(() -> new ResourceNotFoundException("Technician with id: " + technicianId + " not found."));
 
+        // Check for conflicting appointments during the requested absence period
+        List<Appointment> conflictingAppointments = appointmentRepository.findByTechnicianIdAndDateRange(
+                technicianId,
+                requestDto.getStartDate(),
+                requestDto.getEndDate()
+        );
+
+        if (!conflictingAppointments.isEmpty()) {
+            throw new InvalidRequestException(
+                    "Cannot submit absence request: You have " + conflictingAppointments.size() + 
+                    " scheduled appointment(s) during this time period. Please reschedule or cancel them first."
+            );
+        }
 
         AbsenceRequest absence = AbsenceRequest.builder()
                 .technician(technician)
