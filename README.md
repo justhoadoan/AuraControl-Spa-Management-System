@@ -75,7 +75,7 @@ The easiest way to run AuraControl is using **Docker Compose**.  This will set u
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/justhoadoan/AuraControl-Spa-Management-System. git
+git clone https://github.com/justhoadoan/AuraControl-Spa-Management-System.git
 cd AuraControl-Spa-Management-System
 ```
 
