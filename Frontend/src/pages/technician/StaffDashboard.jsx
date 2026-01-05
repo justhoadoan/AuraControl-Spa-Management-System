@@ -170,6 +170,14 @@ const StaffDashboard = () => {
                date1.getFullYear() === date2.getFullYear();
     };
 
+    // Hàm kiểm tra xem ngày có nằm trong khoảng thời gian của event không (dùng cho Absence)
+    const isDateInRange = (date, startDate, endDate) => {
+        const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const start = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+        const end = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+        return d >= start && d <= end;
+    };
+
     // ===========================
     // 4. RENDER
     // ===========================
@@ -245,8 +253,20 @@ const StaffDashboard = () => {
                             const cellDate = new Date(year, month, dayNum);
 
                             // Lọc các sự kiện diễn ra trong ngày này
+                            // - Appointment: so sánh ngày bắt đầu
+                            // - Absence: kiểm tra xem cellDate có nằm trong khoảng start-end không
                             const daysEvents = isCurrentMonth 
-                                ? scheduleEvents.filter(e => isSameDay(new Date(e.start), cellDate))
+                                ? scheduleEvents.filter(e => {
+                                    if (e.type === 'ABSENCE') {
+                                        // Absence có khoảng thời gian, cần kiểm tra nằm trong range
+                                        const startDate = new Date(e.start);
+                                        const endDate = new Date(e.end);
+                                        return isDateInRange(cellDate, startDate, endDate);
+                                    } else {
+                                        // Appointment: chỉ so sánh ngày bắt đầu
+                                        return isSameDay(new Date(e.start), cellDate);
+                                    }
+                                })
                                 : [];
 
                             return (
