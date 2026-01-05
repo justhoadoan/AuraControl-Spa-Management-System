@@ -20,7 +20,7 @@ public class EmailService {
     @Async
     public void sendResetPasswordEmail(String toEmail, String resetToken) {
         try {
-            String resetLink = "http://localhost:80/reset-password?token=" + resetToken;
+            String resetLink = "http://26.24.241.46/reset-password?token=" + resetToken;
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
@@ -103,7 +103,7 @@ public class EmailService {
     @Async
     public void sendVerificationEmail(String toEmail, String name, String token) {
         try {
-            String verifyLink = "http://localhost:80/verify-account?token=" + token;
+            String verifyLink = "http://26.24.241.46/verify-account?token=" + token;
 
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
