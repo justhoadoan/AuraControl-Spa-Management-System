@@ -191,7 +191,7 @@ WHERE r.type = v_req_record.resource_type
              JOIN appointment a ON ar.appointment_id = a.appointment_id
     WHERE ar.resource_id = r.resource_id
       AND a.status != 'CANCELLED'
-                AND a.appointment_id != COALESCE(NEW.appointment_id, -1) -- Tránh đếm chính nó (khi update)
+                AND a.appointment_id != COALESCE(NEW.appointment_id, -1)
                 AND a.start_time < NEW.end_time
                 AND a.end_time > NEW.start_time
 );
@@ -229,7 +229,8 @@ BEGIN
     -- Example: Service requires 'BED' and 'SAUNA_MACHINE' → loop runs twice
 FOR v_req_record IN
 SELECT resource_type
-FROM service_resource_requirement
+FROM service_resource_requirement,
+     generate_series(1, quantity)
 WHERE service_id = NEW.service_id
     LOOP
         -- Reset resource ID for each iteration
