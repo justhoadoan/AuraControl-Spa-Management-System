@@ -315,7 +315,8 @@ WHERE appointment_id = NEW.appointment_id;
 -- 4. Loop through each required resource type for the service
 FOR v_req_record IN
 SELECT resource_type
-FROM service_resource_requirement
+FROM service_resource_requirement,
+      generate_series(1, quantity)
 WHERE service_id = NEW.service_id
     LOOP
         v_new_resource_id := NULL;
@@ -327,7 +328,7 @@ INTO v_new_resource_id
 FROM resources r
 WHERE r.type = v_req_record.resource_type
   AND r.is_deleted = FALSE
-  AND NOT EXISTS (
+  AND NOT EXISTS (	
     SELECT 1
     FROM appointment_resource ar
              JOIN appointment a ON ar.appointment_id = a.appointment_id

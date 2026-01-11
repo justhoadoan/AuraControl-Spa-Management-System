@@ -158,6 +158,7 @@ public class AppointmentService {
         appointment.setService(service);
         appointment.setStartTime(startTime);
         appointment.setEndTime(endTime);
+        appointment.setFinalPrice(service.getPrice());
 
 
 
